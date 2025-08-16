@@ -141,12 +141,12 @@
 //   );
 // }
 
-
-
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { startRegisterByEmailPhoneAsUser } from "../redux/auth/authSlice";
+import {
+  startRegisterByEmailPhoneAsUser,
+  resetUserState,
+} from "../redux/auth/authSlice";
 import {
   Box,
   TextField,
@@ -165,9 +165,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function StartRegisteringUserForm() {
   const dispatch = useDispatch();
-  const { loading, error, success } = useSelector(
-    (state) => state.auth
-  );
+  const { loading, error, success } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
 
@@ -184,6 +182,10 @@ export default function StartRegisteringUserForm() {
       })
     );
   };
+
+  useEffect(() => {
+    dispatch(resetUserState());
+  }, []);
 
   useEffect(() => {
     if (success) {
@@ -210,12 +212,7 @@ export default function StartRegisteringUserForm() {
           borderRadius: 3,
         }}
       >
-        <Typography
-          variant="h4"
-          mb={1}
-          textAlign="center"
-          color="primary"
-        >
+        <Typography variant="h4" mb={1} textAlign="center" color="primary">
           User Signup
         </Typography>
         <Typography
@@ -316,20 +313,6 @@ export default function StartRegisteringUserForm() {
             }}
           >
             Already have an account? Login
-          </Typography>
-          <Typography
-            component={Link}
-            to="/start-registering-office-manager"
-            variant="body2"
-            sx={{
-              display: "block",
-              color: "primary.main",
-              textDecoration: "none",
-              fontWeight: "bold",
-              "&:hover": { textDecoration: "underline" },
-            }}
-          >
-            Want to register as an Office Manager?
           </Typography>
         </Box>
       </Paper>

@@ -941,7 +941,7 @@ const PaymentPage = () => {
   };
 
   const handleGoBack = () => navigate(-1);
-  const handleCancelPayment = () => navigate("/home");
+  const handleCancelPayment = () => navigate("/");
 
   const PaymentSuccessCard = () => (
     <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>

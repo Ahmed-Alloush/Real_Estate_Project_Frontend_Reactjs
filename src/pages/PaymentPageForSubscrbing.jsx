@@ -511,7 +511,6 @@ const PaymentPageForSubscrbing = () => {
 
   // This function handles the logic when the form is submitted.
   const handlePaymentSubmit = async (paymentData) => {
-    
     const result = await dispatch(
       createOfficeSubscription({ subscriptionId: id, ...paymentData })
     );
@@ -523,7 +522,7 @@ const PaymentPageForSubscrbing = () => {
   };
 
   const handleGoBack = () => navigate(-1);
-  const handleCancelPayment = () => navigate("/home");
+  const handleCancelPayment = () => navigate("/");
 
   const PaymentSuccessCard = () => (
     <Paper elevation={3} sx={{ p: 4, textAlign: "center", borderRadius: 3 }}>

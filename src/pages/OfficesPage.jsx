@@ -59,15 +59,9 @@
 
 // export default OfficesPage;
 
-
-
-
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllOffices,
-  setPage,
-} from "../redux/office/officeSlice";
+import { getAllOffices, setPage } from "../redux/office/officeSlice";
 import {
   Container,
   Typography,
@@ -76,14 +70,19 @@ import {
   Alert,
   Box,
   Pagination,
+  Button,
 } from "@mui/material";
 import OfficeCard from "../components/OfficeCard";
+import { FaPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const OfficesPage = () => {
   const dispatch = useDispatch();
   const { offices, loading, error, officePagination } = useSelector(
     (state) => state.office
   );
+
+  const { user } = useSelector((state) => state.auth);
 
   const page = officePagination?.page || 1;
   const pageCount = officePagination?.pageCount || 1;
@@ -109,21 +108,36 @@ const OfficesPage = () => {
 
   return (
     <Container sx={{ mt: 4 }}>
+      {(user?.role !== "officeManager")&& (user?.office) && (
+        <Link to={"/create-office"}>
+          <Button variant="contained" startIcon={<FaPlus />} sx={{ mt: 2 }}>
+            Create Your own Office.
+          </Button>
+        </Link>
+      )}
+
+      {offices?.length === 0 && (
+        <Alert severity="info" sx={{ mt: 3 }}>
+          There aren't any offices yet.
+        </Alert>
+      )}
       {loading && <CircularProgress />}
       {error && <Alert severity="error">{error.message || error}</Alert>}
 
       <Grid container spacing={3} sx={{ mt: 2 }}>
-        {offices.map((office) => (
-          <Grid item xs={12} sm={6} md={4} key={office.id}>
-            <OfficeCard
-              id={office.id}
-              name={office.name}
-              office_photo={office.office_photo}
-              office_phone={office.office_phone}
-              ratingsCount={office.ratingsCount}
-            />
-          </Grid>
-        ))}
+        {offices.map((office) => {
+          return (
+            <Grid item xs={12} sm={6} md={4} key={office.id}>
+              <OfficeCard
+                id={office.id}
+                name={office.name}
+                office_photo={office.office_photo}
+                office_phone={office.office_phone}
+                averageRating={office.averageRating}
+              />
+            </Grid>
+          );
+        })}
       </Grid>
 
       {pageCount > 1 && (
@@ -135,7 +149,7 @@ const OfficesPage = () => {
             color="primary"
           />
         </Box>
-       )}
+      )}
     </Container>
   );
 };

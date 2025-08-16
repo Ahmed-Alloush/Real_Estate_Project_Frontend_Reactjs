@@ -1,1165 +1,261 @@
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useParams, useNavigate } from "react-router-dom";
-// import {
-//   Container,
-//   Typography,
-//   Grid,
-//   Box,
-//   Divider,
-//   CircularProgress,
-//   Alert,
-//   IconButton,
-//   CardMedia,
-//   Avatar,
-//   Stack,
-//   Button,
-//   Dialog, // Ensure Dialog is imported for the full-screen viewer
-//   DialogTitle,
-//   DialogContent,
-// } from "@mui/material";
-// import {
-//   ArrowBackIos as ArrowBackIosIcon,
-//   ArrowForwardIos as ArrowForwardIosIcon,
-//   ArrowBack as ArrowBackIcon,
-//   Close as CloseIcon, // Make sure CloseIcon is imported for the dialog
-// } from "@mui/icons-material";
-
-// // IMPORTANT: Use fetchPropertyById from your 'property' slice
-// import { fetchPropertyById } from "../redux/property/propertySlice"; // Adjust path as needed
-
-// const PropertyDetailsPage = () => {
-//   const { id } = useParams();
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   // Use state from your 'property' slice for a single property
-//   const { property: singleProperty, loading, error } = useSelector(
-//     (state) => state.property // Access the 'property' slice state
-//   );
-
-//   // === IMPORTANT: Replace this with your actual user role from Redux/Auth ===
-//   // Example: const userRole = useSelector(state => state.auth.user?.role);
-//   // For demonstration, let's assume a role for now.
-//   const userRole = "user"; // Default to a 'user' role for general public view
-//   // Consider mapping specific backend roles to more readable frontend roles if needed
-//   // === END IMPORTANT ===
-
-//   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-//   const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
-
-//   useEffect(() => {
-//     if (id) {
-//       dispatch(fetchPropertyById(id)); // Dispatch your fetchPropertyById thunk
-//     }
-//   }, [dispatch, id]);
-
-//   // Reset photo index when property data loads/changes
-//   useEffect(() => {
-//     if (singleProperty) {
-//       setCurrentPhotoIndex(0);
-//     }
-//   }, [singleProperty]);
-
-//   if (loading) {
-//     return (
-//       <Container sx={{ mt: 4, display: "flex", justifyContent: "center", alignItems: "center", minHeight: '80vh' }}>
-//         <CircularProgress />
-//         <Typography variant="h6" ml={2}>Loading property details...</Typography>
-//       </Container>
-//     );
-//   }
-
-//   if (error) {
-//     return (
-//       <Container sx={{ mt: 4 }}>
-//         <Alert severity="error">
-//           Error loading property: {error.message || error.response?.data?.message || "An unknown error occurred."}
-//         </Alert>
-//         <Button
-//             variant="outlined"
-//             startIcon={<ArrowBackIcon />}
-//             onClick={() => navigate(-1)}
-//             sx={{ mt: 2 }}
-//         >
-//             Go Back
-//         </Button>
-//       </Container>
-//     );
-//   }
-
-//   if (!singleProperty) {
-//     return (
-//       <Container sx={{ mt: 4 }}>
-//         <Alert severity="info">Property not found or invalid ID.</Alert>
-//         <Button
-//             variant="outlined"
-//             startIcon={<ArrowBackIcon />}
-//             onClick={() => navigate(-1)}
-//             sx={{ mt: 2 }}
-//         >
-//             Go Back
-//         </Button>
-//       </Container>
-//     );
-//   }
-
-//   const photos = singleProperty.photos || [];
-//   const hasPhotos = photos.length > 0;
-//   const owner = singleProperty.owner;
-
-//   const handleNextPhoto = () => {
-//     setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % photos.length);
-//   };
-
-//   const handlePrevPhoto = () => {
-//     setCurrentPhotoIndex((prevIndex) => (prevIndex - 1 + photos.length) % photos.length);
-//   };
-
-//   const handleOpenPhotoViewer = (index) => {
-//     setCurrentPhotoIndex(index);
-//     setIsPhotoViewerOpen(true);
-//   };
-
-//   const handleClosePhotoViewer = () => {
-//     setIsPhotoViewerOpen(false);
-//   };
-
-//   // Determine if the current user role has access to sensitive owner info
-//   // You can define which roles get which access levels
-//   const canViewSensitiveOwnerInfo = ['office_manager', 'admin', 'super_admin'].includes(userRole);
-//   const canViewLicenseDetails = ['office_manager', 'admin', 'super_admin'].includes(userRole);
-
-
-//   return (
-//     <Container sx={{ mt: 4, pb: 4 }}>
-//       <Button
-//         variant="outlined"
-//         startIcon={<ArrowBackIcon />}
-//         onClick={() => navigate(-1)} // Go back to the previous page
-//         sx={{ mb: 3 }}
-//       >
-//         Back to Properties
-//       </Button>
-
-//       <Typography variant="h4" gutterBottom component="h1">
-//         Property Details: {singleProperty.propertyNumber}
-//       </Typography>
-
-//       <Grid container spacing={4}>
-//         {/* Property Photos Section */}
-//         <Grid item xs={12} md={7}>
-//           <Typography variant="h6" gutterBottom>
-//             Property Photos
-//           </Typography>
-//           {hasPhotos ? (
-//             <>
-//               <Box
-//                 sx={{
-//                   position: "relative",
-//                   display: "flex",
-//                   alignItems: "center",
-//                   justifyContent: "center",
-//                   height: 450,
-//                   backgroundColor: "#f0f0f0",
-//                   borderRadius: 2,
-//                   overflow: "hidden",
-//                   mb: 2,
-//                 }}
-//               >
-//                 <CardMedia
-//                   component="img"
-//                   image={photos[currentPhotoIndex].url}
-//                   alt={`Property Photo ${currentPhotoIndex + 1}`}
-//                   sx={{
-//                     maxHeight: "100%",
-//                     maxWidth: "100%",
-//                     objectFit: "contain",
-//                     cursor: "pointer",
-//                   }}
-//                   onClick={() => handleOpenPhotoViewer(currentPhotoIndex)}
-//                 />
-//                 {photos.length > 1 && (
-//                   <>
-//                     <IconButton
-//                       sx={{ position: "absolute", left: 8, color: "white", backgroundColor: "rgba(0,0,0,0.5)", '&:hover': {backgroundColor: "rgba(0,0,0,0.7)"} }}
-//                       onClick={handlePrevPhoto}
-//                     >
-//                       <ArrowBackIosIcon />
-//                     </IconButton>
-//                     <IconButton
-//                       sx={{ position: "absolute", right: 8, color: "white", backgroundColor: "rgba(0,0,0,0.5)", '&:hover': {backgroundColor: "rgba(0,0,0,0.7)"} }}
-//                       onClick={handleNextPhoto}
-//                     >
-//                       <ArrowForwardIosIcon />
-//                     </IconButton>
-//                   </>
-//                 )}
-//                 <Typography
-//                   variant="caption"
-//                   sx={{
-//                     position: "absolute",
-//                     bottom: 8,
-//                     right: 8,
-//                     color: "white",
-//                     backgroundColor: "rgba(0,0,0,0.6)",
-//                     px: 1,
-//                     borderRadius: 1,
-//                   }}
-//                 >
-//                   {currentPhotoIndex + 1} / {photos.length}
-//                 </Typography>
-//               </Box>
-//               {/* Thumbnail Row */}
-//               <Stack direction="row" spacing={1} overflow="auto" pb={1}>
-//                 {photos.map((photo, index) => (
-//                   <Box
-//                     key={photo.id}
-//                     sx={{
-//                       width: 80,
-//                       height: 80,
-//                       flexShrink: 0,
-//                       borderRadius: 1,
-//                       overflow: "hidden",
-//                       border: index === currentPhotoIndex ? "2px solid #1976d2" : "1px solid #ddd",
-//                       cursor: "pointer",
-//                       transition: "border-color 0.2s",
-//                     }}
-//                     onClick={() => setCurrentPhotoIndex(index)}
-//                   >
-//                     <CardMedia
-//                       component="img"
-//                       image={photo.url}
-//                       alt={`Thumbnail ${index + 1}`}
-//                       sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-//                     />
-//                   </Box>
-//                 ))}
-//               </Stack>
-//             </>
-//           ) : (
-//             <Box
-//               sx={{
-//                 height: 200,
-//                 display: "flex",
-//                 alignItems: "center",
-//                 justifyContent: "center",
-//                 backgroundColor: "#f0f0f0",
-//                 color: "#9e9e9e",
-//                 borderRadius: 1,
-//               }}
-//             >
-//               No Photos Available
-//             </Box>
-//           )}
-//         </Grid>
-
-//         {/* Property Information */}
-//         <Grid item xs={12} md={5}>
-//           <Typography variant="h6" gutterBottom>
-//             Property Information
-//           </Typography>
-//           <Typography variant="body1">
-//             **Property Number:** {singleProperty.propertyNumber}
-//           </Typography>
-//           <Typography variant="body1">
-//             **Operation Type:** {singleProperty.typeOperation}
-//           </Typography>
-//           <Typography variant="body1">
-//             **Space:** {singleProperty.space} sqm
-//           </Typography>
-//           <Typography variant="body1">
-//             **Price:** {singleProperty.price}
-//           </Typography>
-//           <Typography variant="body1">
-//             **Property Type:** {singleProperty.type?.name}
-//           </Typography>
-//           <Typography variant="body1">
-//             **Publish Date:** {new Date(singleProperty.publishDate).toLocaleDateString()}
-//           </Typography>
-//           {/* Status might only be relevant for admin-like roles, or show a simplified status */}
-//           {userRole !== 'user' && ( // Example: don't show status to general users
-//               <Typography variant="body1" sx={{ color: singleProperty.status === 'accepted' ? 'success.main' : singleProperty.status === 'pending' ? 'warning.main' : 'error.main', fontWeight: 'bold' }}>
-//                 **Status:** {singleProperty.status ? singleProperty.status.toUpperCase() : "N/A"}
-//               </Typography>
-//           )}
-//           <Typography variant="body1">
-//             **Description:** {singleProperty.description || "N/A"}
-//           </Typography>
-
-//           <Divider sx={{ my: 2 }} />
-
-//           {/* Owner Information */}
-//           <Typography variant="h6" gutterBottom>
-//             Owner Information
-//           </Typography>
-//           {owner ? (
-//             <Box display="flex" alignItems="center" mb={1}>
-//               {owner.profile_photo?.url ? (
-//                 <Avatar src={owner.profile_photo.url} alt={`${owner.first_name} ${owner.last_name}`} sx={{ width: 60, height: 60, mr: 2 }} />
-//               ) : (
-//                 <Avatar sx={{ width: 60, height: 60, mr: 2 }}>{owner.first_name ? owner.first_name[0] : '?'}</Avatar>
-//               )}
-//               <Box>
-//                 <Typography variant="body1">
-//                   **Full Name:** {owner.first_name} {owner.last_name}
-//                 </Typography>
-//                 {/* Conditionally render sensitive info based on userRole */}
-//                 {canViewSensitiveOwnerInfo && (
-//                   <>
-//                     <Typography variant="body1">
-//                       **National Number:** {owner.national_number || "N/A"}
-//                     </Typography>
-//                     <Typography variant="body2" color="text.secondary">
-//                       **Email:** {owner.email}
-//                     </Typography>
-//                     <Typography variant="body2" color="text.secondary">
-//                       **Phone:** {owner.phone}
-//                     </Typography>
-//                   </>
-//                 )}
-//                 {!canViewSensitiveOwnerInfo && (
-//                     <Typography variant="body2" color="text.secondary">
-//                         (Contact owner via office)
-//                     </Typography>
-//                 )}
-//               </Box>
-//             </Box>
-//           ) : (
-//             <Typography variant="body1" color="text.secondary">
-//               Owner information not available.
-//             </Typography>
-//           )}
-//         </Grid>
-
-//         <Grid item xs={12}>
-//           <Divider sx={{ my: 2 }} />
-//         </Grid>
-
-//         {/* Location and License Details */}
-//         <Grid item xs={12} md={6}>
-//           <Typography variant="h6" gutterBottom>
-//             Location Details
-//           </Typography>
-//           <Typography variant="body1">
-//             **Governorate:** {singleProperty.location?.governorate}
-//           </Typography>
-//           <Typography variant="body1">
-//             **Province:** {singleProperty.location?.province}
-//           </Typography>
-//           <Typography variant="body1">
-//             **City:** {singleProperty.location?.city}
-//           </Typography>
-//           <Typography variant="body1">
-//             **Street:** {singleProperty.location?.street}
-//           </Typography>
-//         </Grid>
-
-//         {canViewLicenseDetails && ( // Conditionally render license details
-//           <Grid item xs={12} md={6}>
-//             <Typography variant="h6" gutterBottom>
-//               License Details
-//             </Typography>
-//             <Typography variant="body1">
-//               **License Type:** {singleProperty.licenseDetails?.license?.name || "N/A"}
-//             </Typography>
-//             <Typography variant="body1">
-//               **License Number:** {singleProperty.licenseDetails?.licenseNumber || "N/A"}
-//             </Typography>
-//             <Typography variant="body1">
-//               **License Date:** {singleProperty.licenseDetails?.date ? new Date(singleProperty.licenseDetails.date).toLocaleDateString() : "N/A"}
-//             </Typography>
-//           </Grid>
-//         )}
-
-//         {/* Property Attributes */}
-//         {singleProperty.propertyAttributes && singleProperty.propertyAttributes.length > 0 && (
-//           <Grid item xs={12}>
-//             <Divider sx={{ my: 2 }} />
-//             <Typography variant="h6" gutterBottom>
-//               Property Attributes
-//             </Typography>
-//             <Grid container spacing={2}>
-//               {singleProperty.propertyAttributes.map((attr, index) => (
-//                 <Grid item xs={6} sm={4} md={3} key={index}>
-//                   <Typography variant="body1">
-//                     **{attr.attribute?.name}:** {attr.value}
-//                   </Typography>
-//                 </Grid>
-//               ))}
-//             </Grid>
-//           </Grid>
-//         )}
-//       </Grid>
-
-//       {/* Full-screen Photo Viewer Dialog (remains a dialog as it overlays the entire page) */}
-//       {hasPhotos && (
-//         <Dialog
-//           open={isPhotoViewerOpen}
-//           onClose={handleClosePhotoViewer}
-//           maxWidth="xl"
-//           fullScreen
-//           PaperProps={{ sx: { backgroundColor: 'transparent' } }}
-//         >
-//           <DialogTitle sx={{
-//             display: 'flex',
-//             justifyContent: 'space-between',
-//             alignItems: 'center',
-//             backgroundColor: 'rgba(0,0,0,0.85)',
-//             color: 'white',
-//             position: 'absolute',
-//             width: '100%',
-//             top: 0,
-//             zIndex: 1,
-//             px: 3, py: 1
-//           }}>
-//             <Typography variant="h6" color="inherit">
-//               Property Photos ({currentPhotoIndex + 1} / {photos.length})
-//             </Typography>
-//             <IconButton
-//               aria-label="close"
-//               onClick={handleClosePhotoViewer}
-//               sx={{ color: 'white' }}
-//             >
-//               <CloseIcon />
-//             </IconButton>
-//           </DialogTitle>
-//           <DialogContent
-//             sx={{
-//               display: "flex",
-//               justifyContent: "center",
-//               alignItems: "center",
-//               backgroundColor: "rgba(0,0,0,0.85)",
-//               p: 0,
-//               position: "relative",
-//             }}
-//           >
-//             <Box
-//               component="img"
-//               src={photos[currentPhotoIndex].url}
-//               alt={`Full-screen Property Photo ${currentPhotoIndex + 1}`}
-//               sx={{
-//                 maxWidth: "95%",
-//                 maxHeight: "95%",
-//                 objectFit: "contain",
-//                 cursor: 'pointer',
-//               }}
-//               onClick={handleClosePhotoViewer}
-//             />
-//             {photos.length > 1 && (
-//               <>
-//                 <IconButton
-//                   sx={{ position: "absolute", left: 20, color: "white", fontSize: 50, zIndex: 1 }}
-//                   onClick={handlePrevPhoto}
-//                 >
-//                   <ArrowBackIosIcon sx={{ fontSize: 'inherit' }} />
-//                 </IconButton>
-//                 <IconButton
-//                   sx={{ position: "absolute", right: 20, color: "white", fontSize: 50, zIndex: 1 }}
-//                   onClick={handleNextPhoto}
-//                 >
-//                   <ArrowForwardIosIcon sx={{ fontSize: 'inherit' }} />
-//                 </IconButton>
-//               </>
-//             )}
-//           </DialogContent>
-//         </Dialog>
-//       )}
-//     </Container>
-//   );
-// };
-
-// export default PropertyDetailsPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import {
+  getUserById, // Placeholder for the new thunk
+  // You will also need to create thunks for ban/warn actions
+} from '../redux/auth/authSlice';
 import {
   Container,
   Typography,
-  Grid,
-  Box,
-  Divider,
   CircularProgress,
-  Alert,
-  IconButton,
-  CardMedia,
+  Box,
+  Paper,
+  Grid,
   Avatar,
-  Stack,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions, // Added for dialog actions
-  TextField, // Added for form inputs
-  MenuItem, // Added for select
-  Snackbar // Added for notifications
-} from "@mui/material";
-import {
-  ArrowBackIos as ArrowBackIosIcon,
-  ArrowForwardIos as ArrowForwardIosIcon,
-  ArrowBack as ArrowBackIcon,
-  Close as CloseIcon,
-} from "@mui/icons-material";
+  Modal,
+  TextField,
+  Card,
+  CardContent,
+  Chip,
+  Alert,
+  AlertTitle,
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import WarningIcon from '@mui/icons-material/Warning';
+import BlockIcon from '@mui/icons-material/Block';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 
-// IMPORTANT: Use fetchPropertyById from your 'property' slice
-import { fetchPropertyById } from "../redux/property/propertySlice"; // Adjust path as needed
-import { makeReservation, clearReservationStatus } from "../redux/reservation/reservationSlice"; // Import new actions
+const StyledModalPaper = styled(Paper)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  padding: theme.spacing(4),
+  outline: 'none',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(2),
+}));
 
-const PropertyDetailsPage = () => {
-  const { id } = useParams();
+const UserDetailsPage = () => {
+  const { id } = useParams(); // Get the 'id' from the URL
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  // Use state from your 'property' slice for a single property
-  const { property: singleProperty, loading, error } = useSelector(
-    (state) => state.property
+  const { user, loading, error } = useSelector(
+    (state) => state.auth // Assuming the fetched user is stored in 'user'
   );
-
-  // Get state from the new 'reservation' slice
-  const {
-    loading: reservationLoading,
-    error: reservationError,
-    success: reservationSuccess,
-  } = useSelector((state) => state.reservation);
-
-  // === IMPORTANT: Replace this with your actual user role from Redux/Auth ===
-  const userRole = "user"; // Default to a 'user' role for general public view
-  // === END IMPORTANT ===
-
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
-  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false); // State for payment dialog
-  // State for payment form fields
-  const [paymentType, setPaymentType] = useState("mastercard");
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiryMonth, setExpiryMonth] = useState("");
-  const [expiryYear, setExpiryYear] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  
+  // State for admin actions modal
+  const [openBanModal, setOpenBanModal] = useState(false);
+  const [openWarnModal, setOpenWarnModal] = useState(false);
+  const [warnReason, setWarnReason] = useState('');
+  const [banReason, setBanReason] = useState('');
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchPropertyById(id));
+      dispatch(getUserById(id)); // Dispatch the new thunk with the 'id'
     }
   }, [dispatch, id]);
 
-  // Reset photo index when property data loads/changes
-  useEffect(() => {
-    if (singleProperty) {
-      setCurrentPhotoIndex(0);
-    }
-  }, [singleProperty]);
-
-  // Handle reservation success/error notifications
-  useEffect(() => {
-    if (reservationSuccess) {
-      setSnackbarMessage("Reservation successful!");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-      setIsPaymentDialogOpen(false); // Close dialog on success
-      dispatch(clearReservationStatus()); // Clear status after showing message
-    }
-    if (reservationError) {
-      setSnackbarMessage(`Reservation failed: ${reservationError.message || 'An unknown error occurred.'}`);
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      // Don't close dialog on error, let user retry/correct
-    }
-  }, [reservationSuccess, reservationError, dispatch]);
-
-
-  const handleOpenPaymentDialog = () => {
-    setIsPaymentDialogOpen(true);
+  const handleBanUser = () => {
+    // Dispatch a thunk to ban the user
+    // e.g., dispatch(banUser({ id: user.id, reason: banReason }));
+    console.log(`Banning user ${user.id} for reason: ${banReason}`);
+    setOpenBanModal(false);
   };
 
-  const handleClosePaymentDialog = () => {
-    setIsPaymentDialogOpen(false);
-    // Optionally clear form fields when closing
-    setPaymentType("mastercard");
-    setCardNumber("");
-    setExpiryMonth("");
-    setExpiryYear("");
-    setCvv("");
-    dispatch(clearReservationStatus()); // Clear any previous reservation errors/success
-  };
-
-  const handleMakeReservation = () => {
-    // Basic validation
-    if (!paymentType || !cardNumber || !expiryMonth || !expiryYear || !cvv) {
-      setSnackbarMessage("Please fill in all payment details.");
-      setSnackbarSeverity("warning");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    const paymentData = {
-      type: paymentType,
-      cardNumber: cardNumber,
-      expiryMonth: parseInt(expiryMonth, 10),
-      expiryYear: parseInt(expiryYear, 10),
-      cvv: cvv,
-    };
-
-    dispatch(makeReservation({ propertyId: id, paymentData }));
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbarOpen(false);
+  const handleWarnUser = () => {
+    // Dispatch a thunk to warn the user
+    // e.g., dispatch(warnUser({ id: user.id, reason: warnReason }));
+    console.log(`Warning user ${user.id} with reason: ${warnReason}`);
+    setOpenWarnModal(false);
   };
 
   if (loading) {
     return (
-      <Container sx={{ mt: 4, display: "flex", justifyContent: "center", alignItems: "center", minHeight: '80vh' }}>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <CircularProgress />
-        <Typography variant="h6" ml={2}>Loading property details...</Typography>
-      </Container>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Container sx={{ mt: 4 }}>
+      <Container maxWidth="md" sx={{ mt: 4 }}>
         <Alert severity="error">
-          Error loading property: {error.message || error.response?.data?.message || "An unknown error occurred."}
+          <AlertTitle>Error</AlertTitle>
+          {error}
         </Alert>
-        <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(-1)}
-            sx={{ mt: 2 }}
-        >
-            Go Back
-        </Button>
       </Container>
     );
   }
 
-  if (!singleProperty) {
+  if (!user) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Alert severity="info">Property not found or invalid ID.</Alert>
-        <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(-1)}
-            sx={{ mt: 2 }}
-        >
-            Go Back
-        </Button>
+      <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Alert severity="info">
+          <AlertTitle>No User Found</AlertTitle>
+          The user with ID {id} was not found.
+        </Alert>
       </Container>
     );
   }
-
-  const photos = singleProperty.photos || [];
-  const hasPhotos = photos.length > 0;
-  const owner = singleProperty.owner;
-
-  const handleNextPhoto = () => {
-    setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % photos.length);
-  };
-
-  const handlePrevPhoto = () => {
-    setCurrentPhotoIndex((prevIndex) => (prevIndex - 1 + photos.length) % photos.length);
-  };
-
-  const handleOpenPhotoViewer = (index) => {
-    setCurrentPhotoIndex(index);
-    setIsPhotoViewerOpen(true);
-  };
-
-  const handleClosePhotoViewer = () => {
-    setIsPhotoViewerOpen(false);
-  };
-
-  const canViewSensitiveOwnerInfo = ['office_manager', 'admin', 'super_admin'].includes(userRole);
-  const canViewLicenseDetails = ['office_manager', 'admin', 'super_admin'].includes(userRole);
-
 
   return (
-    <Container sx={{ mt: 4, pb: 4 }}>
-      <Button
-        variant="outlined"
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate(-1)}
-        sx={{ mb: 3 }}
-      >
-        Back to Properties
-      </Button>
-
-      <Typography variant="h4" gutterBottom component="h1">
-        Property Details: {singleProperty.propertyNumber}
-      </Typography>
-
-      <Grid container spacing={4}>
-        {/* Property Photos Section */}
-        <Grid item xs={12} md={7}>
-          <Typography variant="h6" gutterBottom>
-            Property Photos
-          </Typography>
-          {hasPhotos ? (
-            <>
-              <Box
-                sx={{
-                  position: "relative",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: 450,
-                  backgroundColor: "#f0f0f0",
-                  borderRadius: 2,
-                  overflow: "hidden",
-                  mb: 2,
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  image={photos[currentPhotoIndex].url}
-                  alt={`Property Photo ${currentPhotoIndex + 1}`}
-                  sx={{
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    objectFit: "contain",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleOpenPhotoViewer(currentPhotoIndex)}
-                />
-                {photos.length > 1 && (
-                  <>
-                    <IconButton
-                      sx={{ position: "absolute", left: 8, color: "white", backgroundColor: "rgba(0,0,0,0.5)", '&:hover': {backgroundColor: "rgba(0,0,0,0.7)"} }}
-                      onClick={handlePrevPhoto}
-                    >
-                      <ArrowBackIosIcon />
-                    </IconButton>
-                    <IconButton
-                      sx={{ position: "absolute", right: 8, color: "white", backgroundColor: "rgba(0,0,0,0.5)", '&:hover': {backgroundColor: "rgba(0,0,0,0.7)"} }}
-                      onClick={handleNextPhoto}
-                    >
-                      <ArrowForwardIosIcon />
-                    </IconButton>
-                  </>
-                )}
-                <Typography
-                  variant="caption"
-                  sx={{
-                    position: "absolute",
-                    bottom: 8,
-                    right: 8,
-                    color: "white",
-                    backgroundColor: "rgba(0,0,0,0.6)",
-                    px: 1,
-                    borderRadius: 1,
-                  }}
-                >
-                  {currentPhotoIndex + 1} / {photos.length}
-                </Typography>
-              </Box>
-              {/* Thumbnail Row */}
-              <Stack direction="row" spacing={1} overflow="auto" pb={1}>
-                {photos.map((photo, index) => (
-                  <Box
-                    key={photo.id}
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      flexShrink: 0,
-                      borderRadius: 1,
-                      overflow: "hidden",
-                      border: index === currentPhotoIndex ? "2px solid #1976d2" : "1px solid #ddd",
-                      cursor: "pointer",
-                      transition: "border-color 0.2s",
-                    }}
-                    onClick={() => setCurrentPhotoIndex(index)}
-                  >
-                    <CardMedia
-                      component="img"
-                      image={photo.url}
-                      alt={`Thumbnail ${index + 1}`}
-                      sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  </Box>
-                ))}
-              </Stack>
-            </>
-          ) : (
-            <Box
-              sx={{
-                height: 200,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#f0f0f0",
-                color: "#9e9e9e",
-                borderRadius: 1,
-              }}
-            >
-              No Photos Available
-            </Box>
-          )}
-        </Grid>
-
-        {/* Property Information */}
-        <Grid item xs={12} md={5}>
-          <Typography variant="h6" gutterBottom>
-            Property Information
-          </Typography>
-          <Typography variant="body1">
-            **Property Number:** {singleProperty.propertyNumber}
-          </Typography>
-          <Typography variant="body1">
-            **Operation Type:** {singleProperty.typeOperation}
-          </Typography>
-          <Typography variant="body1">
-            **Space:** {singleProperty.space} sqm
-          </Typography>
-          <Typography variant="body1">
-            **Price:** {singleProperty.price}
-          </Typography>
-          <Typography variant="body1">
-            **Property Type:** {singleProperty.type?.name}
-          </Typography>
-          <Typography variant="body1">
-            **Publish Date:** {new Date(singleProperty.publishDate).toLocaleDateString()}
-          </Typography>
-          {/* Status might only be relevant for admin-like roles, or show a simplified status */}
-          {userRole !== 'user' && ( // Example: don't show status to general users
-              <Typography variant="body1" sx={{ color: singleProperty.status === 'accepted' ? 'success.main' : singleProperty.status === 'pending' ? 'warning.main' : 'error.main', fontWeight: 'bold' }}>
-                **Status:** {singleProperty.status ? singleProperty.status.toUpperCase() : "N/A"}
-              </Typography>
-          )}
-          <Typography variant="body1">
-            **Description:** {singleProperty.description || "N/A"}
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          {/* Owner Information */}
-          <Typography variant="h6" gutterBottom>
-            Owner Information
-          </Typography>
-          {owner ? (
-            <Box display="flex" alignItems="center" mb={1}>
-              {owner.profile_photo?.url ? (
-                <Avatar src={owner.profile_photo.url} alt={`${owner.first_name} ${owner.last_name}`} sx={{ width: 60, height: 60, mr: 2 }} />
-              ) : (
-                <Avatar sx={{ width: 60, height: 60, mr: 2 }}>{owner.first_name ? owner.first_name[0] : '?'}</Avatar>
-              )}
-              <Box>
-                <Typography variant="body1">
-                  **Full Name:** {owner.first_name} {owner.last_name}
-                </Typography>
-                {/* Conditionally render sensitive info based on userRole */}
-                {canViewSensitiveOwnerInfo && (
-                  <>
-                    <Typography variant="body1">
-                      **National Number:** {owner.national_number || "N/A"}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      **Email:** {owner.email}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      **Phone:** {owner.phone}
-                    </Typography>
-                  </>
-                )}
-                {!canViewSensitiveOwnerInfo && (
-                    <Typography variant="body2" color="text.secondary">
-                        (Contact owner via office)
-                    </Typography>
-                )}
-              </Box>
-            </Box>
-          ) : (
-            <Typography variant="body1" color="text.secondary">
-              Owner information not available.
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
+            <Avatar
+              alt={`${user.first_name} ${user.last_name}`}
+              src={user.profile_photo?.url}
+              sx={{ width: 150, height: 150, mx: 'auto', mb: 2 }}
+            />
+            <Typography variant="h5" component="h1" gutterBottom>
+              {user.first_name} {user.last_name}
             </Typography>
-          )}
-
-          <Divider sx={{ my: 2 }} />
-
-          {/* Reserve Property Button */}
-          {userRole === 'user' && ( // Only show to users who can reserve
+            <Chip
+              label={user.role}
+              color={user.role === 'superAdmin' ? 'secondary' : 'primary'}
+              sx={{ mb: 1 }}
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, my: 2 }}>
               <Button
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={handleOpenPaymentDialog}
-                  sx={{ mt: 2 }}
+                variant="contained"
+                color="warning"
+                startIcon={<WarningIcon />}
+                onClick={() => setOpenWarnModal(true)}
               >
-                  Reserve Property
+                Warn User
               </Button>
-          )}
-
-        </Grid>
-
-        <Grid item xs={12}>
-          <Divider sx={{ my: 2 }} />
-        </Grid>
-
-        {/* Location and License Details */}
-        <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom>
-            Location Details
-          </Typography>
-          <Typography variant="body1">
-            **Governorate:** {singleProperty.location?.governorate}
-          </Typography>
-          <Typography variant="body1">
-            **Province:** {singleProperty.location?.province}
-          </Typography>
-          <Typography variant="body1">
-            **City:** {singleProperty.location?.city}
-          </Typography>
-          <Typography variant="body1">
-            **Street:** {singleProperty.location?.street}
-          </Typography>
-        </Grid>
-
-        {canViewLicenseDetails && ( // Conditionally render license details
-          <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom>
-              License Details
-            </Typography>
-            <Typography variant="body1">
-              **License Type:** {singleProperty.licenseDetails?.license?.name || "N/A"}
-            </Typography>
-            <Typography variant="body1">
-              **License Number:** {singleProperty.licenseDetails?.licenseNumber || "N/A"}
-            </Typography>
-            <Typography variant="body1">
-              **License Date:** {singleProperty.licenseDetails?.date ? new Date(singleProperty.licenseDetails.date).toLocaleDateString() : "N/A"}
-            </Typography>
+              <Button
+                variant="contained"
+                color="error"
+                startIcon={<BlockIcon />}
+                onClick={() => setOpenBanModal(true)}
+              >
+                Ban User
+              </Button>
+            </Box>
           </Grid>
-        )}
-
-        {/* Property Attributes */}
-        {singleProperty.propertyAttributes && singleProperty.propertyAttributes.length > 0 && (
-          <Grid item xs={12}>
-            <Divider sx={{ my: 2 }} />
+          <Grid item xs={12} md={8}>
             <Typography variant="h6" gutterBottom>
-              Property Attributes
+              User Information
+            </Typography>
+            <List>
+              <ListItem>
+                <ListItemText primary="Email" secondary={user.email} />
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <ListItemText primary="Phone" secondary={user.phone} />
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <ListItemText primary="National Number" secondary={user.national_number} />
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <ListItemText primary="Verification Status" secondary={
+                  <Chip
+                    label={user.is_verified ? 'Verified' : 'Not Verified'}
+                    icon={user.is_verified ? <CheckCircleIcon /> : <DoNotDisturbAltIcon />}
+                    color={user.is_verified ? 'success' : 'error'}
+                    size="small"
+                  />
+                } />
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <ListItemText primary="Ban Status" secondary={
+                  user.banned ? (
+                    <Chip
+                      label={`Banned until ${new Date(user.banned.ban_end_time).toLocaleDateString()}`}
+                      color="error"
+                      size="small"
+                    />
+                  ) : (
+                    <Chip label="Active" color="success" size="small" />
+                  )
+                } />
+              </ListItem>
+              <Divider />
+            </List>
+          </Grid>
+        </Grid>
+        
+        {user.userWarnings && user.userWarnings.warnings.length > 0 && (
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6" gutterBottom>
+              User Warnings ({user.userWarnings.report_counts})
             </Typography>
             <Grid container spacing={2}>
-              {singleProperty.propertyAttributes.map((attr, index) => (
-                <Grid item xs={6} sm={4} md={3} key={index}>
-                  <Typography variant="body1">
-                    **{attr.attribute?.name}:** {attr.value}
-                  </Typography>
+              {user.userWarnings.warnings.map((warning, index) => (
+                <Grid item xs={12} sm={6} md={4} key={warning.id}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="subtitle1" gutterBottom>
+                        Warning #{index + 1}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        <strong>Reason:</strong> {warning.reason}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        <strong>End Time:</strong> {new Date(warning.warn_end_time).toLocaleDateString()}
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 </Grid>
               ))}
             </Grid>
-          </Grid>
+          </Box>
         )}
-      </Grid>
+      </Paper>
 
-      {/* Full-screen Photo Viewer Dialog */}
-      {hasPhotos && (
-        <Dialog
-          open={isPhotoViewerOpen}
-          onClose={handleClosePhotoViewer}
-          maxWidth="xl"
-          fullScreen
-          PaperProps={{ sx: { backgroundColor: 'transparent' } }}
-        >
-          <DialogTitle sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.85)',
-            color: 'white',
-            position: 'absolute',
-            width: '100%',
-            top: 0,
-            zIndex: 1,
-            px: 3, py: 1
-          }}>
-            <Typography variant="h6" color="inherit">
-              Property Photos ({currentPhotoIndex + 1} / {photos.length})
-            </Typography>
-            <IconButton
-              aria-label="close"
-              onClick={handleClosePhotoViewer}
-              sx={{ color: 'white' }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0,0,0,0.85)",
-              p: 0,
-              position: "relative",
-            }}
-          >
-            <Box
-              component="img"
-              src={photos[currentPhotoIndex].url}
-              alt={`Full-screen Property Photo ${currentPhotoIndex + 1}`}
-              sx={{
-                maxWidth: "95%",
-                maxHeight: "95%",
-                objectFit: "contain",
-                cursor: 'pointer',
-              }}
-              onClick={handleClosePhotoViewer}
-            />
-            {photos.length > 1 && (
-              <>
-                <IconButton
-                  sx={{ position: "absolute", left: 20, color: "white", fontSize: 50, zIndex: 1 }}
-                  onClick={handlePrevPhoto}
-                >
-                  <ArrowBackIosIcon sx={{ fontSize: 'inherit' }} />
-                </IconButton>
-                <IconButton
-                  sx={{ position: "absolute", right: 20, color: "white", fontSize: 50, zIndex: 1 }}
-                  onClick={handleNextPhoto}
-                >
-                  <ArrowForwardIosIcon sx={{ fontSize: 'inherit' }} />
-                </IconButton>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
-      )}
-
-      {/* Payment Dialog */}
-      <Dialog open={isPaymentDialogOpen} onClose={handleClosePaymentDialog}>
-        <DialogTitle>
-          Reserve Property: {singleProperty.propertyNumber}
-          <IconButton
-            aria-label="close"
-            onClick={handleClosePaymentDialog}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          <Typography variant="h6" gutterBottom>
-            Enter Payment Details
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                select
-                label="Card Type"
-                value={paymentType}
-                onChange={(e) => setPaymentType(e.target.value)}
-                fullWidth
-                margin="normal"
-              >
-                <MenuItem value="mastercard">Mastercard</MenuItem>
-                <MenuItem value="visa">Visa</MenuItem>
-                {/* Add other card types as needed */}
-              </TextField>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Card Number"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
-                fullWidth
-                margin="normal"
-                type="text" // Can be 'number' but 'text' allows for formatting/spaces if needed
-                inputProps={{ maxLength: 16 }} // Max length for typical card numbers
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Expiry Month (MM)"
-                value={expiryMonth}
-                onChange={(e) => setExpiryMonth(e.target.value)}
-                fullWidth
-                margin="normal"
-                type="number"
-                inputProps={{ min: 1, max: 12, maxLength: 2 }}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Expiry Year (YY)"
-                value={expiryYear}
-                onChange={(e) => setExpiryYear(e.target.value)}
-                fullWidth
-                margin="normal"
-                type="number"
-                inputProps={{ min: new Date().getFullYear().toString().slice(2), maxLength: 2 }} // Start from current year's last two digits
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="CVV"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
-                fullWidth
-                margin="normal"
-                type="password" // Use password type for security
-                inputProps={{ maxLength: 4 }} // CVV is usually 3 or 4 digits
-              />
-            </Grid>
-          </Grid>
-          {reservationError && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {reservationError.message || "An error occurred during reservation."}
-            </Alert>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePaymentDialog} color="secondary">
-            Cancel
+      {/* Ban User Modal */}
+      <Modal open={openBanModal} onClose={() => setOpenBanModal(false)}>
+        <StyledModalPaper>
+          <Typography variant="h6">Ban User</Typography>
+          <TextField
+            label="Reason for banning"
+            multiline
+            rows={4}
+            fullWidth
+            value={banReason}
+            onChange={(e) => setBanReason(e.target.value)}
+          />
+          <Button variant="contained" color="error" onClick={handleBanUser}>
+            Confirm Ban
           </Button>
-          <Button
-            onClick={handleMakeReservation}
-            color="primary"
-            variant="contained"
-            disabled={reservationLoading} // Disable button while loading
-          >
-            {reservationLoading ? <CircularProgress size={24} /> : "Confirm Reservation"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        </StyledModalPaper>
+      </Modal>
 
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      {/* Warn User Modal */}
+      <Modal open={openWarnModal} onClose={() => setOpenWarnModal(false)}>
+        <StyledModalPaper>
+          <Typography variant="h6">Warn User</Typography>
+          <TextField
+            label="Reason for warning"
+            multiline
+            rows={4}
+            fullWidth
+            value={warnReason}
+            onChange={(e) => setWarnReason(e.target.value)}
+          />
+          <Button variant="contained" color="warning" onClick={handleWarnUser}>
+            Confirm Warning
+          </Button>
+        </StyledModalPaper>
+      </Modal>
     </Container>
   );
 };
 
-export default PropertyDetailsPage;
+export default UserDetailsPage;

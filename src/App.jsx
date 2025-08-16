@@ -1,83 +1,3 @@
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import { Layout } from "./pages/Layout";
-// import { Home } from "./pages/Home";
-// import { About } from "./pages/About";
-// import StartRegisteringUserForm from "./components/StartRegisteringUserForm";
-// import VerificationCode from "./components/VerificationCode";
-// import CompleteRegistering from "./components/CompleteRegistering";
-// import LoginForm from "./components/LoginForm";
-// import Profile from "./components/Profile";
-// import CreateOfficeForm from "./components/CreateOfficeForm";
-// import StartRegisteringOfficeManagerForm from "./components/StartRegisteringOfficeManagerForm";
-// import OfficesPage from "./pages/OfficesPage";
-// import AddAdminForm from "./components/AddAdminForm";
-// import SuperAdminDashboard from "./pages/SuperAdminDashboard";
-// import Unauthorized from "./pages/Unauthorized";
-// import ProtectedRoute from "./components/ProtectedRoute";
-// import UserManagingPage from "./pages/UserManagingPage";
-// import UserDetailsPage from "./pages/UserDetailsPage";
-// import OfficePage from "./pages/OfficePage";
-// import OfficeManagerPage from "./pages/OfficeManagerPage";
-// import PropertyList from "./components/propertyList";
-// import CreatePropertyForm from "./components/property/CreatePropertyForm";
-// import PropertyPage from "./pages/PropertyPage";
-
-// export default function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         {/* Layout routes with Navbar */}
-//         <Route path="/" element={<Layout />}>
-//           {/* <ProtectedRoute
-//             allowedRoles={["superAdmin", "user", "officeManager", "admin"]}
-//           > */}
-//             <Route index element={<Home />} />
-//             <Route path="profile" element={<Profile />} />
-//             <Route path="about" element={<About />} />
-//             <Route path="offices" element={<OfficesPage />} />
-//             <Route path="office/my-office" element={<OfficeManagerPage />} >
-//             <Route path="add-property" element={<CreatePropertyForm />} />
-//             </Route>
-//             <Route path="offices/:id" element={<OfficePage />} />
-//             <Route path="properties" element={<PropertyPage />} />
-//           <Route path="/office-creating" element={<CreateOfficeForm />} />
-//           <Route path="/property/new" element={<CreatePropertyForm />} />
-
-//         </Route>
-
-//         <Route
-//           path="/superadmin"
-//           element={
-//             <ProtectedRoute allowedRoles={["superAdmin"]}>
-//               <SuperAdminDashboard />
-//             </ProtectedRoute>
-//           }
-//         >
-//           <Route path="add-admin" element={<AddAdminForm />} />
-//           <Route path="manage-users" element={<UserManagingPage />} />
-//           <Route path="manage-users/:id" element={<UserDetailsPage />} />
-//         </Route>
-
-//         {/* routes WITHOUT Navbar */}
-//         <Route
-//           path="/start-registering-user"
-//           element={<StartRegisteringUserForm />}
-//         />
-//         <Route
-//           path="/start-registering-office-manager"
-//           element={<StartRegisteringOfficeManagerForm />}
-//         />
-//         <Route path="/verify-code" element={<VerificationCode />} />
-//         <Route path="/complete-registering" element={<CompleteRegistering />} />
-//         <Route path="/login" element={<LoginForm />} />
-
-//         <Route path="/unauthorized" element={<Unauthorized />} />
-
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./pages/Layout";
 import { AdminAndSuperLayout } from "./pages/AdminAndSuperLayout";
@@ -98,9 +18,8 @@ import AddAdminForm from "./components/AddAdminForm";
 import UserManagingPage from "./pages/UserManagingPage";
 import UserDetailsPage from "./pages/UserDetailsPage";
 
-import LoginPage from "./components/LoginPage";
+import LoginPage from "./pages/LoginPage";
 import StartRegisteringUserForm from "./components/StartRegisteringUserForm";
-import StartRegisteringOfficeManagerForm from "./components/StartRegisteringOfficeManagerForm";
 import VerificationCode from "./components/VerificationCode";
 import CompleteRegistering from "./components/CompleteRegistering";
 import Unauthorized from "./pages/Unauthorized";
@@ -123,6 +42,10 @@ import {
   getUnreadCount,
   increaseUnReadCount,
 } from "./redux/notification/notificationSlice";
+import PropertyRequestsPage from "./pages/adminAndSuperAdmin/PropertyRequestsPage";
+import ManageLicenseTypePage from "./pages/adminAndSuperAdmin/ManageLicenseTypePage";
+import UpdatePropertyPage from "./pages/UpdatePropertyPage";
+import PaymentPageForDeletingProperty from "./pages/PaymentPageForDeletingProperty";
 
 export default function App() {
   const { user } = useSelector((state) => state.auth);
@@ -164,7 +87,7 @@ export default function App() {
         {/* Layout for User + OfficeManager */}
         <Route element={<Layout />}>
           <Route
-            path="/home"
+            path="/"
             element={
               <ProtectedRoute allowedRoles={["user", "officeManager"]}>
                 <Home />
@@ -220,11 +143,33 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
           </Route>
+          
+            <Route
+              path="update-property/:id"
+              element={
+                <ProtectedRoute allowedRoles={["officeManager"]}>
+                  <UpdatePropertyPage />
+                </ProtectedRoute>
+              }
+            />
+
+                        <Route
+              path="delete-property/:id"
+              element={
+                <ProtectedRoute allowedRoles={["officeManager"]}>
+                  <PaymentPageForDeletingProperty />
+                </ProtectedRoute>
+              }
+            />
+
+
+            
           <Route
-            path="/office-creating"
+            path="/create-office"
             element={
-              <ProtectedRoute allowedRoles={["officeManager"]}>
+              <ProtectedRoute allowedRoles={["officeManager", "user"]}>
                 <CreateOfficeForm />
               </ProtectedRoute>
             }
@@ -237,6 +182,10 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          {/* <Route
+            path="my-office/update-property/:id"
+            element={<UpdatePropertyPage />}
+          /> */}
           <Route
             path="/properties"
             element={
@@ -358,6 +307,23 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/superadmin/manage-properties-requestes"
+            element={
+              <ProtectedRoute allowedRoles={["superAdmin", "admin"]}>
+                <PropertyRequestsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin/manage-license-type"
+            element={
+              <ProtectedRoute allowedRoles={["superAdmin", "admin"]}>
+                <ManageLicenseTypePage />
+              </ProtectedRoute>
+            }
+          />
           {/* You can add Admin routes here similarly */}
         </Route>
 
@@ -366,10 +332,6 @@ export default function App() {
         <Route
           path="/start-registering-user"
           element={<StartRegisteringUserForm />}
-        />
-        <Route
-          path="/start-registering-office-manager"
-          element={<StartRegisteringOfficeManagerForm />}
         />
         <Route path="/verify-code" element={<VerificationCode />} />
         <Route path="/complete-registering" element={<CompleteRegistering />} />
@@ -380,3 +342,166 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+// import React, { useEffect, useState } from "react";
+// import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { getUser } from "./redux/auth/authSlice";
+// import { getMyNotifications, increaseUnReadCount } from "./redux/notification/notificationSlice";
+// import socket, { registerSocketUser } from "./socket";
+// import ProtectedRoute from "./components/ProtectedRoute";
+// import LoadingScreen from "./components/LoadingScreen"; // You'll need to create this component
+
+// // Layouts
+// import { Layout } from "./pages/Layout";
+// import { AdminAndSuperLayout } from "./pages/AdminAndSuperLayout";
+
+// // User and OfficeManager Pages
+// import { Home } from "./pages/Home";
+// import Profile from "./components/Profile";
+// import OfficesPage from "./pages/OfficesPage";
+// import OfficeDetailsPage from "./pages/OfficeDetailsPage";
+// import OfficeManagerPage from "./pages/OfficeManagerPage";
+// import CreateOfficeForm from "./components/CreateOfficeForm";
+// import CreatePropertyForm from "./components/property/CreatePropertyForm";
+// import PropertyPage from "./pages/PropertyPage";
+// import PropertyDetailsPage from "./pages/PropertyDetailsPage";
+// import PaymentPage from "./pages/PaymentPage";
+// import ReservedPropertyPage from "./pages/ReservedPropertyPage";
+// import SubscriptionPage from "./pages/SubscriptionPage";
+// import PaymentPageForSubscrbing from "./pages/PaymentPageForSubscrbing";
+// import FavoritePropertyPage from "./pages/FavoritePropertyPage";
+// import FavoriteOfficePage from "./pages/FavoriteOfficePage";
+// import NotificationPage from "./pages/NotificationPage";
+// import { About } from "./pages/About";
+
+// // Admin and SuperAdmin Pages
+// import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+// import AddAdminForm from "./components/AddAdminForm";
+// import UserManagingPage from "./pages/UserManagingPage";
+// import UserDetailsPage from "./pages/UserDetailsPage";
+// import ManageOfficePage from "./pages/adminAndSuperAdmin/ManageOfficePage";
+// import ManagePropertyPage from "./pages/adminAndSuperAdmin/ManagePropertyPage";
+// import PropertyRequestsPage from "./pages/adminAndSuperAdmin/PropertyRequestsPage";
+// import ManageLicenseTypePage from "./pages/adminAndSuperAdmin/ManageLicenseTypePage";
+
+// // Public Pages
+// import LoginPage from "./pages/LoginPage";
+// import StartRegisteringUserForm from "./components/StartRegisteringUserForm";
+// import VerificationCode from "./components/VerificationCode";
+// import CompleteRegistering from "./components/CompleteRegistering";
+// import Unauthorized from "./pages/Unauthorized";
+
+// export default function App() {
+//   const dispatch = useDispatch();
+//   const { user, loading, error } = useSelector((state) => state.auth);
+//   const [initialUserLoaded, setInitialUserLoaded] = useState(false);
+
+//   // // Initial user fetching
+//   // useEffect(() => {
+//   //   // Only fetch user on initial load
+//   //   if (!user && !error) {
+//   //     dispatch(getUser()).finally(() => {
+//   //       setInitialUserLoaded(true);
+//   //     });
+//   //   } else {
+//   //       setInitialUserLoaded(true);
+//   //   }
+//   // }, [dispatch, user, error]);
+
+//   // Notification and Socket setup
+//   useEffect(() => {
+//     if ("Notification" in window && Notification.permission !== "granted") {
+//       Notification.requestPermission();
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     const userId = user?.id;
+//     if (userId) {
+//       registerSocketUser(userId);
+//       socket.on("receiveNotification", (data) => {
+//         if ("Notification" in window && Notification.permission === "granted") {
+//           new Notification(data.title, { body: data.message });
+//         }
+//         dispatch(increaseUnReadCount());
+//       });
+//     }
+
+//     return () => {
+//       socket.off("receiveNotification");
+//     };
+//   }, [user, dispatch]);
+
+//   // Display a loading screen while user data is being fetched for the first time
+//   if (loading || !initialUserLoaded) {
+//     return <LoadingScreen />;
+//   }
+
+//   // --- Main Logic: Conditionally render the entire app based on user role ---
+
+//   // ADMIN and SUPER ADMIN view
+//   if (user && (user.role === "admin" || user.role === "superAdmin")) {
+//     return (
+//       <BrowserRouter>
+//         <Routes>
+//           <Route element={<AdminAndSuperLayout />}>
+//             <Route path="/superadmin" element={<SuperAdminDashboard />} />
+//             <Route path="/superadmin/add-admin" element={<AddAdminForm />} />
+//             <Route path="/superadmin/manage-users" element={<UserManagingPage />} />
+//             <Route path="/superadmin/manage-users/:id" element={<UserDetailsPage />} />
+//             <Route path="/superadmin/manage-offices" element={<ManageOfficePage />} />
+//             <Route path="/superadmin/manage-properties" element={<ManagePropertyPage />} />
+//             <Route path="/superadmin/manage-properties-requestes" element={<PropertyRequestsPage />} />
+//             <Route path="/superadmin/manage-license-type" element={<ManageLicenseTypePage />} />
+//             {/* Redirect any other path to the admin dashboard */}
+//             <Route path="*" element={<Navigate to="/superadmin" />} />
+//           </Route>
+//           {/* Public routes for admin (e.g., login, unauthorized) */}
+//           <Route path="/login" element={<Navigate to="/superadmin" />} />
+//           <Route path="/unauthorized" element={<Unauthorized />} />
+//         </Routes>
+//       </BrowserRouter>
+//     );
+//   }
+
+//   // GENERAL USER (including OfficeManager) and PUBLIC view
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+//         <Route element={<Layout />}>
+//           {/* Protected Routes for General Users and OfficeManagers */}
+//           <Route path="/" element={<Home />} />
+//           <Route path="/profile" element={<ProtectedRoute allowedRoles={["user", "officeManager"]}><Profile /></ProtectedRoute>} />
+//           <Route path="/about" element={<About />} />
+//           <Route path="/offices" element={<OfficesPage />} />
+//           <Route path="/offices/:id" element={<OfficeDetailsPage />} />
+//           <Route path="/office/my-office" element={<ProtectedRoute allowedRoles={["officeManager"]}><OfficeManagerPage /></ProtectedRoute>} />
+//           <Route path="/office/my-office/add-property" element={<ProtectedRoute allowedRoles={["officeManager"]}><CreatePropertyForm /></ProtectedRoute>} />
+//           <Route path="/create-office" element={<ProtectedRoute allowedRoles={["officeManager", "user"]}><CreateOfficeForm /></ProtectedRoute>} />
+//           <Route path="/property/new" element={<ProtectedRoute allowedRoles={["officeManager"]}><CreatePropertyForm /></ProtectedRoute>} />
+//           <Route path="/properties" element={<PropertyPage />} />
+//           <Route path="/properties/:id" element={<PropertyDetailsPage />} />
+//           <Route path="/reserved-property" element={<ProtectedRoute allowedRoles={["user", "officeManager"]}><ReservedPropertyPage /></ProtectedRoute>} />
+//           <Route path="/favorite-property" element={<ProtectedRoute allowedRoles={["user", "officeManager"]}><FavoritePropertyPage /></ProtectedRoute>} />
+//           <Route path="/favorite-office" element={<ProtectedRoute allowedRoles={["user", "officeManager"]}><FavoriteOfficePage /></ProtectedRoute>} />
+//           <Route path="/subscriptions" element={<ProtectedRoute allowedRoles={["officeManager"]}><SubscriptionPage /></ProtectedRoute>} />
+//           <Route path="/notifications" element={<ProtectedRoute allowedRoles={["officeManager", "user"]}><NotificationPage /></ProtectedRoute>} />
+
+//           {/* Public Routes without Layout */}
+//           <Route path="/login" element={<LoginPage />} />
+//           <Route path="/start-registering-user" element={<StartRegisteringUserForm />} />
+//           <Route path="/verify-code" element={<VerificationCode />} />
+//           <Route path="/complete-registering" element={<CompleteRegistering />} />
+//           <Route path="/unauthorized" element={<Unauthorized />} />
+//           <Route path="/reserve/:id" element={<PaymentPage />} />
+//           <Route path="/subscribe/:id" element={<PaymentPageForSubscrbing />} />
+
+//           {/* Redirect to home for any admin routes accessed by a normal user */}
+//           <Route path="/superadmin/*" element={<Navigate to="/" replace />} />
+
+//         </Route>
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }

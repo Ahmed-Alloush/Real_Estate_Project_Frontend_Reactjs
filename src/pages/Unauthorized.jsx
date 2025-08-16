@@ -21,7 +21,7 @@ export default function Unauthorized() {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
           >
             Back to Home
           </Button>

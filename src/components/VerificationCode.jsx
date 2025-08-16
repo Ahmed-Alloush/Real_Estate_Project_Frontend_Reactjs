@@ -11,7 +11,7 @@ import {
   Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
+import { resetUserState } from "../redux/auth/authSlice";
 export default function VerificationCode() {
   const dispatch = useDispatch();
   const { loading, error, verifySuccess } = useSelector((state) => state.auth);
@@ -21,12 +21,15 @@ export default function VerificationCode() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    dispatch(resetUserState());
+  }, []);
 
-    useEffect(() => {
-      if (verifySuccess) {
-        navigate("/complete-registering");
-      }
-    }, [verifySuccess, navigate]);
+  useEffect(() => {
+    if (verifySuccess) {
+      navigate("/complete-registering");
+    }
+  }, [verifySuccess, navigate]);
 
   const handleChange = (index, value) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -98,7 +101,7 @@ export default function VerificationCode() {
             {error}
           </Alert>
         )}
-        {verifyCode && (
+        {verifySuccess && (
           <Alert severity="success" sx={{ mt: 2 }}>
             Code verified successfully!
           </Alert>

@@ -1,4 +1,3 @@
-
 // import { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { login } from "../redux/auth/authSlice";
@@ -156,11 +155,9 @@
 //   );
 // }
 
-
-
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../redux/auth/authSlice";
+import { login, resetUserState } from "../redux/auth/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -178,16 +175,24 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, error, success, role } = useSelector((state) => state.auth);
+  const { loading, error, success, role, user } = useSelector(
+    (state) => state.auth
+  );
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  useEffect(()=>{
+    dispatch(resetUserState())
+  },[])
+
   useEffect(() => {
-    if (success) {
+    if (success && (role === "user" || role === "officeManager")) {
       navigate("/");
+    } else if (success && (role === "admin" || role === "superAdmin")) {
+      navigate("/superAdmin");
     }
   }, [success, role, navigate]);
 

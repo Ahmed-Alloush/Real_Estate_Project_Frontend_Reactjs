@@ -27,8 +27,6 @@
 // //   const [lastName, setLastName] = useState("");
 // //   const [receiverIdentifier, setReceiverIdentifier] = useState("");
 
-
-
 // //   useEffect(() => {
 // //     if (error === "Unauthorized") {
 // //       navigate("/login");
@@ -279,22 +277,11 @@
 
 // // export default Profile;
 
-
-
-
-
-
-
 // //   // useEffect(() => {
 // //   //   if (!user) {
 // //   //     dispatch(fetchUser());
 // //   //   }
 // //   // }, [dispatch]);
-
-
-
-
-
 
 // import { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -559,9 +546,6 @@
 //   );
 // }
 
-
-
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -577,7 +561,10 @@ import {
   Alert,
   Box,
 } from "@mui/material";
-import { getUser as fetchUser, updateUserProfile } from "../redux/auth/authSlice";
+import {
+  getUser as fetchUser,
+  updateUserProfile,
+} from "../redux/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaSave, FaUpload, FaEnvelope, FaPhone } from "react-icons/fa";
 
@@ -662,7 +649,8 @@ export default function Profile() {
           p: 3,
           borderRadius: 4,
           boxShadow: 10,
-          background: "linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,240,255,0.95))",
+          background:
+            "linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,240,255,0.95))",
         }}
       >
         <CardContent>
@@ -697,8 +685,14 @@ export default function Profile() {
             </Grid>
 
             {/* First Name */}
-            <Grid item container alignItems="center" justifyContent="space-between">
-             First Name : {editMode.firstName ? (
+            <Grid
+              item
+              container
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              First Name :{" "}
+              {editMode.firstName ? (
                 <>
                   <TextField
                     value={firstName}
@@ -728,8 +722,14 @@ export default function Profile() {
             </Grid>
 
             {/* Last Name */}
-            <Grid item container alignItems="center" justifyContent="space-between">
-             Last Name :   {editMode.lastName ? (
+            <Grid
+              item
+              container
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              Last Name :{" "}
+              {editMode.lastName ? (
                 <>
                   <TextField
                     value={lastName}
@@ -759,8 +759,14 @@ export default function Profile() {
             </Grid>
 
             {/* National Number */}
-            <Grid item container alignItems="center" justifyContent="space-between">
-             National Number : {editMode.nationalNumber ? (
+            <Grid
+              item
+              container
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              National Number :{" "}
+              {editMode.nationalNumber ? (
                 <>
                   <TextField
                     value={receiverIdentifier}
@@ -793,20 +799,25 @@ export default function Profile() {
             <Grid item>
               <Box display="flex" alignItems="center" gap={1}>
                 <FaEnvelope color="#1976d2" />
-              Email :  <Typography variant="body2" color="text.secondary">
+                Email :{" "}
+                <Typography variant="body2" color="text.secondary">
                   {user?.email}
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center" gap={1} mt={1}>
                 <FaPhone color="#1976d2" />
-               Phone : <Typography variant="body2" color="text.secondary">
+                Phone :{" "}
+                <Typography variant="body2" color="text.secondary">
                   {user?.phone}
                 </Typography>
               </Box>
             </Grid>
 
             {/* Save button */}
-            {(editMode.image || editMode.firstName || editMode.lastName || editMode.receiverIdentifier) && (
+            {(editMode.image ||
+              editMode.firstName ||
+              editMode.lastName ||
+              editMode.receiverIdentifier) && (
               <Grid item>
                 <Button
                   variant="contained"
@@ -827,6 +838,8 @@ export default function Profile() {
           </Grid>
         </CardContent>
       </Card>
+
+      
     </Grid>
   );
 }

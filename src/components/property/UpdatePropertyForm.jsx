@@ -1,15 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateProperty } from '../../redux/property/propertySlice';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button, TextField, Grid } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  resetPropertyAttribute,
+  updateProperty,
+} from "../../redux/property/propertySlice";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, TextField, Grid } from "@mui/material";
+import Swal from "sweetalert2";
 
 const UpdatePropertyForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { properties, loading } = useSelector((state) => state.property);
+  const { properties, loading, message } = useSelector(
+    (state) => state.property
+  );
   const [propertyData, setPropertyData] = useState(null);
+
+  useEffect(() => {
+    dispatch(resetPropertyAttribute());
+  }, []);
 
   useEffect(() => {
     const property = properties.find((property) => property.id === id);
@@ -28,8 +38,12 @@ const UpdatePropertyForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateProperty({ id, updatedData: propertyData }));
-    navigate('/property');
+    dispatch(updateProperty({ id, updatedData: propertyData })).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        Swal.fire("Property Updating Success", message, "success");
+        navigate("/property");
+      }
+    });
   };
 
   if (!propertyData) return <Typography>Property not found</Typography>;
@@ -75,7 +89,7 @@ const UpdatePropertyForm = () => {
         sx={{ mb: 2 }}
       />
       <Button variant="contained" type="submit" disabled={loading}>
-        {loading ? 'Updating...' : 'Update Property'}
+        {loading ? "Updating..." : "Update Property"}
       </Button>
     </form>
   );

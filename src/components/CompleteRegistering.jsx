@@ -11,6 +11,7 @@ import {
   Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import {resetUserState} from "../redux/auth/authSlice"
 
 export default function CompleteRegistering() {
   const dispatch = useDispatch();
@@ -28,6 +29,11 @@ export default function CompleteRegistering() {
   const [previewImage, setPreviewImage] = useState(null);
 
   const navigate = useNavigate();
+
+    useEffect(()=>{
+    dispatch(resetUserState())
+  },[])
+
 
   useEffect(() => {
     if (success && role === "user") {
@@ -85,6 +91,7 @@ export default function CompleteRegistering() {
       <Typography variant="h5" mb={2} textAlign="center" color="primary">
         Complete Registration
       </Typography>
+      {error && <Typography>{error}</Typography>}
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>

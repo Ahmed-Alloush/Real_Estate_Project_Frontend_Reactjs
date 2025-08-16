@@ -241,16 +241,28 @@ import {
   Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const CreateOfficeForm = () => {
   const dispatch = useDispatch();
-  const { loading, success, error } = useSelector((state) => state.office);
- 
+  const { loading, success, error, message } = useSelector(
+    (state) => state.office
+  );
+
   const navigate = useNavigate();
 
   useEffect(() => {
     if (success) {
-      navigate("/");
+      Swal.fire({
+        title: "Create Office",
+        text: message,
+        // icon: "",
+        showCancelButton: false,
+        confirmButtonColor: "#d33",
+        confirmButtonText: "OK",
+      }).then((result) => {});
+
+      navigate("/offices");
     }
   }, [success, navigate]);
 

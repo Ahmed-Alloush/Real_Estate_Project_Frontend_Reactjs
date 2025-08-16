@@ -64,7 +64,7 @@ const ReservedPropertyPage = () => {
             </Typography>
             <Button
               variant="contained"
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/")}
               sx={{ mt: 2 }}
             >
               Browse Properties

@@ -1,4 +1,3 @@
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
@@ -57,6 +56,27 @@ export const getUserByNationalNumber = createAsyncThunk(
   }
 );
 
+// Get user by ID
+export const getUserById = createAsyncThunk(
+  "auth/getUserById",
+  async (id, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await api.get(
+        `/user/${id}`, // Assuming this is your API endpoint
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch user by ID."
+      );
+    }
+  }
+);
+
 // Update user profile
 export const updateUserProfile = createAsyncThunk(
   "auth/updateUserProfile",
@@ -82,22 +102,6 @@ export const startRegisterByEmailPhoneAsUser = createAsyncThunk(
   async ({ email, phone }, thunkAPI) => {
     try {
       const response = await api.post("/user/start-register", { email, phone });
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data || err.message);
-    }
-  }
-);
-
-// Start register as office manager
-export const startRegisterByEmailPhoneAsOfficeManager = createAsyncThunk(
-  "auth/startRegisterAsManager",
-  async ({ email, phone }, thunkAPI) => {
-    try {
-      const response = await api.post("/user/start-register-office-manager", {
-        email,
-        phone,
-      });
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -158,6 +162,9 @@ const authSlice = createSlice({
     userByNationalNumber: null,
     userByNationalNumberLoading: false,
     userByNationalNumberError: null,
+    userById: null,
+    userByIdLoading: false,
+    userByIdError: null,
     loading: false,
     success: false,
     error: null,
@@ -180,14 +187,14 @@ const authSlice = createSlice({
       state.user = null;
       state.userByNationalNumber = null;
     },
-    reset:(state,action)=>{
+    resetUserState: (state, action) => {
       state.user = null;
       state.userByNationalNumber = null;
-      state.error=null;
-      state.loading=false;
-      state.success=false;
-      state.verifySuccess=false;
-    }
+      state.error = null;
+      state.loading = false;
+      state.success = false;
+      state.verifySuccess = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -236,6 +243,23 @@ const authSlice = createSlice({
         state.userByNationalNumberError = action.payload;
       })
 
+      // Get user by id
+
+      .addCase(getUserById.pending, (state) => {
+        state.userByIdLoading = true;
+        state.userByIdError = null;
+        state.userById = null; // Clear the user when fetching
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.userByIdLoading = false;
+        state.userById = action.payload;
+      })
+      .addCase(getUserById.rejected, (state, action) => {
+        state.userByIdLoading = false;
+        state.userByIdError = action.payload;
+        state.userById = null;
+      })
+
       // Update profile
       .addCase(updateUserProfile.pending, (state) => {
         state.loading = true;
@@ -266,32 +290,6 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-
-      // Start register as office manager
-      .addCase(
-        startRegisterByEmailPhoneAsOfficeManager.pending,
-        (state, action) => {
-          state.loading = true;
-        }
-      )
-      .addCase(
-        startRegisterByEmailPhoneAsOfficeManager.fulfilled,
-        (state, action) => {
-          state.accessToken = action.payload.accessToken;
-          state.refreshToken = action.payload.refreshToken;
-          localStorage.setItem("accessToken", action.payload.accessToken);
-          localStorage.setItem("refreshToken", action.payload.refreshToken);
-          state.success = true;
-          state.loading = false;
-        }
-      )
-      .addCase(
-        startRegisterByEmailPhoneAsOfficeManager.rejected,
-        (state, action) => {
-          state.error = action.payload;
-          state.loading = false;
-        }
-      )
 
       // Verify Code
       .addCase(verifyCode.pending, (state) => {
@@ -327,5 +325,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearUser,reset } = authSlice.actions;
+export const { logout, clearUser, resetUserState } = authSlice.actions;
 export default authSlice.reducer;

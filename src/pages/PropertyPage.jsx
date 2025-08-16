@@ -242,20 +242,18 @@
 //     (state) => state.property
 //   );
 
-
 //   useEffect(() => {
 //     if (!propertiesWithFiltering || propertiesWithFiltering.length === 0) {
 //       dispatch(fetchPropertiesAndFilterThem());
 //     }
 //   }, [dispatch]);
 
-
 //   const handleFilter = (filters) => {
-    
+
 //     dispatch(fetchPropertiesAndFilterThem(filters));
-    
+
 //   };
-  
+
 //   return (
 //     <Container maxWidth="lg">
 //       <Box py={5}>
@@ -288,12 +286,6 @@
 // }
 
 // export default PropertyPage;
-
-
-
-
-
-
 
 // import React, { useEffect, useState } from "react";
 // import {
@@ -392,10 +384,6 @@
 
 // export default PropertyPage;
 
-
-
-
-
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -404,11 +392,12 @@ import {
   Divider,
   CircularProgress,
   Pagination,
+  Alert,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchPropertiesAndFilterThem,
-  setPage 
+  setPage,
 } from "../redux/property/propertySlice";
 
 import PropertyList from "../components/PropertyList";
@@ -460,9 +449,13 @@ function PropertyPage() {
         <FilterBar onFilter={handleFilter} />
 
         <Divider sx={{ my: 4 }} />
-
+        {propertiesWithFiltering?.length === 0 && (
+          <Alert severity="info" sx={{ mt: 3 }}>
+            There aren't any properties yet.
+          </Alert>
+        )}
         {loading ? (
-          <Box textAlign="center">
+          <Box textAlign="center" m={"50%"} bgcolor={"black"}>
             <CircularProgress />
           </Box>
         ) : (
@@ -472,6 +465,7 @@ function PropertyPage() {
               canDelete={false}
               isDeleteLoading={false}
               onDelete={() => {}}
+              loading={loading}
             />
 
             {pageCount > 1 && (
@@ -490,6 +484,5 @@ function PropertyPage() {
     </Container>
   );
 }
-
 
 export default PropertyPage;

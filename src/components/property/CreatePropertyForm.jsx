@@ -1,7 +1,1550 @@
-import React, { useEffect, useState } from "react";
+// // // import React, { useState } from "react";
+// // // import { useDispatch, useSelector } from "react-redux";
+// // // import {
+// // //   createProperty,
+// // // } from "../../redux/property/propertySlice";
+// // // import {
+// // //   TextField,
+// // //   Button,
+// // //   Box,
+// // //   Grid,
+// // //   Typography,
+// // //   CircularProgress,
+// // // } from "@mui/material";
+// // // import { useNavigate } from "react-router-dom";
+// // // import Swal from "sweetalert2";
+
+// // // export default function CreatePropertyForm() {
+// // //   const dispatch = useDispatch();
+// // //   const navigate = useNavigate();
+// // //   const { loading, error } = useSelector((state) => state.property);
+
+// // //   const [propertyData, setPropertyData] = useState({
+// // //     propertyNumber: "",
+// // //     propertyType: "",
+// // //     licenseNumber: "",
+// // //     licenseType: "",
+// // //     space: "",
+// // //     price: "",
+// // //     description: "",
+// // //     attributes: [{ attributeName: "", value: "" }],
+// // //     location: {
+// // //       governorate: "",
+// // //       province: "",
+// // //       city: "",
+// // //       street: "",
+// // //     },
+// // //     property_photos: [],
+// // //     owner: "",
+// // //   });
+
+// // //   const [imagePreviews, setImagePreviews] = useState([]);
+// // //   const [errors, setErrors] = useState({});
+
+// // //   const validate = () => {
+// // //     const newErrors = {};
+
+// // //     if (!propertyData.propertyNumber) newErrors.propertyNumber = "Required";
+// // //     if (!propertyData.propertyType) newErrors.propertyType = "Required";
+// // //     if (!propertyData.licenseNumber) newErrors.licenseNumber = "Required";
+// // //     if (!propertyData.licenseType) newErrors.licenseType = "Required";
+// // //     if (!propertyData.space || Number(propertyData.space) <= 0)
+// // //       newErrors.space = "Must be a positive number";
+// // //     if (!propertyData.price || Number(propertyData.price) <= 0)
+// // //       newErrors.price = "Must be a positive number";
+// // //     if (!propertyData.description) newErrors.description = "Required";
+// // //     if (!propertyData.owner) newErrors.owner = "Required";
+
+// // //     Object.entries(propertyData.location).forEach(([key, value]) => {
+// // //       if (!value) newErrors[key] = "Required";
+// // //     });
+
+// // //     propertyData.attributes.forEach((attr, index) => {
+// // //       if (!attr.attributeName || !attr.value) {
+// // //         newErrors[`attribute-${index}`] = "Attribute name and value required";
+// // //       } else if (isNaN(attr.value) || Number(attr.value) < 0) {
+// // //         newErrors[`attribute-${index}`] = "Value must be a number ≥ 0";
+// // //       }
+// // //     });
+
+// // //     setErrors(newErrors);
+// // //     return Object.keys(newErrors).length === 0;
+// // //   };
+
+// // //   const handleInputChange = (e) => {
+// // //     const { name, value } = e.target;
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       [name]: value,
+// // //     }));
+// // //   };
+
+// // //   const handleAttributeChange = (index, e) => {
+// // //     const { name, value } = e.target;
+// // //     const updatedAttributes = [...propertyData.attributes];
+// // //     updatedAttributes[index][name] = value;
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       attributes: updatedAttributes,
+// // //     }));
+// // //   };
+
+// // //   const handleLocationChange = (e) => {
+// // //     const { name, value } = e.target;
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       location: {
+// // //         ...prev.location,
+// // //         [name]: value,
+// // //       },
+// // //     }));
+// // //   };
+
+// // //   const handleFileChange = (e) => {
+// // //     const files = Array.from(e.target.files);
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       property_photos: files,
+// // //     }));
+
+// // //     // Generate previews
+// // //     const previews = files.map((file) => URL.createObjectURL(file));
+// // //     setImagePreviews(previews);
+// // //   };
+
+// // //   const addAttribute = () => {
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       attributes: [...prev.attributes, { attributeName: "", value: "" }],
+// // //     }));
+// // //   };
+
+// // //   const handleSubmit = (e) => {
+// // //     e.preventDefault();
+// // //     if (!validate()) return;
+
+// // //     dispatch(createProperty(propertyData)).then((res) => {
+// // //       if (res.meta.requestStatus === "fulfilled") {
+// // //         Swal.fire("Property Created", res.payload?.message || "Success", "success");
+// // //         navigate("/office/my-office");
+// // //       }
+// // //     });
+// // //   };
+
+// // //   return (
+// // //     <Box
+// // //       sx={{
+// // //         maxWidth: "700px",
+// // //         mx: "auto",
+// // //         p: 2,
+// // //         border: "1px solid #ddd",
+// // //         borderRadius: "12px",
+// // //       }}
+// // //     >
+// // //       <Typography variant="h5" gutterBottom>
+// // //         Create Property
+// // //       </Typography>
+
+// // //       <form onSubmit={handleSubmit}>
+// // //         <TextField
+// // //           name="propertyNumber"
+// // //           label="Property Number"
+// // //           value={propertyData.propertyNumber}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mb: 2 }}
+// // //           error={!!errors.propertyNumber}
+// // //           helperText={errors.propertyNumber}
+// // //         />
+// // //         <TextField
+// // //           name="propertyType"
+// // //           label="Property Type"
+// // //           value={propertyData.propertyType}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mb: 2 }}
+// // //           error={!!errors.propertyType}
+// // //           helperText={errors.propertyType}
+// // //         />
+// // //         <TextField
+// // //           name="licenseNumber"
+// // //           label="License Number"
+// // //           value={propertyData.licenseNumber}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mb: 2 }}
+// // //           error={!!errors.licenseNumber}
+// // //           helperText={errors.licenseNumber}
+// // //         />
+// // //         <TextField
+// // //           name="licenseType"
+// // //           label="License Type"
+// // //           value={propertyData.licenseType}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mb: 2 }}
+// // //           error={!!errors.licenseType}
+// // //           helperText={errors.licenseType}
+// // //         />
+// // //         <Grid container spacing={2}>
+// // //           <Grid item xs={6}>
+// // //             <TextField
+// // //               name="space"
+// // //               label="Space"
+// // //               type="number"
+// // //               value={propertyData.space}
+// // //               onChange={handleInputChange}
+// // //               fullWidth
+// // //               error={!!errors.space}
+// // //               helperText={errors.space}
+// // //             />
+// // //           </Grid>
+// // //           <Grid item xs={6}>
+// // //             <TextField
+// // //               name="price"
+// // //               label="Price"
+// // //               type="number"
+// // //               value={propertyData.price}
+// // //               onChange={handleInputChange}
+// // //               fullWidth
+// // //               error={!!errors.price}
+// // //               helperText={errors.price}
+// // //             />
+// // //           </Grid>
+// // //         </Grid>
+// // //         <TextField
+// // //           name="description"
+// // //           label="Description"
+// // //           value={propertyData.description}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mt: 2 }}
+// // //           error={!!errors.description}
+// // //           helperText={errors.description}
+// // //         />
+
+// // //         <Typography variant="h6" sx={{ mt: 3 }}>
+// // //           Location
+// // //         </Typography>
+// // //         <Grid container spacing={2}>
+// // //           {["governorate", "province", "city", "street"].map((field) => (
+// // //             <Grid item xs={6} key={field}>
+// // //               <TextField
+// // //                 name={field}
+// // //                 label={field.charAt(0).toUpperCase() + field.slice(1)}
+// // //                 value={propertyData.location[field]}
+// // //                 onChange={handleLocationChange}
+// // //                 fullWidth
+// // //                 error={!!errors[field]}
+// // //                 helperText={errors[field]}
+// // //               />
+// // //             </Grid>
+// // //           ))}
+// // //         </Grid>
+
+// // //         <Typography variant="h6" sx={{ mt: 3 }}>
+// // //           Attributes
+// // //         </Typography>
+// // //         {propertyData.attributes.map((attr, index) => (
+// // //           <Grid container spacing={2} key={index} sx={{ mb: 1 }}>
+// // //             <Grid item xs={6}>
+// // //               <TextField
+// // //                 name="attributeName"
+// // //                 label="Attribute Name"
+// // //                 value={attr.attributeName}
+// // //                 onChange={(e) => handleAttributeChange(index, e)}
+// // //                 fullWidth
+// // //               />
+// // //             </Grid>
+// // //             <Grid item xs={6}>
+// // //               <TextField
+// // //                 name="value"
+// // //                 label="Value"
+// // //                 type="number"
+// // //                 value={attr.value}
+// // //                 onChange={(e) => handleAttributeChange(index, e)}
+// // //                 fullWidth
+// // //               />
+// // //             </Grid>
+// // //             {errors[`attribute-${index}`] && (
+// // //               <Grid item xs={12}>
+// // //                 <Typography color="error">
+// // //                   {errors[`attribute-${index}`]}
+// // //                 </Typography>
+// // //               </Grid>
+// // //             )}
+// // //           </Grid>
+// // //         ))}
+// // //         <Button onClick={addAttribute} sx={{ mb: 2 }}>
+// // //           + Add Attribute
+// // //         </Button>
+
+// // //         <Typography variant="h6" sx={{ mt: 3 }}>
+// // //           Property Photos
+// // //         </Typography>
+// // //         <input
+// // //           type="file"
+// // //           name="property_photos"
+// // //           multiple
+// // //           accept="image/*"
+// // //           onChange={handleFileChange}
+// // //         />
+
+// // //         {/* Image Previews */}
+// // //         <Grid container spacing={2} sx={{ mt: 2 }}>
+// // //           {imagePreviews.map((src, idx) => (
+// // //             <Grid item xs={4} key={idx}>
+// // //               <img
+// // //                 src={src}
+// // //                 alt={`preview-${idx}`}
+// // //                 style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "8px" }}
+// // //               />
+// // //             </Grid>
+// // //           ))}
+// // //         </Grid>
+
+// // //         <Box mt={"2%"}>
+// // //           <TextField
+// // //             name="owner"
+// // //             label="Owner"
+// // //             value={propertyData.owner}
+// // //             onChange={handleInputChange}
+// // //             fullWidth
+// // //             sx={{ mb: 2 }}
+// // //             error={!!errors.owner}
+// // //             helperText={errors.owner}
+// // //           />
+// // //         </Box>
+
+// // //         {error && (
+// // //           <Typography color="error" sx={{ mt: 2 }}>
+// // //             {error.message || "Something went wrong"}
+// // //           </Typography>
+// // //         )}
+
+// // //         <Button
+// // //           type="submit"
+// // //           variant="contained"
+// // //           sx={{ mt: 3 }}
+// // //           disabled={loading}
+// // //           onClick={handleSubmit}
+// // //         >
+// // //           {loading ? <CircularProgress size={20} /> : "Create Property"}
+// // //         </Button>
+// // //       </form>
+// // //     </Box>
+// // //   );
+// // // }
+
+// // // import React, { useState, useEffect } from "react";
+// // // import { useDispatch, useSelector } from "react-redux";
+// // // import { createProperty } from "../../redux/property/propertySlice";
+// // // import {
+// // //   fetchPropertyTypes, // Import the new action
+// // // } from "../../redux/property type/propertyTypeSlice"; // Adjust path as needed
+// // // import {
+// // //   TextField,
+// // //   Button,
+// // //   Box,
+// // //   Grid,
+// // //   Typography,
+// // //   CircularProgress,
+// // //   Select, // Import Select
+// // //   MenuItem, // Import MenuItem
+// // //   FormControl, // Import FormControl
+// // //   InputLabel, // Import InputLabel
+// // // } from "@mui/material";
+// // // import { useNavigate } from "react-router-dom";
+// // // import Swal from "sweetalert2";
+
+// // // export default function CreatePropertyForm() {
+// // //   const dispatch = useDispatch();
+// // //   const navigate = useNavigate();
+
+// // //   // Access both property and propertyType slices from the store
+// // //   const { loading, error } = useSelector((state) => state.property);
+// // //   const { propertyTypes } = useSelector((state) => state.propertyType);
+
+// // //   const [propertyData, setPropertyData] = useState({
+// // //     propertyNumber: "",
+// // //     propertyType: "",
+// // //     licenseNumber: "",
+// // //     licenseType: "",
+// // //     space: "",
+// // //     price: "",
+// // //     description: "",
+// // //     attributes: [{ attributeName: "", value: "" }],
+// // //     location: {
+// // //       governorate: "",
+// // //       province: "",
+// // //       city: "",
+// // //       street: "",
+// // //     },
+// // //     property_photos: [],
+// // //     owner: "",
+// // //   });
+
+// // //   const [imagePreviews, setImagePreviews] = useState([]);
+// // //   const [errors, setErrors] = useState({});
+
+// // //   useEffect(() => {
+// // //     // Dispatch the new action to fetch property types when the component mounts
+// // //     dispatch(fetchPropertyTypes());
+// // //   }, [dispatch]);
+
+// // //   // ... (rest of the component's state and functions remain the same)
+// // //   const validate = () => {
+// // //     const newErrors = {};
+
+// // //     if (!propertyData.propertyNumber) newErrors.propertyNumber = "Required";
+// // //     // Check if propertyType is selected
+// // //     if (!propertyData.propertyType) newErrors.propertyType = "Required";
+// // //     if (!propertyData.licenseNumber) newErrors.licenseNumber = "Required";
+// // //     if (!propertyData.licenseType) newErrors.licenseType = "Required";
+// // //     if (!propertyData.space || Number(propertyData.space) <= 0)
+// // //       newErrors.space = "Must be a positive number";
+// // //     if (!propertyData.price || Number(propertyData.price) <= 0)
+// // //       newErrors.price = "Must be a positive number";
+// // //     if (!propertyData.description) newErrors.description = "Required";
+// // //     if (!propertyData.owner) newErrors.owner = "Required";
+
+// // //     Object.entries(propertyData.location).forEach(([key, value]) => {
+// // //       if (!value) newErrors[key] = "Required";
+// // //     });
+
+// // //     propertyData.attributes.forEach((attr, index) => {
+// // //       if (!attr.attributeName || !attr.value) {
+// // //         newErrors[`attribute-${index}`] = "Attribute name and value required";
+// // //       } else if (isNaN(attr.value) || Number(attr.value) < 0) {
+// // //         newErrors[`attribute-${index}`] = "Value must be a number ≥ 0";
+// // //       }
+// // //     });
+
+// // //     setErrors(newErrors);
+// // //     return Object.keys(newErrors).length === 0;
+// // //   };
+
+// // //   const handleInputChange = (e) => {
+// // //     const { name, value } = e.target;
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       [name]: value,
+// // //     }));
+// // //   };
+
+// // //   const handleAttributeChange = (index, e) => {
+// // //     const { name, value } = e.target;
+// // //     const updatedAttributes = [...propertyData.attributes];
+// // //     updatedAttributes[index][name] = value;
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       attributes: updatedAttributes,
+// // //     }));
+// // //   };
+
+// // //   const handleLocationChange = (e) => {
+// // //     const { name, value } = e.target;
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       location: {
+// // //         ...prev.location,
+// // //         [name]: value,
+// // //       },
+// // //     }));
+// // //   };
+
+// // //   const handleFileChange = (e) => {
+// // //     const files = Array.from(e.target.files);
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       property_photos: files,
+// // //     }));
+
+// // //     const previews = files.map((file) => URL.createObjectURL(file));
+// // //     setImagePreviews(previews);
+// // //   };
+
+// // //   const addAttribute = () => {
+// // //     setPropertyData((prev) => ({
+// // //       ...prev,
+// // //       attributes: [...prev.attributes, { attributeName: "", value: "" }],
+// // //     }));
+// // //   };
+
+// // //   const handleSubmit = (e) => {
+// // //     e.preventDefault();
+// // //     if (!validate()) return;
+
+// // //     dispatch(createProperty(propertyData)).then((res) => {
+// // //       if (res.meta.requestStatus === "fulfilled") {
+// // //         Swal.fire("Property Created", res.payload?.message || "Success", "success");
+// // //         navigate("/office/my-office");
+// // //       }
+// // //     });
+// // //   };
+
+// // //   // Replace the existing TextField for propertyType with the following:
+// // //   return (
+// // //     <Box
+// // //       sx={{
+// // //         maxWidth: "700px",
+// // //         mx: "auto",
+// // //         p: 2,
+// // //         border: "1px solid #ddd",
+// // //         borderRadius: "12px",
+// // //       }}
+// // //     >
+// // //       <Typography variant="h5" gutterBottom>
+// // //         Create Property
+// // //       </Typography>
+// // //       <form onSubmit={handleSubmit}>
+// // //         {/* ... (other TextFields remain the same) */}
+// // //         <TextField
+// // //           name="propertyNumber"
+// // //           label="Property Number"
+// // //           value={propertyData.propertyNumber}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mb: 2 }}
+// // //           error={!!errors.propertyNumber}
+// // //           helperText={errors.propertyNumber}
+// // //         />
+// // //         <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.propertyType}>
+// // //           <InputLabel>Property Type</InputLabel>
+// // //           <Select
+// // //             name="propertyType"
+// // //             value={propertyData.propertyType}
+// // //             onChange={handleInputChange}
+// // //             label="Property Type"
+// // //             MenuProps={{
+// // //               PaperProps: {
+// // //                 style: {
+// // //                   maxHeight: 200, // This sets the max height for the scrollbar
+// // //                 },
+// // //               },
+// // //             }}
+// // //           >
+// // //             {propertyTypes.map((type) => (
+// // //               <MenuItem key={type.id} value={type.name}>
+// // //                 {type.name}
+// // //               </MenuItem>
+// // //             ))}
+// // //           </Select>
+// // //           {!!errors.propertyType && (
+// // //             <Typography variant="caption" color="error">
+// // //               {errors.propertyType}
+// // //             </Typography>
+// // //           )}
+// // //         </FormControl>
+// // //         <TextField
+// // //           name="licenseNumber"
+// // //           label="License Number"
+// // //           value={propertyData.licenseNumber}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mb: 2 }}
+// // //           error={!!errors.licenseNumber}
+// // //           helperText={errors.licenseNumber}
+// // //         />
+// // //         <TextField
+// // //           name="licenseType"
+// // //           label="License Type"
+// // //           value={propertyData.licenseType}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mb: 2 }}
+// // //           error={!!errors.licenseType}
+// // //           helperText={errors.licenseType}
+// // //         />
+// // //         <Grid container spacing={2}>
+// // //           <Grid item xs={6}>
+// // //             <TextField
+// // //               name="space"
+// // //               label="Space"
+// // //               type="number"
+// // //               value={propertyData.space}
+// // //               onChange={handleInputChange}
+// // //               fullWidth
+// // //               error={!!errors.space}
+// // //               helperText={errors.space}
+// // //             />
+// // //           </Grid>
+// // //           <Grid item xs={6}>
+// // //             <TextField
+// // //               name="price"
+// // //               label="Price"
+// // //               type="number"
+// // //               value={propertyData.price}
+// // //               onChange={handleInputChange}
+// // //               fullWidth
+// // //               error={!!errors.price}
+// // //               helperText={errors.price}
+// // //             />
+// // //           </Grid>
+// // //         </Grid>
+// // //         <TextField
+// // //           name="description"
+// // //           label="Description"
+// // //           value={propertyData.description}
+// // //           onChange={handleInputChange}
+// // //           fullWidth
+// // //           sx={{ mt: 2 }}
+// // //           error={!!errors.description}
+// // //           helperText={errors.description}
+// // //         />
+
+// // //         <Typography variant="h6" sx={{ mt: 3 }}>
+// // //           Location
+// // //         </Typography>
+// // //         <Grid container spacing={2}>
+// // //           {["governorate", "province", "city", "street"].map((field) => (
+// // //             <Grid item xs={6} key={field}>
+// // //               <TextField
+// // //                 name={field}
+// // //                 label={field.charAt(0).toUpperCase() + field.slice(1)}
+// // //                 value={propertyData.location[field]}
+// // //                 onChange={handleLocationChange}
+// // //                 fullWidth
+// // //                 error={!!errors[field]}
+// // //                 helperText={errors[field]}
+// // //               />
+// // //             </Grid>
+// // //           ))}
+// // //         </Grid>
+
+// // //         <Typography variant="h6" sx={{ mt: 3 }}>
+// // //           Attributes
+// // //         </Typography>
+// // //         {propertyData.attributes.map((attr, index) => (
+// // //           <Grid container spacing={2} key={index} sx={{ mb: 1 }}>
+// // //             <Grid item xs={6}>
+// // //               <TextField
+// // //                 name="attributeName"
+// // //                 label="Attribute Name"
+// // //                 value={attr.attributeName}
+// // //                 onChange={(e) => handleAttributeChange(index, e)}
+// // //                 fullWidth
+// // //               />
+// // //             </Grid>
+// // //             <Grid item xs={6}>
+// // //               <TextField
+// // //                 name="value"
+// // //                 label="Value"
+// // //                 type="number"
+// // //                 value={attr.value}
+// // //                 onChange={(e) => handleAttributeChange(index, e)}
+// // //                 fullWidth
+// // //               />
+// // //             </Grid>
+// // //             {errors[`attribute-${index}`] && (
+// // //               <Grid item xs={12}>
+// // //                 <Typography color="error">
+// // //                   {errors[`attribute-${index}`]}
+// // //                 </Typography>
+// // //               </Grid>
+// // //             )}
+// // //           </Grid>
+// // //         ))}
+// // //         <Button onClick={addAttribute} sx={{ mb: 2 }}>
+// // //           + Add Attribute
+// // //         </Button>
+
+// // //         <Typography variant="h6" sx={{ mt: 3 }}>
+// // //           Property Photos
+// // //         </Typography>
+// // //         <input
+// // //           type="file"
+// // //           name="property_photos"
+// // //           multiple
+// // //           accept="image/*"
+// // //           onChange={handleFileChange}
+// // //         />
+
+// // //         <Grid container spacing={2} sx={{ mt: 2 }}>
+// // //           {imagePreviews.map((src, idx) => (
+// // //             <Grid item xs={4} key={idx}>
+// // //               <img
+// // //                 src={src}
+// // //                 alt={`preview-${idx}`}
+// // //                 style={{
+// // //                   width: "100%",
+// // //                   height: "150px",
+// // //                   objectFit: "cover",
+// // //                   borderRadius: "8px",
+// // //                 }}
+// // //               />
+// // //             </Grid>
+// // //           ))}
+// // //         </Grid>
+
+// // //         <Box mt={"2%"}>
+// // //           <TextField
+// // //             name="owner"
+// // //             label="Owner"
+// // //             value={propertyData.owner}
+// // //             onChange={handleInputChange}
+// // //             fullWidth
+// // //             sx={{ mb: 2 }}
+// // //             error={!!errors.owner}
+// // //             helperText={errors.owner}
+// // //           />
+// // //         </Box>
+
+// // //         {error && (
+// // //           <Typography color="error" sx={{ mt: 2 }}>
+// // //             {error.message || "Something went wrong"}
+// // //           </Typography>
+// // //         )}
+
+// // //         <Button
+// // //           type="submit"
+// // //           variant="contained"
+// // //           sx={{ mt: 3 }}
+// // //           disabled={loading}
+// // //           onClick={handleSubmit}
+// // //         >
+// // //           {loading ? <CircularProgress size={20} /> : "Create Property"}
+// // //         </Button>
+// // //       </form>
+// // //     </Box>
+// // //   );
+// // // }
+
+// // import React, { useState, useEffect } from "react";
+// // import { useDispatch, useSelector } from "react-redux";
+// // import { createProperty } from "../../redux/property/propertySlice";
+// // import { fetchPropertyTypes } from "../../redux/property type/propertyTypeSlice";
+// // import {
+// //   TextField,
+// //   Button,
+// //   Box,
+// //   Grid,
+// //   Typography,
+// //   CircularProgress,
+// //   Select,
+// //   MenuItem,
+// //   FormControl,
+// //   InputLabel,
+// //   FormHelperText,
+// //   IconButton,
+// // } from "@mui/material";
+// // import DeleteIcon from '@mui/icons-material/Delete';
+// // import { useNavigate } from "react-router-dom";
+// // import Swal from "sweetalert2";
+
+// // export default function CreatePropertyForm() {
+// //   const dispatch = useDispatch();
+// //   const navigate = useNavigate();
+
+// //   const { loading, error } = useSelector((state) => state.property);
+// //   const { propertyTypes } = useSelector((state) => state.propertyType);
+
+// //   const [propertyData, setPropertyData] = useState({
+// //     propertyNumber: "",
+// //     propertyType: "",
+// //     licenseNumber: "",
+// //     licenseType: "",
+// //     space: "",
+// //     price: "",
+// //     description: "",
+// //     attributes: [], // Start with an empty array of attributes
+// //     location: {
+// //       governorate: "",
+// //       province: "",
+// //       city: "",
+// //       street: "",
+// //     },
+// //     property_photos: [],
+// //     owner: "",
+// //   });
+
+// //   const [imagePreviews, setImagePreviews] = useState([]);
+// //   const [errors, setErrors] = useState({});
+
+// //   // Get the selected property type object to access its attributes
+// //   const selectedPropertyType = propertyTypes.find(
+// //     (type) => type.id === propertyData.propertyType
+// //   );
+// //   const allowedAttributes = selectedPropertyType
+// //     ? selectedPropertyType.attributes.map((pta) => pta.attribute)
+// //     : [];
+
+// //   useEffect(() => {
+// //     dispatch(fetchPropertyTypes());
+// //   }, [dispatch]);
+
+// //   const validate = () => {
+// //     const newErrors = {};
+
+// //     if (!propertyData.propertyNumber) newErrors.propertyNumber = "Required";
+// //     if (!propertyData.propertyType) newErrors.propertyType = "Required";
+// //     // ... (rest of the validation logic remains similar)
+// //     if (!propertyData.licenseNumber) newErrors.licenseNumber = "Required";
+// //     if (!propertyData.licenseType) newErrors.licenseType = "Required";
+// //     if (!propertyData.space || Number(propertyData.space) <= 0)
+// //       newErrors.space = "Must be a positive number";
+// //     if (!propertyData.price || Number(propertyData.price) <= 0)
+// //       newErrors.price = "Must be a positive number";
+// //     if (!propertyData.description) newErrors.description = "Required";
+// //     if (!propertyData.owner) newErrors.owner = "Required";
+
+// //     Object.entries(propertyData.location).forEach(([key, value]) => {
+// //       if (!value) newErrors[key] = "Required";
+// //     });
+
+// //     propertyData.attributes.forEach((attr, index) => {
+// //       if (!attr.attributeName || !attr.value) {
+// //         newErrors[`attribute-${index}`] = "Attribute name and value required";
+// //       } else if (isNaN(attr.value) || Number(attr.value) < 0) {
+// //         newErrors[`attribute-${index}`] = "Value must be a number ≥ 0";
+// //       }
+// //     });
+
+// //     setErrors(newErrors);
+// //     return Object.keys(newErrors).length === 0;
+// //   };
+
+// //   const handleInputChange = (e) => {
+// //     const { name, value } = e.target;
+// //     setPropertyData((prev) => ({
+// //       ...prev,
+// //       [name]: value,
+// //     }));
+// //   };
+
+// //   const handlePropertyTypeChange = (e) => {
+// //     const { value } = e.target;
+// //     // Reset attributes when a new property type is selected
+// //     setPropertyData((prev) => ({
+// //       ...prev,
+// //       propertyType: value,
+// //       attributes: [],
+// //     }));
+// //   };
+
+// //   const handleAttributeChange = (index, e) => {
+// //     const { name, value } = e.target;
+// //     const updatedAttributes = [...propertyData.attributes];
+// //     updatedAttributes[index][name] = value;
+// //     setPropertyData((prev) => ({
+// //       ...prev,
+// //       attributes: updatedAttributes,
+// //     }));
+// //   };
+
+// //   const handleLocationChange = (e) => {
+// //     const { name, value } = e.target;
+// //     setPropertyData((prev) => ({
+// //       ...prev,
+// //       location: {
+// //         ...prev.location,
+// //         [name]: value,
+// //       },
+// //     }));
+// //   };
+
+// //   const handleFileChange = (e) => {
+// //     const files = Array.from(e.target.files);
+// //     setPropertyData((prev) => ({
+// //       ...prev,
+// //       property_photos: files,
+// //     }));
+
+// //     const previews = files.map((file) => URL.createObjectURL(file));
+// //     setImagePreviews(previews);
+// //   };
+
+// //   const addAttribute = () => {
+// //     setPropertyData((prev) => ({
+// //       ...prev,
+// //       attributes: [...prev.attributes, { attributeName: "", value: "" }],
+// //     }));
+// //   };
+
+// //   const removeAttribute = (index) => {
+// //     setPropertyData((prev) => ({
+// //       ...prev,
+// //       attributes: prev.attributes.filter((_, i) => i !== index),
+// //     }));
+// //   };
+
+// //   const handleSubmit = (e) => {
+// //     e.preventDefault();
+// //     if (!validate()) return;
+
+// //     dispatch(createProperty(propertyData)).then((res) => {
+// //       if (res.meta.requestStatus === "fulfilled") {
+// //         Swal.fire("Property Created", res.payload?.message || "Success", "success");
+// //         navigate("/office/my-office");
+// //       }
+// //     });
+// //   };
+
+// //   return (
+// //     <Box
+// //       sx={{
+// //         maxWidth: "700px",
+// //         mx: "auto",
+// //         p: 2,
+// //         border: "1px solid #ddd",
+// //         borderRadius: "12px",
+// //       }}
+// //     >
+// //       <Typography variant="h5" gutterBottom>
+// //         Create Property
+// //       </Typography>
+// //       <form onSubmit={handleSubmit}>
+// //         <TextField
+// //           name="propertyNumber"
+// //           label="Property Number"
+// //           value={propertyData.propertyNumber}
+// //           onChange={handleInputChange}
+// //           fullWidth
+// //           sx={{ mb: 2 }}
+// //           error={!!errors.propertyNumber}
+// //           helperText={errors.propertyNumber}
+// //         />
+// //         <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.propertyType}>
+// //           <InputLabel>Property Type</InputLabel>
+// //           <Select
+// //             name="propertyType"
+// //             value={propertyData.propertyType}
+// //             onChange={handlePropertyTypeChange} // Use the new handler
+// //             label="Property Type"
+// //             MenuProps={{
+// //               PaperProps: {
+// //                 style: {
+// //                   maxHeight: 200,
+// //                 },
+// //               },
+// //             }}
+// //           >
+// //             {propertyTypes.map((type) => (
+// //               <MenuItem key={type.id} value={type.id}>
+// //                 {type.name}
+// //               </MenuItem>
+// //             ))}
+// //           </Select>
+// //           {!!errors.propertyType && <FormHelperText>{errors.propertyType}</FormHelperText>}
+// //         </FormControl>
+
+// //         <TextField
+// //           name="licenseNumber"
+// //           label="License Number"
+// //           value={propertyData.licenseNumber}
+// //           onChange={handleInputChange}
+// //           fullWidth
+// //           sx={{ mb: 2 }}
+// //           error={!!errors.licenseNumber}
+// //           helperText={errors.licenseNumber}
+// //         />
+// //         <TextField
+// //           name="licenseType"
+// //           label="License Type"
+// //           value={propertyData.licenseType}
+// //           onChange={handleInputChange}
+// //           fullWidth
+// //           sx={{ mb: 2 }}
+// //           error={!!errors.licenseType}
+// //           helperText={errors.licenseType}
+// //         />
+// //         <Grid container spacing={2}>
+// //           <Grid item xs={6}>
+// //             <TextField
+// //               name="space"
+// //               label="Space"
+// //               type="number"
+// //               value={propertyData.space}
+// //               onChange={handleInputChange}
+// //               fullWidth
+// //               error={!!errors.space}
+// //               helperText={errors.space}
+// //             />
+// //           </Grid>
+// //           <Grid item xs={6}>
+// //             <TextField
+// //               name="price"
+// //               label="Price"
+// //               type="number"
+// //               value={propertyData.price}
+// //               onChange={handleInputChange}
+// //               fullWidth
+// //               error={!!errors.price}
+// //               helperText={errors.price}
+// //             />
+// //           </Grid>
+// //         </Grid>
+// //         <TextField
+// //           name="description"
+// //           label="Description"
+// //           value={propertyData.description}
+// //           onChange={handleInputChange}
+// //           fullWidth
+// //           sx={{ mt: 2 }}
+// //           error={!!errors.description}
+// //           helperText={errors.description}
+// //         />
+
+// //         <Typography variant="h6" sx={{ mt: 3 }}>
+// //           Location
+// //         </Typography>
+// //         <Grid container spacing={2}>
+// //           {["governorate", "province", "city", "street"].map((field) => (
+// //             <Grid item xs={6} key={field}>
+// //               <TextField
+// //                 name={field}
+// //                 label={field.charAt(0).toUpperCase() + field.slice(1)}
+// //                 value={propertyData.location[field]}
+// //                 onChange={handleLocationChange}
+// //                 fullWidth
+// //                 error={!!errors[field]}
+// //                 helperText={errors[field]}
+// //               />
+// //             </Grid>
+// //           ))}
+// //         </Grid>
+
+// //         <Typography variant="h6" sx={{ mt: 3 }}>
+// //           Attributes
+// //         </Typography>
+// //         {propertyData.attributes.map((attr, index) => (
+// //           <Grid container spacing={2} key={index} sx={{ mb: 1 }}>
+// //             <Grid item xs={5}>
+// //               <FormControl fullWidth>
+// //                 <InputLabel>Attribute Name</InputLabel>
+// //                 <Select
+// //                   name="attributeName"
+// //                   value={attr.attributeName}
+// //                   onChange={(e) => handleAttributeChange(index, e)}
+// //                   label="Attribute Name"
+// //                 >
+// //                   {allowedAttributes.map((allowedAttr) => (
+// //                     <MenuItem key={allowedAttr.id} value={allowedAttr.name}>
+// //                       {allowedAttr.name}
+// //                     </MenuItem>
+// //                   ))}
+// //                 </Select>
+// //               </FormControl>
+// //             </Grid>
+// //             <Grid item xs={5}>
+// //               <TextField
+// //                 name="value"
+// //                 label="Value"
+// //                 type="number"
+// //                 value={attr.value}
+// //                 onChange={(e) => handleAttributeChange(index, e)}
+// //                 fullWidth
+// //               />
+// //             </Grid>
+// //             <Grid item xs={2}>
+// //               <IconButton onClick={() => removeAttribute(index)} color="error">
+// //                 <DeleteIcon />
+// //               </IconButton>
+// //             </Grid>
+// //             {errors[`attribute-${index}`] && (
+// //               <Grid item xs={12}>
+// //                 <Typography color="error">
+// //                   {errors[`attribute-${index}`]}
+// //                 </Typography>
+// //               </Grid>
+// //             )}
+// //           </Grid>
+// //         ))}
+// //         {propertyData.propertyType && (
+// //           <Button onClick={addAttribute} sx={{ mb: 2 }}>
+// //             + Add Attribute
+// //           </Button>
+// //         )}
+
+// //         <Typography variant="h6" sx={{ mt: 3 }}>
+// //           Property Photos
+// //         </Typography>
+// //         <input
+// //           type="file"
+// //           name="property_photos"
+// //           multiple
+// //           accept="image/*"
+// //           onChange={handleFileChange}
+// //         />
+
+// //         <Grid container spacing={2} sx={{ mt: 2 }}>
+// //           {imagePreviews.map((src, idx) => (
+// //             <Grid item xs={4} key={idx}>
+// //               <img
+// //                 src={src}
+// //                 alt={`preview-${idx}`}
+// //                 style={{
+// //                   width: "100%",
+// //                   height: "150px",
+// //                   objectFit: "cover",
+// //                   borderRadius: "8px",
+// //                 }}
+// //               />
+// //             </Grid>
+// //           ))}
+// //         </Grid>
+
+// //         <Box mt={"2%"}>
+// //           <TextField
+// //             name="owner"
+// //             label="Owner"
+// //             value={propertyData.owner}
+// //             onChange={handleInputChange}
+// //             fullWidth
+// //             sx={{ mb: 2 }}
+// //             error={!!errors.owner}
+// //             helperText={errors.owner}
+// //           />
+// //         </Box>
+
+// //         {error && (
+// //           <Typography color="error" sx={{ mt: 2 }}>
+// //             {error.message || "Something went wrong"}
+// //           </Typography>
+// //         )}
+
+// //         <Button
+// //           type="submit"
+// //           variant="contained"
+// //           sx={{ mt: 3 }}
+// //           disabled={loading}
+// //           onClick={handleSubmit}
+// //         >
+// //           {loading ? <CircularProgress size={20} /> : "Create Property"}
+// //         </Button>
+// //       </form>
+// //     </Box>
+// //   );
+// // }
+
+// import React, { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { createProperty } from "../../redux/property/propertySlice";
+// import { fetchPropertyTypes } from "../../redux/property type/propertyTypeSlice";
+// import { fetchLicenseTypes } from "../../redux/license type/licenseTypeSlice"; // Import the new action
+// import {
+//   TextField,
+//   Button,
+//   Box,
+//   Grid,
+//   Typography,
+//   CircularProgress,
+//   Select,
+//   MenuItem,
+//   FormControl,
+//   InputLabel,
+//   FormHelperText,
+//   IconButton,
+// } from "@mui/material";
+// import DeleteIcon from "@mui/icons-material/Delete";
+// import { useNavigate } from "react-router-dom";
+// import Swal from "sweetalert2";
+
+// export default function CreatePropertyForm() {
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+
+//   const { loading, error } = useSelector((state) => state.property);
+//   const { propertyTypes } = useSelector((state) => state.propertyType);
+//   const { licenseTypes } = useSelector((state) => state.licenseType); // Select license types from the store
+
+//   const [propertyData, setPropertyData] = useState({
+//     propertyNumber: "",
+//     propertyType: "",
+//     licenseNumber: "",
+//     licenseType: "", // This will now hold the ID of the selected license type
+//     space: "",
+//     price: "",
+//     description: "",
+//     attributes: [],
+//     location: {
+//       governorate: "",
+//       province: "",
+//       city: "",
+//       street: "",
+//     },
+//     property_photos: [],
+//     owner: "",
+//   });
+
+//   const [imagePreviews, setImagePreviews] = useState([]);
+//   const [errors, setErrors] = useState({});
+
+//   const selectedPropertyType = propertyTypes.find(
+//     (type) => type.id === propertyData.propertyType
+//   );
+//   const allowedAttributes = selectedPropertyType
+//     ? selectedPropertyType.attributes.map((pta) => pta.attribute)
+//     : [];
+
+//   useEffect(() => {
+//     dispatch(fetchPropertyTypes());
+//     dispatch(fetchLicenseTypes()); // Dispatch the new action to fetch license types
+//   }, [dispatch]);
+
+//   const validate = () => {
+//     const newErrors = {};
+
+//     if (!propertyData.propertyNumber) newErrors.propertyNumber = "Required";
+//     if (!propertyData.propertyType) newErrors.propertyType = "Required";
+//     if (!propertyData.licenseNumber) newErrors.licenseNumber = "Required";
+//     if (!propertyData.licenseType) newErrors.licenseType = "Required"; // Validation for the new select field
+//     if (!propertyData.space || Number(propertyData.space) <= 0)
+//       newErrors.space = "Must be a positive number";
+//     if (!propertyData.price || Number(propertyData.price) <= 0)
+//       newErrors.price = "Must be a positive number";
+//     if (!propertyData.description) newErrors.description = "Required";
+//     if (!propertyData.owner) newErrors.owner = "Required";
+
+//     Object.entries(propertyData.location).forEach(([key, value]) => {
+//       if (!value) newErrors[key] = "Required";
+//     });
+
+//     propertyData.attributes.forEach((attr, index) => {
+//       if (!attr.attributeName || !attr.value) {
+//         newErrors[`attribute-${index}`] = "Attribute name and value required";
+//       } else if (isNaN(attr.value) || Number(attr.value) < 0) {
+//         newErrors[`attribute-${index}`] = "Value must be a number ≥ 0";
+//       }
+//     });
+
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
+//   };
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setPropertyData((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   const handlePropertyTypeChange = (e) => {
+//     const { value } = e.target;
+//     setPropertyData((prev) => ({
+//       ...prev,
+//       propertyType: value,
+//       attributes: [],
+//     }));
+//   };
+
+//   const handleAttributeChange = (index, e) => {
+//     const { name, value } = e.target;
+//     const updatedAttributes = [...propertyData.attributes];
+//     updatedAttributes[index][name] = value;
+//     setPropertyData((prev) => ({
+//       ...prev,
+//       attributes: updatedAttributes,
+//     }));
+//   };
+
+//   const handleLocationChange = (e) => {
+//     const { name, value } = e.target;
+//     setPropertyData((prev) => ({
+//       ...prev,
+//       location: {
+//         ...prev.location,
+//         [name]: value,
+//       },
+//     }));
+//   };
+
+//   const handleFileChange = (e) => {
+//     const files = Array.from(e.target.files);
+//     setPropertyData((prev) => ({
+//       ...prev,
+//       property_photos: files,
+//     }));
+
+//     const previews = files.map((file) => URL.createObjectURL(file));
+//     setImagePreviews(previews);
+//   };
+
+//   const addAttribute = () => {
+//     setPropertyData((prev) => ({
+//       ...prev,
+//       attributes: [...prev.attributes, { attributeName: "", value: "" }],
+//     }));
+//   };
+
+//   const removeAttribute = (index) => {
+//     setPropertyData((prev) => ({
+//       ...prev,
+//       attributes: prev.attributes.filter((_, i) => i !== index),
+//     }));
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     if (!validate()) return;
+
+//     dispatch(createProperty(propertyData)).then((res) => {
+//       if (res.meta.requestStatus === "fulfilled") {
+//         Swal.fire("Property Created", res.payload?.message || "Success", "success");
+//         navigate("/office/my-office");
+//       }
+//     });
+//   };
+
+//   return (
+//     <Box
+//       sx={{
+//         maxWidth: "700px",
+//         mx: "auto",
+//         p: 2,
+//         border: "1px solid #ddd",
+//         borderRadius: "12px",
+//       }}
+//     >
+//       <Typography variant="h5" gutterBottom>
+//         Create Property
+//       </Typography>
+//       <form onSubmit={handleSubmit}>
+//         <TextField
+//           name="propertyNumber"
+//           label="Property Number"
+//           value={propertyData.propertyNumber}
+//           onChange={handleInputChange}
+//           fullWidth
+//           sx={{ mb: 2 }}
+//           error={!!errors.propertyNumber}
+//           helperText={errors.propertyNumber}
+//         />
+//         <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.propertyType}>
+//           <InputLabel>Property Type</InputLabel>
+//           <Select
+//             name="propertyType"
+//             value={propertyData.propertyType}
+//             onChange={handlePropertyTypeChange}
+//             label="Property Type"
+//             MenuProps={{
+//               PaperProps: {
+//                 style: {
+//                   maxHeight: 200,
+//                 },
+//               },
+//             }}
+//           >
+//             {propertyTypes.map((type) => (
+//               <MenuItem key={type.id} value={type.id}>
+//                 {type.name}
+//               </MenuItem>
+//             ))}
+//           </Select>
+//           {!!errors.propertyType && <FormHelperText>{errors.propertyType}</FormHelperText>}
+//         </FormControl>
+
+//         <TextField
+//           name="licenseNumber"
+//           label="License Number"
+//           value={propertyData.licenseNumber}
+//           onChange={handleInputChange}
+//           fullWidth
+//           sx={{ mb: 2 }}
+//           error={!!errors.licenseNumber}
+//           helperText={errors.licenseNumber}
+//         />
+
+//         {/* Updated License Type Field with Select */}
+//         <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.licenseType}>
+//           <InputLabel>License Type</InputLabel>
+//           <Select
+//             name="licenseType"
+//             value={propertyData.licenseType}
+//             onChange={handleInputChange}
+//             label="License Type"
+//             MenuProps={{
+//               PaperProps: {
+//                 style: {
+//                   maxHeight: 200,
+//                 },
+//               },
+//             }}
+//           >
+//             {licenseTypes.map((type) => (
+//               <MenuItem key={type.id} value={type.id}>
+//                 {type.name}
+//               </MenuItem>
+//             ))}
+//           </Select>
+//           {!!errors.licenseType && <FormHelperText>{errors.licenseType}</FormHelperText>}
+//         </FormControl>
+
+//         <Grid container spacing={2}>
+//           <Grid item xs={6}>
+//             <TextField
+//               name="space"
+//               label="Space"
+//               type="number"
+//               value={propertyData.space}
+//               onChange={handleInputChange}
+//               fullWidth
+//               error={!!errors.space}
+//               helperText={errors.space}
+//             />
+//           </Grid>
+//           <Grid item xs={6}>
+//             <TextField
+//               name="price"
+//               label="Price"
+//               type="number"
+//               value={propertyData.price}
+//               onChange={handleInputChange}
+//               fullWidth
+//               error={!!errors.price}
+//               helperText={errors.price}
+//             />
+//           </Grid>
+//         </Grid>
+//         <TextField
+//           name="description"
+//           label="Description"
+//           value={propertyData.description}
+//           onChange={handleInputChange}
+//           fullWidth
+//           sx={{ mt: 2 }}
+//           error={!!errors.description}
+//           helperText={errors.description}
+//         />
+
+//         <Typography variant="h6" sx={{ mt: 3 }}>
+//           Location
+//         </Typography>
+//         <Grid container spacing={2}>
+//           {["governorate", "province", "city", "street"].map((field) => (
+//             <Grid item xs={6} key={field}>
+//               <TextField
+//                 name={field}
+//                 label={field.charAt(0).toUpperCase() + field.slice(1)}
+//                 value={propertyData.location[field]}
+//                 onChange={handleLocationChange}
+//                 fullWidth
+//                 error={!!errors[field]}
+//                 helperText={errors[field]}
+//               />
+//             </Grid>
+//           ))}
+//         </Grid>
+
+//         <Typography variant="h6" sx={{ mt: 3 }}>
+//           Attributes
+//         </Typography>
+//         {propertyData.attributes.map((attr, index) => (
+//           <Grid container spacing={2} key={index} sx={{ mb: 1 }}>
+//             <Grid item xs={5}>
+//               <FormControl fullWidth>
+//                 <InputLabel>Attribute Name</InputLabel>
+//                 <Select
+//                   name="attributeName"
+//                   value={attr.attributeName}
+//                   onChange={(e) => handleAttributeChange(index, e)}
+//                   label="Attribute Name"
+//                 >
+//                   {allowedAttributes.map((allowedAttr) => (
+//                     <MenuItem key={allowedAttr.id} value={allowedAttr.name}>
+//                       {allowedAttr.name}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//               </FormControl>
+//             </Grid>
+//             <Grid item xs={5}>
+//               <TextField
+//                 name="value"
+//                 label="Value"
+//                 type="number"
+//                 value={attr.value}
+//                 onChange={(e) => handleAttributeChange(index, e)}
+//                 fullWidth
+//               />
+//             </Grid>
+//             <Grid item xs={2}>
+//               <IconButton onClick={() => removeAttribute(index)} color="error">
+//                 <DeleteIcon />
+//               </IconButton>
+//             </Grid>
+//             {errors[`attribute-${index}`] && (
+//               <Grid item xs={12}>
+//                 <Typography color="error">
+//                   {errors[`attribute-${index}`]}
+//                 </Typography>
+//               </Grid>
+//             )}
+//           </Grid>
+//         ))}
+//         {propertyData.propertyType && (
+//           <Button onClick={addAttribute} sx={{ mb: 2 }}>
+//             + Add Attribute
+//           </Button>
+//         )}
+
+//         <Typography variant="h6" sx={{ mt: 3 }}>
+//           Property Photos
+//         </Typography>
+//         <input
+//           type="file"
+//           name="property_photos"
+//           multiple
+//           accept="image/*"
+//           onChange={handleFileChange}
+//         />
+
+//         <Grid container spacing={2} sx={{ mt: 2 }}>
+//           {imagePreviews.map((src, idx) => (
+//             <Grid item xs={4} key={idx}>
+//               <img
+//                 src={src}
+//                 alt={`preview-${idx}`}
+//                 style={{
+//                   width: "100%",
+//                   height: "150px",
+//                   objectFit: "cover",
+//                   borderRadius: "8px",
+//                 }}
+//               />
+//             </Grid>
+//           ))}
+//         </Grid>
+
+//         <Box mt={"2%"}>
+//           <TextField
+//             name="owner"
+//             label="Owner"
+//             value={propertyData.owner}
+//             onChange={handleInputChange}
+//             fullWidth
+//             sx={{ mb: 2 }}
+//             error={!!errors.owner}
+//             helperText={errors.owner}
+//           />
+//         </Box>
+
+//         {error && (
+//           <Typography color="error" sx={{ mt: 2 }}>
+//             {error.message || "Something went wrong"}
+//           </Typography>
+//         )}
+
+//         <Button
+//           type="submit"
+//           variant="contained"
+//           sx={{ mt: 3 }}
+//           disabled={loading}
+//           onClick={handleSubmit}
+//         >
+//           {loading ? <CircularProgress size={20} /> : "Create Property"}
+//         </Button>
+//       </form>
+//     </Box>
+//   );
+// }
+
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createProperty } from "../../redux/property/propertySlice";
-import { getUserByNationalNumber } from "../../redux/auth/authSlice"; // <-- make sure path is correct
+import { fetchPropertyTypes } from "../../redux/property type/propertyTypeSlice";
+import { fetchLicenseTypes } from "../../redux/license type/licenseTypeSlice";
 import {
   TextField,
   Button,
@@ -9,33 +1552,42 @@ import {
   Grid,
   Typography,
   CircularProgress,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+  IconButton,
+  Alert,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
-import { SearchIcon } from "lucide-react";
-import { StyledInputBase } from "../../components/Navbar";
+import Swal from "sweetalert2";
+
+// Define the PropertyTypeOperation enum
+const PropertyTypeOperation = {
+  Selling: "selling",
+  Renting: "renting",
+};
 
 export default function CreatePropertyForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { loading, error } = useSelector((state) => state.property);
-  const {
-    userByNationalNumber,
-    userByNationalNumberLoading: getUserLoading,
-    userByNationalNumberError: getUserError,
-  } = useSelector((state) => state.auth);
-
-  const [searchNationalNumber, setSearchNationalNumber] = useState("");
+  const { propertyTypes } = useSelector((state) => state.propertyType);
+  const { licenseTypes } = useSelector((state) => state.licenseType);
 
   const [propertyData, setPropertyData] = useState({
     propertyNumber: "",
     propertyType: "",
+    typeOperation: PropertyTypeOperation.Selling, // Added new state field with a default value
     licenseNumber: "",
     licenseType: "",
     space: "",
     price: "",
     description: "",
-    attributes: [{ attributeName: "", value: "" }],
+    attributes: [],
     location: {
       governorate: "",
       province: "",
@@ -43,23 +1595,69 @@ export default function CreatePropertyForm() {
       street: "",
     },
     property_photos: [],
-    ownerId: "",
+    owner: "",
   });
 
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [errors, setErrors] = useState({});
+
+  const selectedPropertyType = propertyTypes.find(
+    (type) => type.id === propertyData.propertyType
+  );
+  const allowedAttributes = selectedPropertyType
+    ? selectedPropertyType.attributes.map((pta) => pta.attribute)
+    : [];
+
   useEffect(() => {
-    if (userByNationalNumber && userByNationalNumber.id) {
-      setPropertyData((prev) => ({
-        ...prev,
-        ownerId: userByNationalNumber.id,
-      }));
-    }
-  }, [userByNationalNumber]);
+    dispatch(fetchPropertyTypes());
+    dispatch(fetchLicenseTypes());
+  }, [dispatch]);
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!propertyData.propertyNumber) newErrors.propertyNumber = "Required";
+    if (!propertyData.propertyType) newErrors.propertyType = "Required";
+    if (!propertyData.typeOperation) newErrors.typeOperation = "Required"; // Added validation for new field
+    if (!propertyData.licenseNumber) newErrors.licenseNumber = "Required";
+    if (!propertyData.licenseType) newErrors.licenseType = "Required";
+    if (!propertyData.space || Number(propertyData.space) <= 0)
+      newErrors.space = "Must be a positive number";
+    if (!propertyData.price || Number(propertyData.price) <= 0)
+      newErrors.price = "Must be a positive number";
+    if (!propertyData.description) newErrors.description = "Required";
+    if (!propertyData.owner) newErrors.owner = "Required";
+
+    Object.entries(propertyData.location).forEach(([key, value]) => {
+      if (!value) newErrors[key] = "Required";
+    });
+
+    propertyData.attributes.forEach((attr, index) => {
+      if (!attr.attributeName || !attr.value) {
+        newErrors[`attribute-${index}`] = "Attribute name and value required";
+      } else if (isNaN(attr.value) || Number(attr.value) < 0) {
+        newErrors[`attribute-${index}`] = "Value must be a number ≥ 0";
+      }
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setPropertyData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handlePropertyTypeChange = (e) => {
+    const { value } = e.target;
+    setPropertyData((prev) => ({
+      ...prev,
+      propertyType: value,
+      attributes: [],
     }));
   };
 
@@ -85,10 +1683,14 @@ export default function CreatePropertyForm() {
   };
 
   const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
     setPropertyData((prev) => ({
       ...prev,
-      property_photos: e.target.files,
+      property_photos: files,
     }));
+
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews(previews);
   };
 
   const addAttribute = () => {
@@ -98,20 +1700,24 @@ export default function CreatePropertyForm() {
     }));
   };
 
-  const handleSearchChange = (e) => {
-    setSearchNationalNumber(e.target.value);
-  };
-
-  const handleSearchSubmit = () => {
-    if (searchNationalNumber) {
-      dispatch(getUserByNationalNumber(searchNationalNumber));
-    }
+  const removeAttribute = (index) => {
+    setPropertyData((prev) => ({
+      ...prev,
+      attributes: prev.attributes.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     dispatch(createProperty(propertyData)).then((res) => {
       if (res.meta.requestStatus === "fulfilled") {
+        Swal.fire(
+          "Property Created",
+          res.payload?.message || "Success",
+          "success"
+        );
         navigate("/office/my-office");
       }
     });
@@ -130,7 +1736,6 @@ export default function CreatePropertyForm() {
       <Typography variant="h5" gutterBottom>
         Create Property
       </Typography>
-
       <form onSubmit={handleSubmit}>
         <TextField
           name="propertyNumber"
@@ -139,17 +1744,63 @@ export default function CreatePropertyForm() {
           onChange={handleInputChange}
           fullWidth
           sx={{ mb: 2 }}
-          required
+          error={!!errors.propertyNumber}
+          helperText={errors.propertyNumber}
         />
-        <TextField
-          name="propertyType"
-          label="Property Type"
-          value={propertyData.propertyType}
-          onChange={handleInputChange}
-          fullWidth
-          sx={{ mb: 2 }}
-          required
-        />
+
+        {/* Property Type and Operation on the same line */}
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid item xs={6}>
+            <FormControl fullWidth error={!!errors.propertyType}>
+              <InputLabel>Property Type</InputLabel>
+              <Select
+                name="propertyType"
+                value={propertyData.propertyType}
+                onChange={handlePropertyTypeChange}
+                label="Property Type"
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 200,
+                    },
+                  },
+                }}
+              >
+                {propertyTypes.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                    {type.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              {!!errors.propertyType && (
+                <FormHelperText>{errors.propertyType}</FormHelperText>
+              )}
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={6}>
+            <FormControl fullWidth error={!!errors.typeOperation}>
+              <InputLabel>Type Operation</InputLabel>
+              <Select
+                name="typeOperation"
+                value={propertyData.typeOperation}
+                onChange={handleInputChange}
+                label="Type Operation"
+              >
+                <MenuItem value={PropertyTypeOperation.Selling}>
+                  {PropertyTypeOperation.Selling}
+                </MenuItem>
+                <MenuItem value={PropertyTypeOperation.Renting}>
+                  {PropertyTypeOperation.Renting}
+                </MenuItem>
+              </Select>
+              {!!errors.typeOperation && (
+                <FormHelperText>{errors.typeOperation}</FormHelperText>
+              )}
+            </FormControl>
+          </Grid>
+        </Grid>
+
         <TextField
           name="licenseNumber"
           label="License Number"
@@ -157,17 +1808,36 @@ export default function CreatePropertyForm() {
           onChange={handleInputChange}
           fullWidth
           sx={{ mb: 2 }}
-          required
+          error={!!errors.licenseNumber}
+          helperText={errors.licenseNumber}
         />
-        <TextField
-          name="licenseType"
-          label="License Type"
-          value={propertyData.licenseType}
-          onChange={handleInputChange}
-          fullWidth
-          sx={{ mb: 2 }}
-          required
-        />
+
+        <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.licenseType}>
+          <InputLabel>License Type</InputLabel>
+          <Select
+            name="licenseType"
+            value={propertyData.licenseType}
+            onChange={handleInputChange}
+            label="License Type"
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  maxHeight: 200,
+                },
+              },
+            }}
+          >
+            {licenseTypes.map((type) => (
+              <MenuItem key={type.id} value={type.id}>
+                {type.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {!!errors.licenseType && (
+            <FormHelperText>{errors.licenseType}</FormHelperText>
+          )}
+        </FormControl>
+
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <TextField
@@ -177,7 +1847,8 @@ export default function CreatePropertyForm() {
               value={propertyData.space}
               onChange={handleInputChange}
               fullWidth
-              required
+              error={!!errors.space}
+              helperText={errors.space}
             />
           </Grid>
           <Grid item xs={6}>
@@ -188,7 +1859,8 @@ export default function CreatePropertyForm() {
               value={propertyData.price}
               onChange={handleInputChange}
               fullWidth
-              required
+              error={!!errors.price}
+              helperText={errors.price}
             />
           </Grid>
         </Grid>
@@ -199,7 +1871,8 @@ export default function CreatePropertyForm() {
           onChange={handleInputChange}
           fullWidth
           sx={{ mt: 2 }}
-          required
+          error={!!errors.description}
+          helperText={errors.description}
         />
 
         <Typography variant="h6" sx={{ mt: 3 }}>
@@ -214,7 +1887,8 @@ export default function CreatePropertyForm() {
                 value={propertyData.location[field]}
                 onChange={handleLocationChange}
                 fullWidth
-                required
+                error={!!errors[field]}
+                helperText={errors[field]}
               />
             </Grid>
           ))}
@@ -225,32 +1899,52 @@ export default function CreatePropertyForm() {
         </Typography>
         {propertyData.attributes.map((attr, index) => (
           <Grid container spacing={2} key={index} sx={{ mb: 1 }}>
-            <Grid item xs={6}>
-              <TextField
-                name="attributeName"
-                label="Attribute Name"
-                value={attr.attributeName}
-                onChange={(e) => handleAttributeChange(index, e)}
-                fullWidth
-                required
-              />
+            <Grid item xs={5}>
+              <FormControl fullWidth>
+                <InputLabel>Attribute Name</InputLabel>
+                <Select
+                  name="attributeName"
+                  value={attr.attributeName}
+                  onChange={(e) => handleAttributeChange(index, e)}
+                  label="Attribute Name"
+                >
+                  {allowedAttributes.map((allowedAttr) => (
+                    <MenuItem key={allowedAttr.id} value={allowedAttr.name}>
+                      {allowedAttr.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <TextField
                 name="value"
                 label="Value"
+                type="number"
                 value={attr.value}
                 onChange={(e) => handleAttributeChange(index, e)}
-                type="number"
                 fullWidth
-                required
               />
             </Grid>
+            <Grid item xs={2}>
+              <IconButton onClick={() => removeAttribute(index)} color="error">
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+            {errors[`attribute-${index}`] && (
+              <Grid item xs={12}>
+                <Typography color="error">
+                  {errors[`attribute-${index}`]}
+                </Typography>
+              </Grid>
+            )}
           </Grid>
         ))}
-        <Button onClick={addAttribute} sx={{ mb: 2 }}>
-          + Add Attribute
-        </Button>
+        {propertyData.propertyType && (
+          <Button onClick={addAttribute} sx={{ mb: 2 }}>
+            + Add Attribute
+          </Button>
+        )}
 
         <Typography variant="h6" sx={{ mt: 3 }}>
           Property Photos
@@ -259,74 +1953,44 @@ export default function CreatePropertyForm() {
           type="file"
           name="property_photos"
           multiple
+          accept="image/*"
           onChange={handleFileChange}
         />
 
-        {/* Search Field */}
-        <Typography variant="h6" sx={{ mt: 3 }}>
-          Search Owner by National Number
-        </Typography>
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          {imagePreviews.map((src, idx) => (
+            <Grid item xs={4} key={idx}>
+              <img
+                src={src}
+                alt={`preview-${idx}`}
+                style={{
+                  width: "100%",
+                  height: "150px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                }}
+              />
+            </Grid>
+          ))}
+        </Grid>
 
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            border: "2px solid #1976d2",
-            borderRadius: "8px",
-            padding: "4px 8px",
-            mb: 2,
-            width: "300px",
-            transition: "width 0.3s ease",
-            "&:focus-within": {
-              width: "100%",
-              borderColor: "#1565c0",
-            },
-            backgroundColor: "#f9f9f9",
-          }}
-        >
-          <StyledInputBase
-            placeholder="Enter National Number…"
-            value={searchNationalNumber}
-            onChange={handleSearchChange}
-            sx={{
-              flex: 1,
-              padding: "6px",
-            }}
+        <Box mt={"2%"}>
+          <TextField
+            name="owner"
+            label="Owner"
+            value={propertyData.owner}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mb: 2 }}
+            error={!!errors.owner}
+            helperText={errors.owner}
           />
-          <Button
-            onClick={handleSearchSubmit}
-            disabled={getUserLoading}
-            sx={{
-              minWidth: "40px",
-              padding: "6px 12px",
-              ml: 1,
-              backgroundColor: "#1976d2",
-              color: "#fff",
-              ":hover": {
-                backgroundColor: "#1565c0",
-              },
-            }}
-          >
-            <SearchIcon size={18} />
-          </Button>
         </Box>
 
-        {getUserLoading && <Typography>Searching...</Typography>}
-        {userByNationalNumber && (
-          <Typography sx={{ color: "green", mb: 1 }}>
-            Owner found: <strong>{userByNationalNumber.full_name}</strong>
-          </Typography>
-        )}
-        {getUserError && (
-          <Typography color="error" sx={{ mb: 1 }}>
-            {getUserError}
-          </Typography>
-        )}
-
         {error && (
-          <Typography color="error" sx={{ mt: 2 }}>
-            {error.message || "Something went wrong"}
-          </Typography>
+          <Alert severity="error" sx={{ mt: 3 }} color="error">
+            {"Something went wrong, Please try again later."}
+          </Alert>
         )}
 
         <Button
@@ -334,6 +1998,7 @@ export default function CreatePropertyForm() {
           variant="contained"
           sx={{ mt: 3 }}
           disabled={loading}
+          onClick={handleSubmit}
         >
           {loading ? <CircularProgress size={20} /> : "Create Property"}
         </Button>

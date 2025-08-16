@@ -1089,6 +1089,7 @@ import {
   CircularProgress,
   Chip,
 } from "@mui/material";
+import { AlertCircle } from "lucide-react";
 
 // Helper functions for formatting and validation are kept local
 // as they are part of the component's internal logic.
@@ -1142,9 +1143,10 @@ const PaymentForm = ({
       !month || !year || expiry.length !== 5 ||
       !cardType
     ) {
-      <Alert>
+
+      <AlertCircle>
         Please fill in all card details correctly.
-      </Alert>
+      </AlertCircle>
       return;
     }
 

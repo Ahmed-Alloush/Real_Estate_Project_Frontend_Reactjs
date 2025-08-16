@@ -65,9 +65,6 @@
 
 // export default AdminAndSuperNavbar;
 
-
-
-
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
@@ -131,6 +128,29 @@ function AdminAndSuperNavbar() {
           <NavbarButton component={Link} to="/superadmin/manage-properties">
             Properties
           </NavbarButton>
+
+          <NavbarButton
+            component={Link}
+            to="/superadmin/manage-properties-requestes"
+          >
+            Properties Requestes
+          </NavbarButton>
+
+
+          <NavbarButton
+            component={Link}
+            to="/superadmin/manage-property-type"
+          >
+            Property Type
+          </NavbarButton>
+
+          <NavbarButton
+            component={Link}
+            to="/superadmin/manage-license-type"
+          >
+            License Type
+          </NavbarButton>
+
           <NavbarButton component={Link} to="/superadmin/reports">
             Reports
           </NavbarButton>
@@ -142,4 +162,3 @@ function AdminAndSuperNavbar() {
 }
 
 export default AdminAndSuperNavbar;
-

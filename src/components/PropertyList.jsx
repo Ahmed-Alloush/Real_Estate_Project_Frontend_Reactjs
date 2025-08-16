@@ -157,8 +157,6 @@
 
 // export default PropertyList;
 
-
-
 // src/components/PropertyList.jsx (or wherever your PropertyList is)
 import React from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
@@ -176,15 +174,18 @@ import {
   Chip,
   CircularProgress,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const PropertyList = ({
   properties = [],
   onDelete, // Keep onDelete for cases where you might still need it
+  onUpdate,
+  onSendRequest,
   canDelete = false,
   isDeleteLoading,
+  loading = false,
 }) => {
   const navigate = useNavigate(); // Initialize useNavigate hook
-
   const handleCardClick = (propertyId) => {
     // Navigate to the property details page using the property's ID
     // Ensure this route matches your router setup (e.g., /properties/:propertyId)
@@ -222,6 +223,12 @@ const PropertyList = ({
         </Box>
       )}
 
+      {loading && (
+        <Box textAlign="center" m={"50%"} bgcolor={"black"}>
+          <CircularProgress />
+        </Box>
+      )}
+
       {/* Property Cards Grid */}
       <Grid container spacing={3}>
         {properties.map((property) => {
@@ -255,11 +262,12 @@ const PropertyList = ({
                     sx={{ objectFit: "cover" }}
                   />
                 )}
-                <CardContent sx={{ flexGrow: 1 }}> {/* Allow content to grow */}
+                <CardContent sx={{ flexGrow: 1 }}>
+                  {" "}
+                  {/* Allow content to grow */}
                   <Typography variant="h6" gutterBottom>
                     {property.propertyNumber}
                   </Typography>
-
                   <Stack
                     direction="row"
                     spacing={1}
@@ -272,13 +280,12 @@ const PropertyList = ({
                       Price: <strong>{property.price} $</strong>
                     </Typography>
                   </Stack>
-
-                  <Typography variant="body2" mt={1} noWrap> {/* Added noWrap for long descriptions */}
+                  <Typography variant="body2" mt={1} noWrap>
+                    {" "}
+                    {/* Added noWrap for long descriptions */}
                     {property.description}
                   </Typography>
-
                   <Divider sx={{ my: 1 }} />
-
                   <Box>
                     <Typography variant="caption" color="text.secondary">
                       Location:
@@ -287,9 +294,7 @@ const PropertyList = ({
                       {location?.city}, {location?.governorate}
                     </Typography>
                   </Box>
-
                   <Divider sx={{ my: 1 }} />
-
                   <Box>
                     <Typography variant="caption" color="text.secondary">
                       Attributes:
@@ -313,20 +318,47 @@ const PropertyList = ({
                   </Box>
                 </CardContent>
 
-                <CardActions sx={{ mt: "auto" }}> {/* Push actions to bottom */}
+                <CardActions sx={{ mt: "auto" }}>
+                  {" "}
+                  {/* Push actions to bottom */}
                   {/* The delete button should prevent event bubbling to the card click */}
                   {canDelete ? (
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      fullWidth
-                      onClick={(e) => {
-                        e.stopPropagation(); // Stop the card's onClick from firing
-                        onDelete(property.id);
-                      }}
-                    >
-                      Delete
-                    </Button>
+                    <>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        fullWidth
+                        onClick={(e) => {
+                          e.stopPropagation(); // Stop the card's onClick from firing
+                          navigate(`/delete-property/${property?.id}`)
+                        }}
+                      >
+                        Delete
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        fullWidth
+                        onClick={(e) => {
+                          e.stopPropagation(); // Stop the card's onClick from firing
+                          navigate(`/update-property/${property?.id}`)
+                        }}
+                      >
+                        Update
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        fullWidth
+                        onClick={(e) => {
+                          e.stopPropagation(); // Stop the card's onClick from firing
+                          // Pass the entire property object to the handler
+                          onSendRequest(property);
+                        }}
+                      >
+                        Send Request
+                      </Button>
+                    </>
                   ) : (
                     // This section is now less relevant as the whole card is clickable
                     <Box width="100%" textAlign="center">

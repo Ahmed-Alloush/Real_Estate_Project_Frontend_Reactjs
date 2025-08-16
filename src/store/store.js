@@ -11,6 +11,11 @@ import reservationReducer from "../redux/reservation/reservationSlice";
 import subscriptionReducer from "../redux/subscription/subscriptionSlice";
 import officeSubscriptionReducer from "../redux/office subscription/officeSubscriptionSlice";
 import notificationReducer from "../redux/notification/notificationSlice";
+import propertyRequestReducer from "../redux/property request/propertyRequestSlice";
+import propertyTypeReducer from "../redux/property type/propertyTypeSlice";
+import licenseTypeReducer from "../redux/license type/licenseTypeSlice";
+import officeCommentReducer from "../redux/office comment/officeCommentSlice";
+
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +30,10 @@ export const store = configureStore({
     reservation: reservationReducer, // Add this line
     subscription: subscriptionReducer, // Add this line
     officeSubscription: officeSubscriptionReducer, // Add this line
-    notification:notificationReducer
+    notification:notificationReducer,
+    propertyRequest: propertyRequestReducer,
+    propertyType:propertyTypeReducer,
+    licenseType:licenseTypeReducer,
+    officeComment:officeCommentReducer,
   },
 });
