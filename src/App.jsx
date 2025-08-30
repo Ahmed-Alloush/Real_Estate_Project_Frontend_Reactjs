@@ -589,6 +589,7 @@ import StatisticsDashboard from "./pages/adminAndSuperAdmin/StatisticsDashboardP
 import OfficeComplaintPage from "./pages/OfficeComplaintPage";
 import PropertyComplaintPage from "./pages/PropertyComplaintPage";
 import UserPropertiesPage from "./pages/UserPropertiesPage";
+import ArchivePage from "./pages/adminAndSuperAdmin/ArchivePage";
 
 export default function App() {
   const { user } = useSelector((state) => state.auth);
@@ -907,7 +908,7 @@ export default function App() {
                     "admin",
                   ]}
                 >
-                <UserPropertiesPage />
+                  <UserPropertiesPage />
                 </ProtectedRoute>
               }
             />
@@ -1031,6 +1032,15 @@ export default function App() {
               element={
                 <ProtectedRoute allowedRoles={["superAdmin", "admin"]}>
                   <ManageOfficeComplaintPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/superadmin/manage-archive"
+              element={
+                <ProtectedRoute allowedRoles={["superAdmin", "admin"]}>
+                  <ArchivePage />
                 </ProtectedRoute>
               }
             />

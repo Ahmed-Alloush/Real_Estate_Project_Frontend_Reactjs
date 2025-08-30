@@ -244,15 +244,24 @@ function AdminAndSuperNavbar() {
           {/* <NavbarButton component={Link} to="/superadmin/reports">
             {t("superAdminNav.reports")}
           </NavbarButton> */}
-          <NavbarButton component={Link} to="/superadmin/manage-property-complaint">
+          <NavbarButton
+            component={Link}
+            to="/superadmin/manage-property-complaint"
+          >
             {t("superAdminNav.propertyComplaint")}
           </NavbarButton>
 
-          <NavbarButton component={Link} to="/superadmin/manage-office-complaint">
+          <NavbarButton
+            component={Link}
+            to="/superadmin/manage-office-complaint"
+          >
             {t("superAdminNav.officeComplaint")}
           </NavbarButton>
-          
-          
+
+          <NavbarButton component={Link} to="/superadmin/manage-archive">
+            {t("superAdminNav.archive")}
+          </NavbarButton>
+
           <NavbarButton onClick={handleLogout}>
             {t("superAdminNav.logout")}
           </NavbarButton>

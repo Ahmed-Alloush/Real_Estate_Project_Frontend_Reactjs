@@ -19,6 +19,7 @@ import attributeReducer from "../redux/attribute/attributeSlice";
 import statisticsReducer from "../redux/superAdmin/statisticsSlice";
 import officeComplaintReducer from "../redux/superAdmin/manageOfficeComplaintSlice";
 import propertyComplaintReducer from "../redux/superAdmin/managePropertyComplaintSlice";
+import archiveReducer from "../redux/archive/archiveSlice";
 import themReducer from "../redux/them/themSlice";
 
 
@@ -44,6 +45,7 @@ export const store = configureStore({
     statistics:statisticsReducer,
     officeComplaint:officeComplaintReducer,
     propertyComplaint:propertyComplaintReducer,
+    archive:archiveReducer,
     them:themReducer,
   },
 });

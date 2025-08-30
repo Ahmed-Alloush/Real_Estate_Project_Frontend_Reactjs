@@ -262,6 +262,7 @@ export const translation = {
     attribute: "Attribute",
     propertyComplaint: "Property Complaint",
     officeComplaint: "Office Complaint",
+    archive: "Archive",
   },
   completeRegister: {
     title: "Complete Registration",

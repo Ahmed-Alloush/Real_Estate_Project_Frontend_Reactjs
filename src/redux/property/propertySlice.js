@@ -562,10 +562,14 @@ const propertySlice = createSlice({
       .addCase(createProperty.fulfilled, (state, action) => {
         state.loading = false;
         state.message = action.payload?.message;
+        console.log("this is the action.payload?.message : ",action.payload);
+        
       })
       .addCase(createProperty.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        console.log("this is the action.payload error : ",action.payload);
+
       })
 
       // Update property

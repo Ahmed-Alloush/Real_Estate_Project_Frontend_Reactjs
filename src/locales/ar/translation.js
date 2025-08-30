@@ -253,6 +253,8 @@ export const translation = {
     attribute: "الخصائص",
     propertyComplaint: "شكاوي العقارات",
     officeComplaint: "شكاوي المكاتب",
+      archive:"أرشيف",
+
   },
   completeRegister: {
     title: "إكمال التسجيل",
