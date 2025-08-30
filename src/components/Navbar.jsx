@@ -480,9 +480,9 @@ export default function Navbar() {
       <NavLink component={Link} to="/office-complaint">
         {t("navOfficeComplaint")}
       </NavLink>
-      <NavLink component={Link} to="/user-property">
+      {/* <NavLink component={Link} to="/user-property">
         {t("navUserProperty")}
-      </NavLink>
+      </NavLink> */}
     </>
   );
 
