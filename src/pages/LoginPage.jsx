@@ -1,6 +1,7 @@
+
 // import { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
-// import { login } from "../redux/auth/authSlice";
+// import { login, resetUserState } from "../redux/auth/authSlice";
 // import { Link, useNavigate } from "react-router-dom";
 // import {
 //   Box,
@@ -11,13 +12,14 @@
 //   CircularProgress,
 //   Alert,
 //   Paper,
+//   Fade,
 // } from "@mui/material";
 
 // export default function LoginPage() {
 //   const dispatch = useDispatch();
 //   const navigate = useNavigate();
 
-//   const { loading, error, accessToken, success, role } = useSelector(
+//   const { loading, error, success, role, user } = useSelector(
 //     (state) => state.auth
 //   );
 
@@ -26,9 +28,15 @@
 //     password: "",
 //   });
 
+//   useEffect(()=>{
+//     dispatch(resetUserState())
+//   },[])
+
 //   useEffect(() => {
-//     if (success ){
+//     if (success && (role === "user" || role === "officeManager")) {
 //       navigate("/");
+//     } else if (success && (role === "admin" || role === "superAdmin")) {
+//       navigate("/superAdmin");
 //     }
 //   }, [success, role, navigate]);
 
@@ -41,6 +49,10 @@
 
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
+
+//     // Basic form validation
+//     if (!formData.email || !formData.password) return;
+
 //     dispatch(login(formData));
 //   };
 
@@ -51,19 +63,21 @@
 //       alignItems="center"
 //       sx={{
 //         minHeight: "100vh",
-//         background: "linear-gradient(to bottom, #e3f2fd, #f0f4ff)",
+//         background: "linear-gradient(to right, #e3f2fd, #f0f4ff)",
+//         px: 2,
 //       }}
 //     >
 //       <Paper
-//         elevation={6}
+//         elevation={8}
 //         sx={{
 //           p: 4,
-//           maxWidth: 420,
+//           maxWidth: 450,
 //           width: "100%",
-//           borderRadius: 3,
+//           borderRadius: 4,
+//           boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
 //         }}
 //       >
-//         <Typography variant="h4" mb={2} textAlign="center" color="primary">
+//         <Typography variant="h4" mb={1} textAlign="center" color="primary">
 //           Welcome Back
 //         </Typography>
 //         <Typography
@@ -72,9 +86,20 @@
 //           mb={3}
 //           color="text.secondary"
 //         >
-//           Please login to continue
+//           Please login to continue to your account
 //         </Typography>
-//         <form onSubmit={handleSubmit}>
+
+//         {error && (
+//           <Fade in>
+//             <Alert severity="error" sx={{ mb: 2 }}>
+//               {typeof error === "string"
+//                 ? error
+//                 : error.message || "Something went wrong. Please try again."}
+//             </Alert>
+//           </Fade>
+//         )}
+
+//         <form onSubmit={handleSubmit} noValidate>
 //           <Grid container spacing={2}>
 //             <Grid item xs={12}>
 //               <TextField
@@ -100,11 +125,6 @@
 //                 onChange={handleChange}
 //               />
 //             </Grid>
-//             {/* {error && (
-//               <Grid item xs={12}>
-//                 <Alert severity="error">{error}</Alert>
-//               </Grid>
-//             )} */}
 //             <Grid item xs={12}>
 //               <Button
 //                 type="submit"
@@ -117,6 +137,7 @@
 //                   py: 1.5,
 //                   fontWeight: "bold",
 //                   letterSpacing: 0.5,
+//                   mt: 1,
 //                   transition: "all 0.3s ease",
 //                   "&:hover": {
 //                     transform: "translateY(-2px)",
@@ -132,6 +153,7 @@
 //             </Grid>
 //           </Grid>
 //         </form>
+
 //         <Typography
 //           mt={3}
 //           variant="body2"
@@ -155,6 +177,9 @@
 //   );
 // }
 
+
+
+
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login, resetUserState } from "../redux/auth/authSlice";
@@ -170,10 +195,12 @@ import {
   Paper,
   Fade,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const { loading, error, success, role, user } = useSelector(
     (state) => state.auth
@@ -184,9 +211,9 @@ export default function LoginPage() {
     password: "",
   });
 
-  useEffect(()=>{
-    dispatch(resetUserState())
-  },[])
+  useEffect(() => {
+    dispatch(resetUserState());
+  }, []);
 
   useEffect(() => {
     if (success && (role === "user" || role === "officeManager")) {
@@ -205,12 +232,11 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Basic form validation
     if (!formData.email || !formData.password) return;
-
     dispatch(login(formData));
   };
+
+  const isRTL = i18n.language === "ar";
 
   return (
     <Grid
@@ -221,6 +247,7 @@ export default function LoginPage() {
         minHeight: "100vh",
         background: "linear-gradient(to right, #e3f2fd, #f0f4ff)",
         px: 2,
+        direction: isRTL ? 'rtl' : 'ltr',
       }}
     >
       <Paper
@@ -234,7 +261,8 @@ export default function LoginPage() {
         }}
       >
         <Typography variant="h4" mb={1} textAlign="center" color="primary">
-          Welcome Back
+          {/* Using dot notation for nested keys */}
+          {t("login.welcomeBack")}
         </Typography>
         <Typography
           variant="body2"
@@ -242,7 +270,7 @@ export default function LoginPage() {
           mb={3}
           color="text.secondary"
         >
-          Please login to continue to your account
+          {t("login.prompt")}
         </Typography>
 
         {error && (
@@ -250,7 +278,7 @@ export default function LoginPage() {
             <Alert severity="error" sx={{ mb: 2 }}>
               {typeof error === "string"
                 ? error
-                : error.message || "Something went wrong. Please try again."}
+                : error.message || t("login.genericError")}
             </Alert>
           </Fade>
         )}
@@ -260,7 +288,7 @@ export default function LoginPage() {
             <Grid item xs={12}>
               <TextField
                 name="email"
-                label="Email"
+                label={t("login.email")}
                 type="email"
                 fullWidth
                 required
@@ -272,7 +300,7 @@ export default function LoginPage() {
             <Grid item xs={12}>
               <TextField
                 name="password"
-                label="Password"
+                label={t("login.password")}
                 type="password"
                 fullWidth
                 required
@@ -303,7 +331,7 @@ export default function LoginPage() {
                 {loading ? (
                   <CircularProgress size={24} color="inherit" />
                 ) : (
-                  "Login"
+                  t("login.button")
                 )}
               </Button>
             </Grid>
@@ -314,19 +342,24 @@ export default function LoginPage() {
           mt={3}
           variant="body2"
           textAlign="center"
-          component={Link}
-          to="/start-registering-user"
           sx={{
-            color: "primary.main",
-            textDecoration: "none",
-            fontWeight: "bold",
             display: "block",
             "&:hover": {
               textDecoration: "underline",
             },
           }}
         >
-          Don&apos;t have an account? Register
+          {t("login.registerPrompt")}{" "}
+          <Link
+            to="/start-registering-user"
+            style={{
+              color: "inherit",
+              textDecoration: "none",
+              fontWeight: "bold",
+            }}
+          >
+            {t("login.registerLink")}
+          </Link>
         </Typography>
       </Paper>
     </Grid>

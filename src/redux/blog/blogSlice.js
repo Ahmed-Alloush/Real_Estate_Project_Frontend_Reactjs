@@ -1,4 +1,3 @@
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
@@ -94,8 +93,10 @@ export const updateBlog = createAsyncThunk(
 // ------------------- DELETE
 export const deleteBlog = createAsyncThunk(
   "blog/deleteBlog",
-  async (id, thunkAPI) => {
+  async ({ id }, thunkAPI) => {
     try {
+      console.log("this is the blog id : ", id);
+
       const token = localStorage.getItem("accessToken");
       await api.delete(`/blog/${id}`, {
         headers: {
@@ -113,11 +114,18 @@ const blogSlice = createSlice({
   name: "blog",
   initialState: {
     loading: false,
+    deletingId: null, //
     error: null,
     success: false,
     blogs: [],
     officeBlogs: [],
     currentBlog: null,
+    blogsPagination: {
+      page: 1,
+      limit: 6,
+      total: 0,
+      pageCount: 1,
+    },
   },
   reducers: {
     resetBlogState: (state) => {
@@ -135,9 +143,10 @@ const blogSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(createBlog.fulfilled, (state) => {
+      .addCase(createBlog.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
+        state.officeBlogs.push(action.payload);
       })
       .addCase(createBlog.rejected, (state, action) => {
         state.loading = false;
@@ -150,7 +159,11 @@ const blogSlice = createSlice({
       })
       .addCase(getAllBlogs.fulfilled, (state, action) => {
         state.loading = false;
-        state.blogs = action.payload;
+        state.blogs = action.payload.data;
+        state.blogsPagination.limit = action.payload.limit;
+        state.blogsPagination.page = action.payload.page;
+        state.blogsPagination.pageCount = action.payload.pageCount;
+        state.blogsPagination.total = action.payload.total;
       })
       .addCase(getAllBlogs.rejected, (state, action) => {
         state.loading = false;
@@ -188,9 +201,16 @@ const blogSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateBlog.fulfilled, (state) => {
+      .addCase(updateBlog.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
+        state.officeBlogs = state.officeBlogs.map((blog) => {
+          if (blog.id === action.payload.id) {
+            return action.payload;
+          } else {
+            return blog;
+          }
+        });
       })
       .addCase(updateBlog.rejected, (state, action) => {
         state.loading = false;
@@ -198,19 +218,22 @@ const blogSlice = createSlice({
       })
 
       // deleteBlog
-      .addCase(deleteBlog.pending, (state) => {
+      .addCase(deleteBlog.pending, (state, action) => {
         state.loading = true;
+        state.deletingId = action.meta.arg.id;
+        state.error = null;
       })
       .addCase(deleteBlog.fulfilled, (state, action) => {
         state.loading = false;
-        // remove deleted blog from lists
+        state.deletingId = null;
         state.blogs = state.blogs.filter((b) => b.id !== action.payload);
         state.officeBlogs = state.officeBlogs.filter(
           (b) => b.id !== action.payload
         );
       })
       .addCase(deleteBlog.rejected, (state, action) => {
-        state.loading = false;
+        // Reset deletingId on failure
+        state.deletingId = null;
         state.error = action.payload;
       });
   },

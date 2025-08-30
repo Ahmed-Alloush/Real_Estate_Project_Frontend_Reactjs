@@ -72,30 +72,6 @@
 
 // export default propertyTypeSlice.reducer;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
@@ -119,7 +95,12 @@ export const createPropertyType = createAsyncThunk(
   "propertyType/createPropertyType",
   async (newPropertyType, { rejectWithValue }) => {
     try {
-      const response = await api.post("/property-type", newPropertyType);
+      const token = localStorage.getItem("accessToken");
+      const response = await api.post("/property-type", newPropertyType, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -132,7 +113,13 @@ export const updatePropertyType = createAsyncThunk(
   "propertyType/updatePropertyType",
   async ({ id, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/property-type/${id}`, updatedData);
+      const token = localStorage.getItem("accessToken");
+
+      const response = await api.put(`/property-type/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -145,7 +132,13 @@ export const deletePropertyType = createAsyncThunk(
   "propertyType/deletePropertyType",
   async (id, { rejectWithValue }) => {
     try {
-      await api.delete(`/property-type/${id}`);
+      const token = localStorage.getItem("accessToken");
+
+      await api.delete(`/property-type/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -173,7 +166,12 @@ export const createAttribute = createAsyncThunk(
   "attribute/createAttribute",
   async (newAttribute, { rejectWithValue }) => {
     try {
-      const response = await api.post("/attribute", newAttribute);
+      const token = localStorage.getItem("accessToken");
+      const response = await api.post("/attribute", newAttribute, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -186,7 +184,12 @@ export const updateAttribute = createAsyncThunk(
   "attribute/updateAttribute",
   async ({ id, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/attribute/${id}`, updatedData);
+      const token = localStorage.getItem("accessToken");
+      const response = await api.put(`/attribute/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -199,7 +202,12 @@ export const deleteAttribute = createAsyncThunk(
   "attribute/deleteAttribute",
   async (id, { rejectWithValue }) => {
     try {
-      await api.delete(`/attribute/${id}`);
+      const token = localStorage.getItem("accessToken");
+      await api.delete(`/attribute/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

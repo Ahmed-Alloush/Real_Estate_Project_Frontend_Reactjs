@@ -248,6 +248,8 @@ const officeSlice = createSlice({
       .addCase(getAllOffices.fulfilled, (state, action) => {
         state.loading = false;
         state.offices = action.payload.data;
+        console.log("this is from the getAllOffices.fulfilled : ",action.payload);
+        
         state.officePagination = {
           page: action.payload.page,
           limit: action.payload.limit,

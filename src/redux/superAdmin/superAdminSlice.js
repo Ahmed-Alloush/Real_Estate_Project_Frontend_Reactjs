@@ -59,14 +59,20 @@ export const banUser = createAsyncThunk(
 // WARN USER
 export const warnUser = createAsyncThunk(
   "superAdmin/warnUser",
-  async ({ userId, data }, thunkAPI) => {
+  async ( data , thunkAPI) => {
     try {
+      console.log("this is data:",data,"in warnUser");
+      
       const token = localStorage.getItem("accessToken");
-      const response = await api.post(`/user/warn-user/${userId}`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.post(
+        `/user/warn-user/${userId.userId}`,
+        { reason: data.reason },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -90,9 +96,7 @@ const superAdminSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-
-
-        // GET ALL USERS
+    // GET ALL USERS
     builder
       .addCase(getAllUsers.pending, (state) => {
         state.loading = true;
@@ -106,8 +110,6 @@ const superAdminSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       });
-
-
 
     // ADD ADMIN
     builder

@@ -1,3 +1,373 @@
+// // // // // // import React, { useEffect, useState } from "react";
+// // // // // // import { useDispatch, useSelector } from "react-redux";
+// // // // // // import {
+// // // // // //   fetchAllPropertyRequests,
+// // // // // //   updatePropertyRequestByAdmin,
+// // // // // //   deletePropertyRequest,
+// // // // // // } from "../../redux/property request/propertyRequestSlice";
+// // // // // // import {
+// // // // // //   Container,
+// // // // // //   Typography,
+// // // // // //   CircularProgress,
+// // // // // //   Box,
+// // // // // //   Paper,
+// // // // // //   Table,
+// // // // // //   TableBody,
+// // // // // //   TableCell,
+// // // // // //   TableContainer,
+// // // // // //   TableHead,
+// // // // // //   TableRow,
+// // // // // //   TablePagination,
+// // // // // //   Button,
+// // // // // //   IconButton,
+// // // // // //   Tooltip,
+// // // // // //   Modal,
+// // // // // //   TextField,
+// // // // // //   FormControl,
+// // // // // //   InputLabel,
+// // // // // //   Select,
+// // // // // //   MenuItem,
+// // // // // //   Grid,
+// // // // // // } from "@mui/material";
+// // // // // // import {
+// // // // // //   CheckCircleOutline,
+// // // // // //   HighlightOff,
+// // // // // //   Visibility,
+// // // // // //   DeleteOutline,
+// // // // // // } from "@mui/icons-material";
+// // // // // // import { styled } from "@mui/material/styles";
+// // // // // // import { format } from "date-fns";
+// // // // // // import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// // // // // // import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+// // // // // // import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+
+// // // // // // const StyledTableRow = styled(TableRow)(({ theme }) => ({
+// // // // // //   "&:nth-of-type(odd)": {
+// // // // // //     backgroundColor: theme.palette.action.hover,
+// // // // // //   },
+// // // // // //   "&:last-child td, &:last-child th": {
+// // // // // //     border: 0,
+// // // // // //   },
+// // // // // // }));
+
+// // // // // // const StyledModalPaper = styled(Paper)(({ theme }) => ({
+// // // // // //   position: "absolute",
+// // // // // //   top: "50%",
+// // // // // //   left: "50%",
+// // // // // //   transform: "translate(-50%, -50%)",
+// // // // // //   width: 500,
+// // // // // //   padding: theme.spacing(4),
+// // // // // //   outline: "none",
+// // // // // //   textAlign: "center",
+// // // // // // }));
+
+// // // // // // const PropertyRequestsPage = () => {
+// // // // // //   const dispatch = useDispatch();
+// // // // // //   const { propertyRequests, loading, error,deleteLoading ,deletError} = useSelector(
+// // // // // //     (state) => state.propertyRequest
+// // // // // //   );
+
+// // // // // //   const [page, setPage] = useState(0);
+// // // // // //   const [rowsPerPage, setRowsPerPage] = useState(10);
+// // // // // //   const [openModal, setOpenModal] = useState(false);
+// // // // // //   const [selectedRequest, setSelectedRequest] = useState(null);
+// // // // // //   const [action, setAction] = useState("");
+// // // // // //   const [filterType, setFilterType] = useState("All");
+// // // // // //   const [adminFormData, setAdminFormData] = useState({
+// // // // // //     propertyNumber: "",
+// // // // // //     expireDate: null,
+// // // // // //     status: "",
+// // // // // //   });
+
+// // // // // //   useEffect(() => {
+// // // // // //     dispatch(fetchAllPropertyRequests());
+// // // // // //   }, [dispatch]);
+
+// // // // // //   const handleChangePage = (event, newPage) => {
+// // // // // //     setPage(newPage);
+// // // // // //   };
+
+// // // // // //   const handleChangeRowsPerPage = (event) => {
+// // // // // //     setRowsPerPage(parseInt(event.target.value, 10));
+// // // // // //     setPage(0);
+// // // // // //   };
+
+// // // // // //   const handleOpenModal = (request, actionType) => {
+// // // // // //     setSelectedRequest(request);
+// // // // // //     setAction(actionType);
+// // // // // //     setAdminFormData({
+// // // // // //       propertyNumber: request.propertyNumber || "",
+// // // // // //       expireDate: null,
+// // // // // //       status: actionType === "accept" ? "Accepted" : "Rejected",
+// // // // // //     });
+// // // // // //     setOpenModal(true);
+// // // // // //   };
+
+// // // // // //   const handleCloseModal = () => {
+// // // // // //     setOpenModal(false);
+// // // // // //     setSelectedRequest(null);
+// // // // // //     setAction("");
+// // // // // //   };
+
+// // // // // //   const handleAdminFormChange = (e) => {
+// // // // // //     const { name, value } = e.target;
+// // // // // //     setAdminFormData({ ...adminFormData, [name]: value });
+// // // // // //   };
+
+// // // // // //   const handleDateChange = (newDate) => {
+// // // // // //     setAdminFormData({ ...adminFormData, expireDate: newDate });
+// // // // // //   };
+
+// // // // // //   const handleAdminAction = () => {
+// // // // // //     if (action === "accept" || action === "reject") {
+// // // // // //       const updateData = {
+// // // // // //         id: selectedRequest.id,
+// // // // // //         updateData: {
+// // // // // //           status: action === "accept" ? "Accepted" : "Rejected",
+// // // // // //           propertyNumber: adminFormData.propertyNumber,
+// // // // // //           expireDate:
+// // // // // //             selectedRequest.typeOperation === "Renting"
+// // // // // //               ? adminFormData.expireDate
+// // // // // //               : null,
+// // // // // //         },
+// // // // // //       };
+// // // // // //       dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
+// // // // // //         dispatch(fetchAllPropertyRequests());
+// // // // // //         handleCloseModal();
+// // // // // //       });
+// // // // // //     } else if (action === "delete") {
+// // // // // //       dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
+// // // // // //         dispatch(fetchAllPropertyRequests());
+// // // // // //         handleCloseModal();
+// // // // // //       });
+// // // // // //     }
+// // // // // //   };
+
+// // // // // //   const filteredRequests = propertyRequests.filter((request) => {
+// // // // // //     if (filterType === "All") return true;
+// // // // // //     return request.typeOperation === filterType;
+// // // // // //   });
+
+// // // // // //   const paginatedRequests = filteredRequests.slice(
+// // // // // //     page * rowsPerPage,
+// // // // // //     page * rowsPerPage + rowsPerPage
+// // // // // //   );
+
+// // // // // //   if (loading) {
+// // // // // //     return (
+// // // // // //       <Box
+// // // // // //         display="flex"
+// // // // // //         justifyContent="center"
+// // // // // //         alignItems="center"
+// // // // // //         minHeight="100vh"
+// // // // // //       >
+// // // // // //         <CircularProgress />
+// // // // // //       </Box>
+// // // // // //     );
+// // // // // //   }
+
+// // // // // //   if (error) {
+// // // // // //     return (
+// // // // // //       <Container>
+// // // // // //         <Typography color="error" variant="h6" sx={{ mt: 4 }}>
+// // // // // //           Error: {error}
+// // // // // //         </Typography>
+// // // // // //       </Container>
+// // // // // //     );
+// // // // // //   }
+
+// // // // // //   return (
+// // // // // //     <LocalizationProvider dateAdapter={AdapterDateFns}>
+// // // // // //       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+// // // // // //         <Grid container spacing={2} alignItems="center" mb={4}>
+// // // // // //           <Grid item xs={12} sm={6}>
+// // // // // //             <Typography variant="h4" component="div">
+// // // // // //               Property Requests Management
+// // // // // //             </Typography>
+// // // // // //           </Grid>
+// // // // // //           <Grid item xs={12} sm={6} display="flex" justifyContent="flex-end">
+// // // // // //             <FormControl sx={{ m: 1, minWidth: 150 }}>
+// // // // // //               <InputLabel>Operation Type</InputLabel>
+// // // // // //               <Select
+// // // // // //                 value={filterType}
+// // // // // //                 label="Operation Type"
+// // // // // //                 onChange={(e) => setFilterType(e.target.value)}
+// // // // // //               >
+// // // // // //                 <MenuItem value="All">All</MenuItem>
+// // // // // //                 <MenuItem value="Selling">Selling</MenuItem>
+// // // // // //                 <MenuItem value="Renting">Renting</MenuItem>
+// // // // // //               </Select>
+// // // // // //             </FormControl>
+// // // // // //           </Grid>
+// // // // // //         </Grid>
+
+// // // // // //         <Paper sx={{ width: "100%", overflow: "hidden" }}>
+// // // // // //           <TableContainer sx={{ maxHeight: 600 }}>
+// // // // // //             <Table stickyHeader aria-label="sticky table">
+// // // // // //               <TableHead>
+// // // // // //                 <TableRow>
+// // // // // //                   <TableCell>ID</TableCell>
+// // // // // //                   <TableCell>Property Number</TableCell>
+// // // // // //                   <TableCell>Operation Type</TableCell>
+// // // // // //                   <TableCell>Status</TableCell>
+// // // // // //                   <TableCell>Created At</TableCell>
+// // // // // //                   <TableCell align="center">Actions</TableCell>
+// // // // // //                 </TableRow>
+// // // // // //               </TableHead>
+// // // // // //               <TableBody>
+// // // // // //                 {paginatedRequests.map((request) => {
+// // // // // //                   // console.log(request)
+
+// // // // // //                   return (
+// // // // // //                     <>
+// // // // // //                       <StyledTableRow key={request.id}>
+// // // // // //                         <TableCell>{request.id}</TableCell>
+// // // // // //                         <TableCell>{request.propertyNumber}</TableCell>
+// // // // // //                         <TableCell>{request.typeOperation}</TableCell>
+// // // // // //                         <TableCell>{request.status}</TableCell>
+// // // // // //                         <TableCell>
+// // // // // //                           {request.createdAt
+// // // // // //                             ? format(new Date(request.createdAt), "PP")
+// // // // // //                             : "N/A"}{" "}
+// // // // // //                         </TableCell>
+// // // // // //                         <TableCell align="center">
+// // // // // //                           <Tooltip title="View Details">
+// // // // // //                             <IconButton
+// // // // // //                               color="info"
+// // // // // //                               onClick={() =>
+// // // // // //                                 alert(
+// // // // // //                                   "View Details functionality to be implemented"
+// // // // // //                                 )
+// // // // // //                               }
+// // // // // //                             >
+// // // // // //                               <Visibility />
+// // // // // //                             </IconButton>
+// // // // // //                           </Tooltip>
+// // // // // //                           <Tooltip title="Accept Request">
+// // // // // //                             <IconButton
+// // // // // //                               color="success"
+// // // // // //                               onClick={() => handleOpenModal(request, "accept")}
+// // // // // //                             >
+// // // // // //                               <CheckCircleOutline />
+// // // // // //                             </IconButton>
+// // // // // //                           </Tooltip>
+// // // // // //                           <Tooltip title="Reject Request">
+// // // // // //                             <IconButton
+// // // // // //                               color="error"
+// // // // // //                               onClick={() => handleOpenModal(request, "reject")}
+// // // // // //                             >
+// // // // // //                               <HighlightOff />
+// // // // // //                             </IconButton>
+// // // // // //                           </Tooltip>
+// // // // // //                           <Tooltip title="Delete Request">
+// // // // // //                             <IconButton
+// // // // // //                               color="secondary"
+// // // // // //                               onClick={() => handleOpenModal(request, "delete")}
+// // // // // //                             >
+// // // // // //                               <DeleteOutline />
+// // // // // //                             </IconButton>
+// // // // // //                           </Tooltip>
+// // // // // //                         </TableCell>
+// // // // // //                       </StyledTableRow>
+// // // // // //                     </>
+// // // // // //                   );
+// // // // // //                 })}
+
+// // // // // //                 {!paginatedRequests.length && (
+// // // // // //                   <TableRow>
+// // // // // //                     <TableCell colSpan={6} align="center">
+// // // // // //                       No property requests found.
+// // // // // //                     </TableCell>
+// // // // // //                   </TableRow>
+// // // // // //                 )}
+// // // // // //               </TableBody>
+// // // // // //             </Table>
+// // // // // //           </TableContainer>
+// // // // // //           <TablePagination
+// // // // // //             rowsPerPageOptions={[10, 25, 100]}
+// // // // // //             component="div"
+// // // // // //             count={filteredRequests.length}
+// // // // // //             rowsPerPage={rowsPerPage}
+// // // // // //             page={page}
+// // // // // //             onPageChange={handleChangePage}
+// // // // // //             onRowsPerPageChange={handleChangeRowsPerPage}
+// // // // // //           />
+// // // // // //         </Paper>
+
+// // // // // //         {/* Modal for Admin Actions */}
+// // // // // //         <Modal open={openModal} onClose={handleCloseModal}>
+// // // // // //           <StyledModalPaper>
+// // // // // //             <Typography variant="h6" gutterBottom>
+// // // // // //               {action === "accept"
+// // // // // //                 ? "Accept Property Request"
+// // // // // //                 : action === "reject"
+// // // // // //                 ? "Reject Property Request"
+// // // // // //                 : "Delete Property Request"}
+// // // // // //             </Typography>
+// // // // // //             <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+// // // // // //               {`Are you sure you want to ${action} the request for property number ${selectedRequest?.propertyNumber}?`}
+// // // // // //             </Typography>
+
+// // // // // //             {action === "accept" &&
+// // // // // //               selectedRequest?.typeOperation === "Renting" && (
+// // // // // //                 <Box component="form" noValidate sx={{ mt: 2 }}>
+// // // // // //                   <DatePicker
+// // // // // //                     label="Expiration Date"
+// // // // // //                     value={adminFormData.expireDate}
+// // // // // //                     onChange={handleDateChange}
+// // // // // //                     renderInput={(params) => (
+// // // // // //                       <TextField {...params} fullWidth margin="normal" />
+// // // // // //                     )}
+// // // // // //                   />
+// // // // // //                 </Box>
+// // // // // //               )}
+
+// // // // // //             <Box
+// // // // // //               sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
+// // // // // //             >
+// // // // // //               <Button
+// // // // // //                 variant="contained"
+// // // // // //                 color={
+// // // // // //                   action === "accept"
+// // // // // //                     ? "success"
+// // // // // //                     : action === "reject"
+// // // // // //                     ? "error"
+// // // // // //                     : "secondary"
+// // // // // //                 }
+// // // // // //                 onClick={handleAdminAction}
+// // // // // //               >
+// // // // // //                 {action === "accept" ? (
+// // // // // //                   loading ? (
+
+// // // // // //                     <CircularProgress size={20} color="secondary" />
+// // // // // //                   ) : (
+// // // // // //                     "Confirm Acceptance"
+// // // // // //                   )
+// // // // // //                 ) : action === "reject" ? (
+// // // // // //                   loading ? (
+// // // // // //                     <CircularProgress size={20} />
+// // // // // //                   ) : (
+// // // // // //                     "Confirm Rejection"
+// // // // // //                   )
+// // // // // //                 ) : deleteLoading ? (
+// // // // // //                   <CircularProgress size={20} />
+// // // // // //                 ) : (
+// // // // // //                   "Confirm Deletion"
+// // // // // //                 )}
+// // // // // //               </Button>
+// // // // // //               <Button variant="outlined" onClick={handleCloseModal}>
+// // // // // //                 Cancel
+// // // // // //               </Button>
+// // // // // //             </Box>
+// // // // // //           </StyledModalPaper>
+// // // // // //         </Modal>
+// // // // // //       </Container>
+// // // // // //     </LocalizationProvider>
+// // // // // //   );
+// // // // // // };
+
+// // // // // // export default PropertyRequestsPage;
+
 // // // // // import React, { useEffect, useState } from "react";
 // // // // // import { useDispatch, useSelector } from "react-redux";
 // // // // // import {
@@ -28,14 +398,21 @@
 // // // // //   Select,
 // // // // //   MenuItem,
 // // // // //   Grid,
+// // // // //   Dialog,
+// // // // //   DialogTitle,
+// // // // //   DialogContent,
+// // // // //   DialogActions,
+// // // // //   CardMedia,
 // // // // // } from "@mui/material";
 // // // // // import {
 // // // // //   CheckCircleOutline,
 // // // // //   HighlightOff,
 // // // // //   Visibility,
 // // // // //   DeleteOutline,
+// // // // //   ArrowBackIos,
+// // // // //   ArrowForwardIos,
 // // // // // } from "@mui/icons-material";
-// // // // // import { styled } from "@mui/material/styles";
+// // // // // import { styled, useTheme } from "@mui/material/styles";
 // // // // // import { format } from "date-fns";
 // // // // // import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 // // // // // import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -59,20 +436,59 @@
 // // // // //   padding: theme.spacing(4),
 // // // // //   outline: "none",
 // // // // //   textAlign: "center",
+// // // // //   [theme.breakpoints.down("sm")]: {
+// // // // //     width: "90%",
+// // // // //     padding: theme.spacing(2),
+// // // // //   },
+// // // // // }));
+
+// // // // // const CarouselContainer = styled(Box)(({ theme }) => ({
+// // // // //   position: "relative",
+// // // // //   width: "100%",
+// // // // //   maxWidth: 400,
+// // // // //   margin: "auto",
+// // // // // }));
+
+// // // // // const CarouselImage = styled("img")({
+// // // // //   width: "100%",
+// // // // //   height: 250,
+// // // // //   objectFit: "cover",
+// // // // //   borderRadius: 8,
+// // // // // });
+
+// // // // // const CarouselButton = styled(IconButton)(({ theme }) => ({
+// // // // //   position: "absolute",
+// // // // //   top: "50%",
+// // // // //   transform: "translateY(-50%)",
+// // // // //   backgroundColor: "rgba(0, 0, 0, 0.5)",
+// // // // //   color: "#fff",
+// // // // //   "&:hover": {
+// // // // //     backgroundColor: "rgba(0, 0, 0, 0.7)",
+// // // // //   },
 // // // // // }));
 
 // // // // // const PropertyRequestsPage = () => {
 // // // // //   const dispatch = useDispatch();
-// // // // //   const { propertyRequests, loading, error,deleteLoading ,deletError} = useSelector(
-// // // // //     (state) => state.propertyRequest
-// // // // //   );
+// // // // //   const theme = useTheme();
+
+// // // // //   const {
+// // // // //     propertyRequests,
+// // // // //     loading,
+// // // // //     error,
+// // // // //     deleteLoading,
+// // // // //     deletError,
+// // // // //     updateLoading,
+// // // // //   } = useSelector((state) => state.propertyRequest);
 
 // // // // //   const [page, setPage] = useState(0);
 // // // // //   const [rowsPerPage, setRowsPerPage] = useState(10);
-// // // // //   const [openModal, setOpenModal] = useState(false);
+// // // // //   const [openAdminModal, setOpenAdminModal] = useState(false);
+// // // // //   const [openDetailsModal, setOpenDetailsModal] = useState(false);
 // // // // //   const [selectedRequest, setSelectedRequest] = useState(null);
 // // // // //   const [action, setAction] = useState("");
 // // // // //   const [filterType, setFilterType] = useState("All");
+// // // // //   const [photoIndex, setPhotoIndex] = useState(0);
+
 // // // // //   const [adminFormData, setAdminFormData] = useState({
 // // // // //     propertyNumber: "",
 // // // // //     expireDate: null,
@@ -92,19 +508,28 @@
 // // // // //     setPage(0);
 // // // // //   };
 
-// // // // //   const handleOpenModal = (request, actionType) => {
+// // // // //   const handleOpenAdminModal = (request, actionType) => {
 // // // // //     setSelectedRequest(request);
 // // // // //     setAction(actionType);
-// // // // //     setAdminFormData({
-// // // // //       propertyNumber: request.propertyNumber || "",
-// // // // //       expireDate: null,
-// // // // //       status: actionType === "accept" ? "Accepted" : "Rejected",
-// // // // //     });
-// // // // //     setOpenModal(true);
+// // // // //     if (actionType !== "delete") {
+// // // // //       setAdminFormData({
+// // // // //         propertyNumber: request.propertyNumber || "",
+// // // // //         expireDate: request.typeOperation === "Renting" ? null : null,
+// // // // //         status: actionType === "accept" ? "Accepted" : "Rejected",
+// // // // //       });
+// // // // //     }
+// // // // //     setOpenAdminModal(true);
+// // // // //   };
+
+// // // // //   const handleOpenDetailsModal = (request) => {
+// // // // //     setSelectedRequest(request);
+// // // // //     setPhotoIndex(0); // Reset carousel to the first image
+// // // // //     setOpenDetailsModal(true);
 // // // // //   };
 
 // // // // //   const handleCloseModal = () => {
-// // // // //     setOpenModal(false);
+// // // // //     setOpenAdminModal(false);
+// // // // //     setOpenDetailsModal(false);
 // // // // //     setSelectedRequest(null);
 // // // // //     setAction("");
 // // // // //   };
@@ -119,33 +544,52 @@
 // // // // //   };
 
 // // // // //   const handleAdminAction = () => {
-// // // // //     if (action === "accept" || action === "reject") {
+// // // // //     if (action === "delete") {
+// // // // //       dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
+// // // // //         dispatch(fetchAllPropertyRequests());
+// // // // //         handleCloseModal();
+// // // // //       });
+// // // // //     } else {
+// // // // //       // Logic for 'accept' and 'reject'
 // // // // //       const updateData = {
 // // // // //         id: selectedRequest.id,
 // // // // //         updateData: {
-// // // // //           status: action === "accept" ? "Accepted" : "Rejected",
+// // // // //           status: adminFormData.status,
 // // // // //           propertyNumber: adminFormData.propertyNumber,
 // // // // //           expireDate:
-// // // // //             selectedRequest.typeOperation === "Renting"
+// // // // //             selectedRequest.typeOperation.toLowerCase() === "renting" &&
+// // // // //             adminFormData.status === "Accepted"
 // // // // //               ? adminFormData.expireDate
 // // // // //               : null,
 // // // // //         },
 // // // // //       };
+
 // // // // //       dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
-// // // // //         dispatch(fetchAllPropertyRequests());
-// // // // //         handleCloseModal();
-// // // // //       });
-// // // // //     } else if (action === "delete") {
-// // // // //       dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
 // // // // //         dispatch(fetchAllPropertyRequests());
 // // // // //         handleCloseModal();
 // // // // //       });
 // // // // //     }
 // // // // //   };
 
+// // // // //   const handleNextPhoto = () => {
+// // // // //     if (selectedRequest?.photos) {
+// // // // //       setPhotoIndex((prevIndex) =>
+// // // // //         prevIndex === selectedRequest.photos.length - 1 ? 0 : prevIndex + 1
+// // // // //       );
+// // // // //     }
+// // // // //   };
+
+// // // // //   const handlePreviousPhoto = () => {
+// // // // //     if (selectedRequest?.photos) {
+// // // // //       setPhotoIndex((prevIndex) =>
+// // // // //         prevIndex === 0 ? selectedRequest.photos.length - 1 : prevIndex - 1
+// // // // //       );
+// // // // //     }
+// // // // //   };
+
 // // // // //   const filteredRequests = propertyRequests.filter((request) => {
 // // // // //     if (filterType === "All") return true;
-// // // // //     return request.typeOperation === filterType;
+// // // // //     return request.typeOperation.toLowerCase() === filterType.toLowerCase();
 // // // // //   });
 
 // // // // //   const paginatedRequests = filteredRequests.slice(
@@ -215,63 +659,53 @@
 // // // // //                 </TableRow>
 // // // // //               </TableHead>
 // // // // //               <TableBody>
-// // // // //                 {paginatedRequests.map((request) => {
-// // // // //                   // console.log(request)
-
-// // // // //                   return (
-// // // // //                     <>
-// // // // //                       <StyledTableRow key={request.id}>
-// // // // //                         <TableCell>{request.id}</TableCell>
-// // // // //                         <TableCell>{request.propertyNumber}</TableCell>
-// // // // //                         <TableCell>{request.typeOperation}</TableCell>
-// // // // //                         <TableCell>{request.status}</TableCell>
-// // // // //                         <TableCell>
-// // // // //                           {request.createdAt
-// // // // //                             ? format(new Date(request.createdAt), "PP")
-// // // // //                             : "N/A"}{" "}
-// // // // //                         </TableCell>
-// // // // //                         <TableCell align="center">
-// // // // //                           <Tooltip title="View Details">
-// // // // //                             <IconButton
-// // // // //                               color="info"
-// // // // //                               onClick={() =>
-// // // // //                                 alert(
-// // // // //                                   "View Details functionality to be implemented"
-// // // // //                                 )
-// // // // //                               }
-// // // // //                             >
-// // // // //                               <Visibility />
-// // // // //                             </IconButton>
-// // // // //                           </Tooltip>
-// // // // //                           <Tooltip title="Accept Request">
-// // // // //                             <IconButton
-// // // // //                               color="success"
-// // // // //                               onClick={() => handleOpenModal(request, "accept")}
-// // // // //                             >
-// // // // //                               <CheckCircleOutline />
-// // // // //                             </IconButton>
-// // // // //                           </Tooltip>
-// // // // //                           <Tooltip title="Reject Request">
-// // // // //                             <IconButton
-// // // // //                               color="error"
-// // // // //                               onClick={() => handleOpenModal(request, "reject")}
-// // // // //                             >
-// // // // //                               <HighlightOff />
-// // // // //                             </IconButton>
-// // // // //                           </Tooltip>
-// // // // //                           <Tooltip title="Delete Request">
-// // // // //                             <IconButton
-// // // // //                               color="secondary"
-// // // // //                               onClick={() => handleOpenModal(request, "delete")}
-// // // // //                             >
-// // // // //                               <DeleteOutline />
-// // // // //                             </IconButton>
-// // // // //                           </Tooltip>
-// // // // //                         </TableCell>
-// // // // //                       </StyledTableRow>
-// // // // //                     </>
-// // // // //                   );
-// // // // //                 })}
+// // // // //                 {paginatedRequests.map((request) => (
+// // // // //                   <StyledTableRow key={request.id}>
+// // // // //                     <TableCell>{request.id}</TableCell>
+// // // // //                     <TableCell>{request.propertyNumber}</TableCell>
+// // // // //                     <TableCell>{request.typeOperation}</TableCell>
+// // // // //                     <TableCell>{request.status}</TableCell>
+// // // // //                     <TableCell>
+// // // // //                       {request.createdAt
+// // // // //                         ? format(new Date(request.createdAt), "PP")
+// // // // //                         : "N/A"}{" "}
+// // // // //                     </TableCell>
+// // // // //                     <TableCell align="center">
+// // // // //                       <Tooltip title="View Details">
+// // // // //                         <IconButton
+// // // // //                           color="info"
+// // // // //                           onClick={() => handleOpenDetailsModal(request)}
+// // // // //                         >
+// // // // //                           <Visibility />
+// // // // //                         </IconButton>
+// // // // //                       </Tooltip>
+// // // // //                       <Tooltip title="Accept Request">
+// // // // //                         <IconButton
+// // // // //                           color="success"
+// // // // //                           onClick={() => handleOpenAdminModal(request, "accept")}
+// // // // //                         >
+// // // // //                           <CheckCircleOutline />
+// // // // //                         </IconButton>
+// // // // //                       </Tooltip>
+// // // // //                       <Tooltip title="Reject Request">
+// // // // //                         <IconButton
+// // // // //                           color="error"
+// // // // //                           onClick={() => handleOpenAdminModal(request, "reject")}
+// // // // //                         >
+// // // // //                           <HighlightOff />
+// // // // //                         </IconButton>
+// // // // //                       </Tooltip>
+// // // // //                       <Tooltip title="Delete Request">
+// // // // //                         <IconButton
+// // // // //                           color="secondary"
+// // // // //                           onClick={() => handleOpenAdminModal(request, "delete")}
+// // // // //                         >
+// // // // //                           <DeleteOutline />
+// // // // //                         </IconButton>
+// // // // //                       </Tooltip>
+// // // // //                     </TableCell>
+// // // // //                   </StyledTableRow>
+// // // // //                 ))}
 
 // // // // //                 {!paginatedRequests.length && (
 // // // // //                   <TableRow>
@@ -294,8 +728,8 @@
 // // // // //           />
 // // // // //         </Paper>
 
-// // // // //         {/* Modal for Admin Actions */}
-// // // // //         <Modal open={openModal} onClose={handleCloseModal}>
+// // // // //         {/* Modal for Admin Actions (Accept, Reject, Delete) */}
+// // // // //         <Modal open={openAdminModal} onClose={handleCloseModal}>
 // // // // //           <StyledModalPaper>
 // // // // //             <Typography variant="h6" gutterBottom>
 // // // // //               {action === "accept"
@@ -309,19 +743,18 @@
 // // // // //             </Typography>
 
 // // // // //             {action === "accept" &&
-// // // // //               selectedRequest?.typeOperation === "Renting" && (
+// // // // //               selectedRequest?.typeOperation.toLowerCase() === "renting" && (
 // // // // //                 <Box component="form" noValidate sx={{ mt: 2 }}>
 // // // // //                   <DatePicker
 // // // // //                     label="Expiration Date"
 // // // // //                     value={adminFormData.expireDate}
 // // // // //                     onChange={handleDateChange}
-// // // // //                     renderInput={(params) => (
-// // // // //                       <TextField {...params} fullWidth margin="normal" />
-// // // // //                     )}
+// // // // //                     slotProps={{
+// // // // //                         textField: { fullWidth: true, margin: "normal" }
+// // // // //                     }}
 // // // // //                   />
 // // // // //                 </Box>
 // // // // //               )}
-
 // // // // //             <Box
 // // // // //               sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
 // // // // //             >
@@ -335,22 +768,22 @@
 // // // // //                     : "secondary"
 // // // // //                 }
 // // // // //                 onClick={handleAdminAction}
+// // // // //                 disabled={updateLoading || deleteLoading}
 // // // // //               >
 // // // // //                 {action === "accept" ? (
-// // // // //                   loading ? (
-
-// // // // //                     <CircularProgress size={20} color="secondary" />
+// // // // //                   updateLoading ? (
+// // // // //                     <CircularProgress size={20} color="inherit" />
 // // // // //                   ) : (
 // // // // //                     "Confirm Acceptance"
 // // // // //                   )
 // // // // //                 ) : action === "reject" ? (
-// // // // //                   loading ? (
-// // // // //                     <CircularProgress size={20} />
+// // // // //                   updateLoading ? (
+// // // // //                     <CircularProgress size={20} color="inherit" />
 // // // // //                   ) : (
 // // // // //                     "Confirm Rejection"
 // // // // //                   )
 // // // // //                 ) : deleteLoading ? (
-// // // // //                   <CircularProgress size={20} />
+// // // // //                   <CircularProgress size={20} color="inherit" />
 // // // // //                 ) : (
 // // // // //                   "Confirm Deletion"
 // // // // //                 )}
@@ -361,6 +794,80 @@
 // // // // //             </Box>
 // // // // //           </StyledModalPaper>
 // // // // //         </Modal>
+
+// // // // //         {/* Modal for Viewing Details */}
+// // // // //         <Dialog open={openDetailsModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+// // // // //           <DialogTitle>Property Request Details</DialogTitle>
+// // // // //           <DialogContent dividers>
+// // // // //             {selectedRequest && (
+// // // // //               <Box>
+// // // // //                 <Grid container spacing={2}>
+// // // // //                   <Grid item xs={12}>
+// // // // //                     <CarouselContainer>
+// // // // //                       {selectedRequest.photos && selectedRequest.photos.length > 0 ? (
+// // // // //                         <>
+// // // // //                           <CardMedia
+// // // // //                             component="img"
+// // // // //                             image={selectedRequest.photos[photoIndex].url}
+// // // // //                             alt="Property Photo"
+// // // // //                             sx={{
+// // // // //                               width: "100%",
+// // // // //                               height: 300,
+// // // // //                               objectFit: "cover",
+// // // // //                               borderRadius: 1,
+// // // // //                             }}
+// // // // //                           />
+// // // // //                           {selectedRequest.photos.length > 1 && (
+// // // // //                             <>
+// // // // //                               <CarouselButton
+// // // // //                                 onClick={handlePreviousPhoto}
+// // // // //                                 sx={{ left: 8 }}
+// // // // //                               >
+// // // // //                                 <ArrowBackIos />
+// // // // //                               </CarouselButton>
+// // // // //                               <CarouselButton
+// // // // //                                 onClick={handleNextPhoto}
+// // // // //                                 sx={{ right: 8 }}
+// // // // //                               >
+// // // // //                                 <ArrowForwardIos />
+// // // // //                               </CarouselButton>
+// // // // //                             </>
+// // // // //                           )}
+// // // // //                         </>
+// // // // //                       ) : (
+// // // // //                         <Typography variant="body2" color="text.secondary" align="center">
+// // // // //                           No photos available.
+// // // // //                         </Typography>
+// // // // //                       )}
+// // // // //                     </CarouselContainer>
+// // // // //                   </Grid>
+// // // // //                   <Grid item xs={12}>
+// // // // //                     <Typography variant="h6">Request Info</Typography>
+// // // // //                     <Typography variant="body1">
+// // // // //                       <strong>ID:</strong> {selectedRequest.id}
+// // // // //                     </Typography>
+// // // // //                     <Typography variant="body1">
+// // // // //                       <strong>Property Number:</strong> {selectedRequest.propertyNumber}
+// // // // //                     </Typography>
+// // // // //                     <Typography variant="body1">
+// // // // //                       <strong>Operation Type:</strong> {selectedRequest.typeOperation}
+// // // // //                     </Typography>
+// // // // //                     <Typography variant="body1">
+// // // // //                       <strong>Status:</strong> {selectedRequest.status}
+// // // // //                     </Typography>
+// // // // //                     <Typography variant="body1">
+// // // // //                       <strong>Created At:</strong>{" "}
+// // // // //                       {format(new Date(selectedRequest.createdAt), "PP")}
+// // // // //                     </Typography>
+// // // // //                   </Grid>
+// // // // //                 </Grid>
+// // // // //               </Box>
+// // // // //             )}
+// // // // //           </DialogContent>
+// // // // //           <DialogActions>
+// // // // //             <Button onClick={handleCloseModal}>Close</Button>
+// // // // //           </DialogActions>
+// // // // //         </Dialog>
 // // // // //       </Container>
 // // // // //     </LocalizationProvider>
 // // // // //   );
@@ -369,1078 +876,1138 @@
 // // // // // export default PropertyRequestsPage;
 
 // // // // import React, { useEffect, useState } from "react";
-// // // // import { useDispatch, useSelector } from "react-redux";
-// // // // import {
-// // // //   fetchAllPropertyRequests,
-// // // //   updatePropertyRequestByAdmin,
-// // // //   deletePropertyRequest,
-// // // // } from "../../redux/property request/propertyRequestSlice";
-// // // // import {
-// // // //   Container,
-// // // //   Typography,
-// // // //   CircularProgress,
-// // // //   Box,
-// // // //   Paper,
-// // // //   Table,
-// // // //   TableBody,
-// // // //   TableCell,
-// // // //   TableContainer,
-// // // //   TableHead,
-// // // //   TableRow,
-// // // //   TablePagination,
-// // // //   Button,
-// // // //   IconButton,
-// // // //   Tooltip,
-// // // //   Modal,
-// // // //   TextField,
-// // // //   FormControl,
-// // // //   InputLabel,
-// // // //   Select,
-// // // //   MenuItem,
-// // // //   Grid,
-// // // //   Dialog,
-// // // //   DialogTitle,
-// // // //   DialogContent,
-// // // //   DialogActions,
-// // // //   CardMedia,
-// // // // } from "@mui/material";
-// // // // import {
-// // // //   CheckCircleOutline,
-// // // //   HighlightOff,
-// // // //   Visibility,
-// // // //   DeleteOutline,
-// // // //   ArrowBackIos,
-// // // //   ArrowForwardIos,
-// // // // } from "@mui/icons-material";
-// // // // import { styled, useTheme } from "@mui/material/styles";
-// // // // import { format } from "date-fns";
-// // // // import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-// // // // import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-// // // // import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+// // // //  import { useDispatch, useSelector } from "react-redux";
+// // // //  import {
+// // // //    fetchAllPropertyRequests,
+// // // //    updatePropertyRequestByAdmin,
+// // // //    deletePropertyRequest,
+// // // //  } from "../../redux/property request/propertyRequestSlice";
+// // // //  import {
+// // // //    Container,
+// // // //    Typography,
+// // // //    CircularProgress,
+// // // //    Box,
+// // // //    Paper,
+// // // //    Table,
+// // // //    TableBody,
+// // // //    TableCell,
+// // // //    TableContainer,
+// // // //    TableHead,
+// // // //    TableRow,
+// // // //    TablePagination,
+// // // //    Button,
+// // // //    IconButton,
+// // // //    Tooltip,
+// // // //    Modal,
+// // // //    TextField,
+// // // //    FormControl,
+// // // //    InputLabel,
+// // // //    Select,
+// // // //    MenuItem,
+// // // //    Grid,
+// // // //    Dialog,
+// // // //    DialogTitle,
+// // // //    DialogContent,
+// // // //    DialogActions,
+// // // //    CardMedia,
+// // // //  } from "@mui/material";
+// // // //  import {
+// // // //    CheckCircleOutline,
+// // // //    HighlightOff,
+// // // //    Visibility,
+// // // //    DeleteOutline,
+// // // //    ArrowBackIos,
+// // // //    ArrowForwardIos,
+// // // //    Close,
+// // // //  } from "@mui/icons-material";
+// // // //  import { styled, useTheme } from "@mui/material/styles";
+// // // //  import { format } from "date-fns";
+// // // //  import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// // // //  import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+// // // //  import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
-// // // // const StyledTableRow = styled(TableRow)(({ theme }) => ({
-// // // //   "&:nth-of-type(odd)": {
-// // // //     backgroundColor: theme.palette.action.hover,
-// // // //   },
-// // // //   "&:last-child td, &:last-child th": {
-// // // //     border: 0,
-// // // //   },
-// // // // }));
+// // // //  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+// // // //    "&:nth-of-type(odd)": {
+// // // //      backgroundColor: theme.palette.action.hover,
+// // // //    },
+// // // //    "&:last-child td, &:last-child th": {
+// // // //      border: 0,
+// // // //    },
+// // // //  }));
 
-// // // // const StyledModalPaper = styled(Paper)(({ theme }) => ({
-// // // //   position: "absolute",
-// // // //   top: "50%",
-// // // //   left: "50%",
-// // // //   transform: "translate(-50%, -50%)",
-// // // //   width: 500,
-// // // //   padding: theme.spacing(4),
-// // // //   outline: "none",
-// // // //   textAlign: "center",
-// // // //   [theme.breakpoints.down("sm")]: {
-// // // //     width: "90%",
-// // // //     padding: theme.spacing(2),
-// // // //   },
-// // // // }));
+// // // //  const StyledModalPaper = styled(Paper)(({ theme }) => ({
+// // // //    position: "absolute",
+// // // //    top: "50%",
+// // // //    left: "50%",
+// // // //    transform: "translate(-50%, -50%)",
+// // // //    width: 500,
+// // // //    padding: theme.spacing(4),
+// // // //    outline: "none",
+// // // //    textAlign: "center",
+// // // //    backgroundColor: theme.palette.background.paper,
+// // // //    boxShadow: theme.shadows["5"],
+// // // //    borderRadius: theme.shape.borderRadius,
+// // // //    "@media (max-width: 600px)": {
+// // // //      width: "90%",
+// // // //      padding: theme.spacing(2),
+// // // //    },
+// // // //  }));
 
-// // // // const CarouselContainer = styled(Box)(({ theme }) => ({
-// // // //   position: "relative",
-// // // //   width: "100%",
-// // // //   maxWidth: 400,
-// // // //   margin: "auto",
-// // // // }));
+// // // //  const CarouselContainer = styled(Box)(({ theme }) => ({
+// // // //    position: "relative",
+// // // //    width: "100%",
+// // // //    maxWidth: 400,
+// // // //    margin: "auto",
+// // // //  }));
 
-// // // // const CarouselImage = styled("img")({
-// // // //   width: "100%",
-// // // //   height: 250,
-// // // //   objectFit: "cover",
-// // // //   borderRadius: 8,
-// // // // });
+// // // //  const CarouselImage = styled("img")({
+// // // //    width: "100%",
+// // // //    height: 250,
+// // // //    objectFit: "cover",
+// // // //    borderRadius: 8,
+// // // //  });
 
-// // // // const CarouselButton = styled(IconButton)(({ theme }) => ({
-// // // //   position: "absolute",
-// // // //   top: "50%",
-// // // //   transform: "translateY(-50%)",
-// // // //   backgroundColor: "rgba(0, 0, 0, 0.5)",
-// // // //   color: "#fff",
-// // // //   "&:hover": {
-// // // //     backgroundColor: "rgba(0, 0, 0, 0.7)",
-// // // //   },
-// // // // }));
+// // // //  const CarouselButton = styled(IconButton)(({ theme }) => ({
+// // // //    position: "absolute",
+// // // //    top: "50%",
+// // // //    transform: "translateY(-50%)",
+// // // //    backgroundColor: "rgba(0, 0, 0, 0.5)",
+// // // //    color: "#fff",
+// // // //    "&:hover": {
+// // // //      backgroundColor: "rgba(0, 0, 0, 0.7)",
+// // // //    },
+// // // //  }));
 
-// // // // const PropertyRequestsPage = () => {
-// // // //   const dispatch = useDispatch();
-// // // //   const theme = useTheme();
+// // // //  const FullScreenDialog = styled(Dialog)(({ theme }) => ({
+// // // //    "& .MuiDialog-paperFullScreen": {
+// // // //      backgroundColor: theme.palette.background.default,
+// // // //    },
+// // // //  }));
 
-// // // //   const {
-// // // //     propertyRequests,
-// // // //     loading,
-// // // //     error,
-// // // //     deleteLoading,
-// // // //     deletError,
-// // // //     updateLoading,
-// // // //   } = useSelector((state) => state.propertyRequest);
+// // // //  const FullScreenImage = styled("img")({
+// // // //    display: "block",
+// // // //    maxWidth: "100%",
+// // // //    maxHeight: "100vh",
+// // // //    margin: "auto",
+// // // //  });
 
-// // // //   const [page, setPage] = useState(0);
-// // // //   const [rowsPerPage, setRowsPerPage] = useState(10);
-// // // //   const [openAdminModal, setOpenAdminModal] = useState(false);
-// // // //   const [openDetailsModal, setOpenDetailsModal] = useState(false);
-// // // //   const [selectedRequest, setSelectedRequest] = useState(null);
-// // // //   const [action, setAction] = useState("");
-// // // //   const [filterType, setFilterType] = useState("All");
-// // // //   const [photoIndex, setPhotoIndex] = useState(0);
+// // // //  const PropertyRequestsPage = () => {
+// // // //    const dispatch = useDispatch();
+// // // //    const theme = useTheme();
 
-// // // //   const [adminFormData, setAdminFormData] = useState({
-// // // //     propertyNumber: "",
-// // // //     expireDate: null,
-// // // //     status: "",
-// // // //   });
+// // // //    const {
+// // // //      propertyRequests,
+// // // //      loading,
+// // // //      error,
+// // // //      deleteLoading,
+// // // //      deletError,
+// // // //      updateLoading,
+// // // //    } = useSelector((state) => state.propertyRequest);
 
-// // // //   useEffect(() => {
-// // // //     dispatch(fetchAllPropertyRequests());
-// // // //   }, [dispatch]);
+// // // //    const [page, setPage] = useState(0);
+// // // //    const [rowsPerPage, setRowsPerPage] = useState(10);
+// // // //    const [openAdminModal, setOpenAdminModal] = useState(false);
+// // // //    const [openDetailsModal, setOpenDetailsModal] = useState(false);
+// // // //    const [openFullScreen, setOpenFullScreen] = useState(false);
+// // // //    const [fullScreenImageUrl, setFullScreenImageUrl] = useState("");
+// // // //    const [selectedRequest, setSelectedRequest] = useState(null);
+// // // //    const [action, setAction] = useState("");
+// // // //    const [filterType, setFilterType] = useState("All");
+// // // //    const [photoIndex, setPhotoIndex] = useState(0);
 
-// // // //   const handleChangePage = (event, newPage) => {
-// // // //     setPage(newPage);
-// // // //   };
+// // // //    const [adminFormData, setAdminFormData] = useState({
+// // // //      propertyNumber: "",
+// // // //      expireDate: null,
+// // // //      status: "",
+// // // //    });
 
-// // // //   const handleChangeRowsPerPage = (event) => {
-// // // //     setRowsPerPage(parseInt(event.target.value, 10));
-// // // //     setPage(0);
-// // // //   };
+// // // //    useEffect(() => {
+// // // //      dispatch(fetchAllPropertyRequests());
+// // // //    }, [dispatch]);
 
-// // // //   const handleOpenAdminModal = (request, actionType) => {
-// // // //     setSelectedRequest(request);
-// // // //     setAction(actionType);
-// // // //     if (actionType !== "delete") {
-// // // //       setAdminFormData({
-// // // //         propertyNumber: request.propertyNumber || "",
-// // // //         expireDate: request.typeOperation === "Renting" ? null : null,
-// // // //         status: actionType === "accept" ? "Accepted" : "Rejected",
-// // // //       });
-// // // //     }
-// // // //     setOpenAdminModal(true);
-// // // //   };
+// // // //    const handleChangePage = (event, newPage) => {
+// // // //      setPage(newPage);
+// // // //    };
 
-// // // //   const handleOpenDetailsModal = (request) => {
-// // // //     setSelectedRequest(request);
-// // // //     setPhotoIndex(0); // Reset carousel to the first image
-// // // //     setOpenDetailsModal(true);
-// // // //   };
+// // // //    const handleChangeRowsPerPage = (event) => {
+// // // //      setRowsPerPage(parseInt(event.target.value, 10));
+// // // //      setPage(0);
+// // // //    };
 
-// // // //   const handleCloseModal = () => {
-// // // //     setOpenAdminModal(false);
-// // // //     setOpenDetailsModal(false);
-// // // //     setSelectedRequest(null);
-// // // //     setAction("");
-// // // //   };
+// // // //    const handleOpenAdminModal = (request, actionType) => {
+// // // //      setSelectedRequest(request);
+// // // //      setAction(actionType);
+// // // //      if (actionType !== "delete") {
+// // // //        setAdminFormData({
+// // // //          propertyNumber: request.propertyNumber || "",
+// // // //          expireDate: request.typeOperation === "Renting" ? null : null,
+// // // //          status: actionType === "accept" ? "accepted" : "rejected",
+// // // //        });
+// // // //      }
+// // // //      setOpenAdminModal(true);
+// // // //    };
 
-// // // //   const handleAdminFormChange = (e) => {
-// // // //     const { name, value } = e.target;
-// // // //     setAdminFormData({ ...adminFormData, [name]: value });
-// // // //   };
+// // // //    const handleOpenDetailsModal = (request) => {
+// // // //      setSelectedRequest(request);
+// // // //      setPhotoIndex(0); // Reset carousel to the first image
+// // // //      setOpenDetailsModal(true);
+// // // //    };
 
-// // // //   const handleDateChange = (newDate) => {
-// // // //     setAdminFormData({ ...adminFormData, expireDate: newDate });
-// // // //   };
+// // // //    const handleCloseModal = () => {
+// // // //      setOpenAdminModal(false);
+// // // //      setOpenDetailsModal(false);
+// // // //      setOpenFullScreen(false);
+// // // //      setSelectedRequest(null);
+// // // //      setAction("");
+// // // //      setFullScreenImageUrl("");
+// // // //    };
 
-// // // //   const handleAdminAction = () => {
-// // // //     if (action === "delete") {
-// // // //       dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
-// // // //         dispatch(fetchAllPropertyRequests());
-// // // //         handleCloseModal();
-// // // //       });
-// // // //     } else {
-// // // //       // Logic for 'accept' and 'reject'
-// // // //       const updateData = {
-// // // //         id: selectedRequest.id,
-// // // //         updateData: {
-// // // //           status: adminFormData.status,
-// // // //           propertyNumber: adminFormData.propertyNumber,
-// // // //           expireDate:
-// // // //             selectedRequest.typeOperation.toLowerCase() === "renting" &&
-// // // //             adminFormData.status === "Accepted"
-// // // //               ? adminFormData.expireDate
-// // // //               : null,
-// // // //         },
-// // // //       };
+// // // //    const handleAdminFormChange = (e) => {
+// // // //      const { name, value } = e.target;
+// // // //      setAdminFormData({ ...adminFormData, [name]: value });
+// // // //    };
 
-// // // //       dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
-// // // //         dispatch(fetchAllPropertyRequests());
-// // // //         handleCloseModal();
-// // // //       });
-// // // //     }
-// // // //   };
+// // // //    const handleDateChange = (newDate) => {
+// // // //      setAdminFormData({ ...adminFormData, expireDate: newDate });
+// // // //    };
 
-// // // //   const handleNextPhoto = () => {
-// // // //     if (selectedRequest?.photos) {
-// // // //       setPhotoIndex((prevIndex) =>
-// // // //         prevIndex === selectedRequest.photos.length - 1 ? 0 : prevIndex + 1
-// // // //       );
-// // // //     }
-// // // //   };
+// // // //    const handleAdminAction = () => {
+// // // //      if (action === "delete") {
+// // // //        dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
+// // // //          dispatch(fetchAllPropertyRequests());
+// // // //          handleCloseModal();
+// // // //        });
+// // // //      } else {
+// // // //        // Logic for 'accept' and 'reject'
+// // // //        const updateData = {
+// // // //          id: selectedRequest.id,
+// // // //          updateData: {
+// // // //            status: adminFormData.status,
+// // // //            propertyNumber: adminFormData.propertyNumber,
+// // // //            expireDate:
+// // // //              selectedRequest.typeOperation.toLowerCase() === "renting" &&
+// // // //              adminFormData.status === "Accepted"
+// // // //                ? adminFormData.expireDate
+// // // //                : null,
+// // // //          },
+// // // //        };
 
-// // // //   const handlePreviousPhoto = () => {
-// // // //     if (selectedRequest?.photos) {
-// // // //       setPhotoIndex((prevIndex) =>
-// // // //         prevIndex === 0 ? selectedRequest.photos.length - 1 : prevIndex - 1
-// // // //       );
-// // // //     }
-// // // //   };
+// // // //        dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
+// // // //          dispatch(fetchAllPropertyRequests());
+// // // //          handleCloseModal();
+// // // //        });
+// // // //      }
+// // // //    };
 
-// // // //   const filteredRequests = propertyRequests.filter((request) => {
-// // // //     if (filterType === "All") return true;
-// // // //     return request.typeOperation.toLowerCase() === filterType.toLowerCase();
-// // // //   });
+// // // //    const handleNextPhoto = () => {
+// // // //      if (selectedRequest?.photos) {
+// // // //        setPhotoIndex((prevIndex) =>
+// // // //          prevIndex === selectedRequest.photos.length - 1 ? 0 : prevIndex + 1
+// // // //        );
+// // // //      }
+// // // //    };
 
-// // // //   const paginatedRequests = filteredRequests.slice(
-// // // //     page * rowsPerPage,
-// // // //     page * rowsPerPage + rowsPerPage
-// // // //   );
+// // // //    const handlePreviousPhoto = () => {
+// // // //      if (selectedRequest?.photos) {
+// // // //        setPhotoIndex((prevIndex) =>
+// // // //          prevIndex === 0 ? selectedRequest.photos.length - 1 : prevIndex - 1
+// // // //        );
+// // // //      }
+// // // //    };
 
-// // // //   if (loading) {
-// // // //     return (
-// // // //       <Box
-// // // //         display="flex"
-// // // //         justifyContent="center"
-// // // //         alignItems="center"
-// // // //         minHeight="100vh"
-// // // //       >
-// // // //         <CircularProgress />
-// // // //       </Box>
-// // // //     );
-// // // //   }
+// // // //    const handleOpenFullScreen = (imageUrl) => {
+// // // //      setFullScreenImageUrl(imageUrl);
+// // // //      setOpenFullScreen(true);
+// // // //    };
 
-// // // //   if (error) {
-// // // //     return (
-// // // //       <Container>
-// // // //         <Typography color="error" variant="h6" sx={{ mt: 4 }}>
-// // // //           Error: {error}
-// // // //         </Typography>
-// // // //       </Container>
-// // // //     );
-// // // //   }
+// // // //    const filteredRequests = propertyRequests.filter((request) => {
+// // // //      if (filterType === "All") return true;
+// // // //      return request.typeOperation.toLowerCase() === filterType.toLowerCase();
+// // // //    });
 
-// // // //   return (
-// // // //     <LocalizationProvider dateAdapter={AdapterDateFns}>
-// // // //       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-// // // //         <Grid container spacing={2} alignItems="center" mb={4}>
-// // // //           <Grid item xs={12} sm={6}>
-// // // //             <Typography variant="h4" component="div">
-// // // //               Property Requests Management
-// // // //             </Typography>
-// // // //           </Grid>
-// // // //           <Grid item xs={12} sm={6} display="flex" justifyContent="flex-end">
-// // // //             <FormControl sx={{ m: 1, minWidth: 150 }}>
-// // // //               <InputLabel>Operation Type</InputLabel>
-// // // //               <Select
-// // // //                 value={filterType}
-// // // //                 label="Operation Type"
-// // // //                 onChange={(e) => setFilterType(e.target.value)}
-// // // //               >
-// // // //                 <MenuItem value="All">All</MenuItem>
-// // // //                 <MenuItem value="Selling">Selling</MenuItem>
-// // // //                 <MenuItem value="Renting">Renting</MenuItem>
-// // // //               </Select>
-// // // //             </FormControl>
-// // // //           </Grid>
-// // // //         </Grid>
+// // // //    const paginatedRequests = filteredRequests.slice(
+// // // //      page * rowsPerPage,
+// // // //      page * rowsPerPage + rowsPerPage
+// // // //    );
 
-// // // //         <Paper sx={{ width: "100%", overflow: "hidden" }}>
-// // // //           <TableContainer sx={{ maxHeight: 600 }}>
-// // // //             <Table stickyHeader aria-label="sticky table">
-// // // //               <TableHead>
-// // // //                 <TableRow>
-// // // //                   <TableCell>ID</TableCell>
-// // // //                   <TableCell>Property Number</TableCell>
-// // // //                   <TableCell>Operation Type</TableCell>
-// // // //                   <TableCell>Status</TableCell>
-// // // //                   <TableCell>Created At</TableCell>
-// // // //                   <TableCell align="center">Actions</TableCell>
-// // // //                 </TableRow>
-// // // //               </TableHead>
-// // // //               <TableBody>
-// // // //                 {paginatedRequests.map((request) => (
-// // // //                   <StyledTableRow key={request.id}>
-// // // //                     <TableCell>{request.id}</TableCell>
-// // // //                     <TableCell>{request.propertyNumber}</TableCell>
-// // // //                     <TableCell>{request.typeOperation}</TableCell>
-// // // //                     <TableCell>{request.status}</TableCell>
-// // // //                     <TableCell>
-// // // //                       {request.createdAt
-// // // //                         ? format(new Date(request.createdAt), "PP")
-// // // //                         : "N/A"}{" "}
-// // // //                     </TableCell>
-// // // //                     <TableCell align="center">
-// // // //                       <Tooltip title="View Details">
-// // // //                         <IconButton
-// // // //                           color="info"
-// // // //                           onClick={() => handleOpenDetailsModal(request)}
-// // // //                         >
-// // // //                           <Visibility />
-// // // //                         </IconButton>
-// // // //                       </Tooltip>
-// // // //                       <Tooltip title="Accept Request">
-// // // //                         <IconButton
-// // // //                           color="success"
-// // // //                           onClick={() => handleOpenAdminModal(request, "accept")}
-// // // //                         >
-// // // //                           <CheckCircleOutline />
-// // // //                         </IconButton>
-// // // //                       </Tooltip>
-// // // //                       <Tooltip title="Reject Request">
-// // // //                         <IconButton
-// // // //                           color="error"
-// // // //                           onClick={() => handleOpenAdminModal(request, "reject")}
-// // // //                         >
-// // // //                           <HighlightOff />
-// // // //                         </IconButton>
-// // // //                       </Tooltip>
-// // // //                       <Tooltip title="Delete Request">
-// // // //                         <IconButton
-// // // //                           color="secondary"
-// // // //                           onClick={() => handleOpenAdminModal(request, "delete")}
-// // // //                         >
-// // // //                           <DeleteOutline />
-// // // //                         </IconButton>
-// // // //                       </Tooltip>
-// // // //                     </TableCell>
-// // // //                   </StyledTableRow>
-// // // //                 ))}
+// // // //    if (loading) {
+// // // //      return (
+// // // //        <Box
+// // // //          display="flex"
+// // // //          justifyContent="center"
+// // // //          alignItems="center"
+// // // //          minHeight="100vh"
+// // // //        >
+// // // //          <CircularProgress />
+// // // //        </Box>
+// // // //      );
+// // // //    }
 
-// // // //                 {!paginatedRequests.length && (
-// // // //                   <TableRow>
-// // // //                     <TableCell colSpan={6} align="center">
-// // // //                       No property requests found.
-// // // //                     </TableCell>
-// // // //                   </TableRow>
-// // // //                 )}
-// // // //               </TableBody>
-// // // //             </Table>
-// // // //           </TableContainer>
-// // // //           <TablePagination
-// // // //             rowsPerPageOptions={[10, 25, 100]}
-// // // //             component="div"
-// // // //             count={filteredRequests.length}
-// // // //             rowsPerPage={rowsPerPage}
-// // // //             page={page}
-// // // //             onPageChange={handleChangePage}
-// // // //             onRowsPerPageChange={handleChangeRowsPerPage}
-// // // //           />
-// // // //         </Paper>
+// // // //    if (error) {
+// // // //      return (
+// // // //        <Container>
+// // // //          <Typography color="error" variant="h6" sx={{ mt: 4 }}>
+// // // //            Error: {error}
+// // // //          </Typography>
+// // // //        </Container>
+// // // //      );
+// // // //    }
 
-// // // //         {/* Modal for Admin Actions (Accept, Reject, Delete) */}
-// // // //         <Modal open={openAdminModal} onClose={handleCloseModal}>
-// // // //           <StyledModalPaper>
-// // // //             <Typography variant="h6" gutterBottom>
-// // // //               {action === "accept"
-// // // //                 ? "Accept Property Request"
-// // // //                 : action === "reject"
-// // // //                 ? "Reject Property Request"
-// // // //                 : "Delete Property Request"}
-// // // //             </Typography>
-// // // //             <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-// // // //               {`Are you sure you want to ${action} the request for property number ${selectedRequest?.propertyNumber}?`}
-// // // //             </Typography>
+// // // //    return (
+// // // //      <LocalizationProvider dateAdapter={AdapterDateFns}>
+// // // //        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+// // // //          <Grid container spacing={2} alignItems="center" mb={4}>
+// // // //            <Grid item xs={12} sm={6}>
+// // // //              <Typography variant="h4" component="div">
+// // // //                Property Requests Management
+// // // //              </Typography>
+// // // //            </Grid>
+// // // //            <Grid item xs={12} sm={6} display="flex" justifyContent="flex-end">
+// // // //              <FormControl sx={{ m: 1, minWidth: 150 }}>
+// // // //                <InputLabel>Operation Type</InputLabel>
+// // // //                <Select
+// // // //                  value={filterType}
+// // // //                  label="Operation Type"
+// // // //                  onChange={(e) => setFilterType(e.target.value)}
+// // // //                >
+// // // //                  <MenuItem value="All">All</MenuItem>
+// // // //                  <MenuItem value="Selling">Selling</MenuItem>
+// // // //                  <MenuItem value="Renting">Renting</MenuItem>
+// // // //                </Select>
+// // // //              </FormControl>
+// // // //            </Grid>
+// // // //          </Grid>
 
-// // // //             {action === "accept" &&
-// // // //               selectedRequest?.typeOperation.toLowerCase() === "renting" && (
-// // // //                 <Box component="form" noValidate sx={{ mt: 2 }}>
-// // // //                   <DatePicker
-// // // //                     label="Expiration Date"
-// // // //                     value={adminFormData.expireDate}
-// // // //                     onChange={handleDateChange}
-// // // //                     slotProps={{
-// // // //                         textField: { fullWidth: true, margin: "normal" }
-// // // //                     }}
-// // // //                   />
-// // // //                 </Box>
-// // // //               )}
-// // // //             <Box
-// // // //               sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
-// // // //             >
-// // // //               <Button
-// // // //                 variant="contained"
-// // // //                 color={
-// // // //                   action === "accept"
-// // // //                     ? "success"
-// // // //                     : action === "reject"
-// // // //                     ? "error"
-// // // //                     : "secondary"
-// // // //                 }
-// // // //                 onClick={handleAdminAction}
-// // // //                 disabled={updateLoading || deleteLoading}
-// // // //               >
-// // // //                 {action === "accept" ? (
-// // // //                   updateLoading ? (
-// // // //                     <CircularProgress size={20} color="inherit" />
-// // // //                   ) : (
-// // // //                     "Confirm Acceptance"
-// // // //                   )
-// // // //                 ) : action === "reject" ? (
-// // // //                   updateLoading ? (
-// // // //                     <CircularProgress size={20} color="inherit" />
-// // // //                   ) : (
-// // // //                     "Confirm Rejection"
-// // // //                   )
-// // // //                 ) : deleteLoading ? (
-// // // //                   <CircularProgress size={20} color="inherit" />
-// // // //                 ) : (
-// // // //                   "Confirm Deletion"
-// // // //                 )}
-// // // //               </Button>
-// // // //               <Button variant="outlined" onClick={handleCloseModal}>
-// // // //                 Cancel
-// // // //               </Button>
-// // // //             </Box>
-// // // //           </StyledModalPaper>
-// // // //         </Modal>
+// // // //          <Paper sx={{ width: "100%", overflow: "hidden" }}>
+// // // //            <TableContainer sx={{ maxHeight: 600 }}>
+// // // //              <Table stickyHeader aria-label="sticky table">
+// // // //                <TableHead>
+// // // //                  <TableRow>
+// // // //                    <TableCell>ID</TableCell>
+// // // //                    <TableCell>Property Number</TableCell>
+// // // //                    <TableCell>Operation Type</TableCell>
+// // // //                    <TableCell>Status</TableCell>
+// // // //                    <TableCell>Created At</TableCell>
+// // // //                    <TableCell align="center">Actions</TableCell>
+// // // //                  </TableRow>
+// // // //                </TableHead>
+// // // //                <TableBody>
+// // // //                  {paginatedRequests.map((request) => (
+// // // //                    <StyledTableRow key={request.id}>
+// // // //                      <TableCell>{request.id}</TableCell>
+// // // //                      <TableCell>{request.propertyNumber}</TableCell>
+// // // //                      <TableCell>{request.typeOperation}</TableCell>
+// // // //                      <TableCell>{request.status}</TableCell>
+// // // //                      <TableCell>
+// // // //                        {request.createdAt
+// // // //                          ? format(new Date(request.createdAt), "PP")
+// // // //                          : "N/A"}{" "}
+// // // //                      </TableCell>
+// // // //                      <TableCell align="center">
+// // // //                        <Tooltip title="View Details">
+// // // //                          <IconButton
+// // // //                            color="info"
+// // // //                            onClick={() => handleOpenDetailsModal(request)}
+// // // //                          >
+// // // //                            <Visibility />
+// // // //                          </IconButton>
+// // // //                        </Tooltip>
+// // // //                        <Tooltip title="Accept Request">
+// // // //                          <IconButton
+// // // //                            color="success"
+// // // //                            onClick={() => handleOpenAdminModal(request, "accept")}
+// // // //                          >
+// // // //                            <CheckCircleOutline />
+// // // //                          </IconButton>
+// // // //                        </Tooltip>
+// // // //                        <Tooltip title="Reject Request">
+// // // //                          <IconButton
+// // // //                            color="error"
+// // // //                            onClick={() => handleOpenAdminModal(request, "reject")}
+// // // //                          >
+// // // //                            <HighlightOff />
+// // // //                          </IconButton>
+// // // //                        </Tooltip>
+// // // //                        <Tooltip title="Delete Request">
+// // // //                          <IconButton
+// // // //                            color="secondary"
+// // // //                            onClick={() => handleOpenAdminModal(request, "delete")}
+// // // //                          >
+// // // //                            <DeleteOutline />
+// // // //                          </IconButton>
+// // // //                        </Tooltip>
+// // // //                      </TableCell>
+// // // //                    </StyledTableRow>
+// // // //                  ))}
 
-// // // //         {/* Modal for Viewing Details */}
-// // // //         <Dialog open={openDetailsModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
-// // // //           <DialogTitle>Property Request Details</DialogTitle>
-// // // //           <DialogContent dividers>
-// // // //             {selectedRequest && (
-// // // //               <Box>
-// // // //                 <Grid container spacing={2}>
-// // // //                   <Grid item xs={12}>
-// // // //                     <CarouselContainer>
-// // // //                       {selectedRequest.photos && selectedRequest.photos.length > 0 ? (
-// // // //                         <>
-// // // //                           <CardMedia
-// // // //                             component="img"
-// // // //                             image={selectedRequest.photos[photoIndex].url}
-// // // //                             alt="Property Photo"
-// // // //                             sx={{
-// // // //                               width: "100%",
-// // // //                               height: 300,
-// // // //                               objectFit: "cover",
-// // // //                               borderRadius: 1,
-// // // //                             }}
-// // // //                           />
-// // // //                           {selectedRequest.photos.length > 1 && (
-// // // //                             <>
-// // // //                               <CarouselButton
-// // // //                                 onClick={handlePreviousPhoto}
-// // // //                                 sx={{ left: 8 }}
-// // // //                               >
-// // // //                                 <ArrowBackIos />
-// // // //                               </CarouselButton>
-// // // //                               <CarouselButton
-// // // //                                 onClick={handleNextPhoto}
-// // // //                                 sx={{ right: 8 }}
-// // // //                               >
-// // // //                                 <ArrowForwardIos />
-// // // //                               </CarouselButton>
-// // // //                             </>
-// // // //                           )}
-// // // //                         </>
-// // // //                       ) : (
-// // // //                         <Typography variant="body2" color="text.secondary" align="center">
-// // // //                           No photos available.
-// // // //                         </Typography>
-// // // //                       )}
-// // // //                     </CarouselContainer>
-// // // //                   </Grid>
-// // // //                   <Grid item xs={12}>
-// // // //                     <Typography variant="h6">Request Info</Typography>
-// // // //                     <Typography variant="body1">
-// // // //                       <strong>ID:</strong> {selectedRequest.id}
-// // // //                     </Typography>
-// // // //                     <Typography variant="body1">
-// // // //                       <strong>Property Number:</strong> {selectedRequest.propertyNumber}
-// // // //                     </Typography>
-// // // //                     <Typography variant="body1">
-// // // //                       <strong>Operation Type:</strong> {selectedRequest.typeOperation}
-// // // //                     </Typography>
-// // // //                     <Typography variant="body1">
-// // // //                       <strong>Status:</strong> {selectedRequest.status}
-// // // //                     </Typography>
-// // // //                     <Typography variant="body1">
-// // // //                       <strong>Created At:</strong>{" "}
-// // // //                       {format(new Date(selectedRequest.createdAt), "PP")}
-// // // //                     </Typography>
-// // // //                   </Grid>
-// // // //                 </Grid>
-// // // //               </Box>
-// // // //             )}
-// // // //           </DialogContent>
-// // // //           <DialogActions>
-// // // //             <Button onClick={handleCloseModal}>Close</Button>
-// // // //           </DialogActions>
-// // // //         </Dialog>
-// // // //       </Container>
-// // // //     </LocalizationProvider>
-// // // //   );
-// // // // };
+// // // //                  {!paginatedRequests.length && (
+// // // //                    <TableRow>
+// // // //                      <TableCell colSpan={6} align="center">
+// // // //                        No property requests found.
+// // // //                      </TableCell>
+// // // //                    </TableRow>
+// // // //                  )}
+// // // //                </TableBody>
+// // // //              </Table>
+// // // //            </TableContainer>
+// // // //            <TablePagination
+// // // //              rowsPerPageOptions={[10, 25, 100]}
+// // // //              component="div"
+// // // //              count={filteredRequests.length}
+// // // //              rowsPerPage={rowsPerPage}
+// // // //              page={page}
+// // // //              onPageChange={handleChangePage}
+// // // //              onRowsPerPageChange={handleChangeRowsPerPage}
+// // // //            />
+// // // //          </Paper>
 
-// // // // export default PropertyRequestsPage;
+// // // //          {/* Modal for Admin Actions (Accept, Reject, Delete) */}
+// // // //          <Modal open={openAdminModal} onClose={handleCloseModal}>
+// // // //            <StyledModalPaper>
+// // // //              <Typography variant="h6" gutterBottom>
+// // // //                {action === "accept"
+// // // //                  ? "Accept Property Request"
+// // // //                  : action === "reject"
+// // // //                  ? "Reject Property Request"
+// // // //                  : "Delete Property Request"}
+// // // //              </Typography>
+// // // //              <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+// // // //                {`Are you sure you want to ${action} the request for property number ${selectedRequest?.propertyNumber}?`}
+// // // //              </Typography>
+
+// // // //              {action === "accept" &&
+// // // //                selectedRequest?.typeOperation.toLowerCase() === "renting" && (
+// // // //                  <Box component="form" noValidate sx={{ mt: 2 }}>
+// // // //                    <DatePicker
+// // // //                      label="Expiration Date"
+// // // //                      value={adminFormData.expireDate}
+// // // //                      onChange={handleDateChange}
+// // // //                      slotProps={{
+// // // //                        textField: { fullWidth: true, margin: "normal" },
+// // // //                      }}
+// // // //                    />
+// // // //                  </Box>
+// // // //                )}
+// // // //              <Box
+// // // //                sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
+// // // //              >
+// // // //                <Button
+// // // //                  variant="contained"
+// // // //                  color={
+// // // //                    action === "accept"
+// // // //                      ? "success"
+// // // //                      : action === "reject"
+// // // //                      ? "error"
+// // // //                      : "secondary"
+// // // //                  }
+// // // //                  onClick={handleAdminAction}
+// // // //                  disabled={updateLoading || deleteLoading}
+// // // //                >
+// // // //                  {action === "accept" ? (
+// // // //                    updateLoading ? (
+// // // //                      <CircularProgress size={20} color="inherit" />
+// // // //                    ) : (
+// // // //                      "Confirm Acceptance"
+// // // //                    )
+// // // //                  ) : action === "reject" ? (
+// // // //                    updateLoading ? (
+// // // //                      <CircularProgress size={20} color="inherit" />
+// // // //                    ) : (
+// // // //                      "Confirm Rejection"
+// // // //                    )
+// // // //                  ) : deleteLoading ? (
+// // // //                    <CircularProgress size={20} color="inherit" />
+// // // //                  ) : (
+// // // //                    "Confirm Deletion"
+// // // //                  )}
+// // // //                </Button>
+// // // //                <Button variant="outlined" onClick={handleCloseModal}>
+// // // //                  Cancel
+// // // //                </Button>
+// // // //              </Box>
+// // // //            </StyledModalPaper>
+// // // //          </Modal>
+
+// // // //          {/* Modal for Viewing Details */}
+// // // //          <Dialog
+// // // //            open={openDetailsModal}
+// // // //            onClose={handleCloseModal}
+// // // //            maxWidth="sm"
+// // // //            fullWidth
+// // // //          >
+// // // //            <DialogTitle>Property Request Details</DialogTitle>
+// // // //            <DialogContent dividers>
+// // // //              {selectedRequest && (
+// // // //                <Box>
+// // // //                  <Grid container spacing={2}>
+// // // //                    <Grid item xs={12}>
+// // // //                      <CarouselContainer>
+// // // //                        {selectedRequest.photos && selectedRequest.photos.length > 0 ? (
+// // // //                          <>
+// // // //                            <CardMedia
+// // // //                              component="img"
+// // // //                              image={selectedRequest.photos?.[photoIndex]?.url}
+// // // //                              alt="Property Photo"
+// // // //                              onClick={() =>
+// // // //                                handleOpenFullScreen(
+// // // //                                  selectedRequest.photos?.[photoIndex]?.url
+// // // //                                )
+// // // //                              }
+// // // //                              sx={{
+// // // //                                width: "100%",
+// // // //                                height: 300,
+// // // //                                objectFit: "cover",
+// // // //                                borderRadius: 1,
+// // // //                                cursor: "pointer",
+// // // //                              }}
+// // // //                            />
+// // // //                            {selectedRequest.photos.length > 1 && (
+// // // //                              <>
+// // // //                                <CarouselButton
+// // // //                                  onClick={handlePreviousPhoto}
+// // // //                                  sx={{ left: 8 }}
+// // // //                                >
+// // // //                                  <ArrowBackIos />
+// // // //                                </CarouselButton>
+// // // //                                <CarouselButton
+// // // //                                  onClick={handleNextPhoto}
+// // // //                                  sx={{ right: 8 }}
+// // // //                                >
+// // // //                                  <ArrowForwardIos />
+// // // //                                </CarouselButton>
+// // // //                              </>
+// // // //                            )}
+// // // //                          </>
+// // // //                        ) : (
+// // // //                          <Typography
+// // // //                            variant="body2"
+// // // //                            color="text.secondary"
+// // // //                            align="center"
+// // // //                          >
+// // // //                            No photos available.
+// // // //                          </Typography>
+// // // //                        )}
+// // // //                      </CarouselContainer>
+// // // //                    </Grid>
+// // // //                    <Grid item xs={12}>
+// // // //                      <Typography variant="h6">Request Info</Typography>
+// // // //                      <Typography variant="body1">
+// // // //                        <strong>ID:</strong> {selectedRequest.id}
+// // // //                      </Typography>
+// // // //                      <Typography variant="body1">
+// // // //                        <strong>Property Number:</strong>{" "}
+// // // //                        {selectedRequest.propertyNumber}
+// // // //                      </Typography>
+// // // //                      <Typography variant="body1">
+// // // //                        <strong>Operation Type:</strong>{" "}
+// // // //                        {selectedRequest.typeOperation}
+// // // //                      </Typography>
+// // // //                      <Typography variant="body1">
+// // // //                        <strong>Status:</strong> {selectedRequest.status}
+// // // //                      </Typography>
+// // // //                      <Typography variant="body1">
+// // // //                        <strong>Created At:</strong>{" "}
+// // // //                        {format(new Date(selectedRequest.createdAt), "PP")}
+// // // //                      </Typography>
+// // // //                    </Grid>
+// // // //                  </Grid>
+// // // //                </Box>
+// // // //              )}
+// // // //            </DialogContent>
+// // // //            <DialogActions>
+// // // //              <Button onClick={handleCloseModal}>Close</Button>
+// // // //            </DialogActions>
+// // // //          </Dialog>
+
+// // // //          {/* Full Screen Image Modal */}
+// // // //          <FullScreenDialog
+// // // //            fullScreen
+// // // //            open={openFullScreen}
+// // // //            onClose={handleCloseModal}
+// // // //          >
+// // // //            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+// // // //              Full Screen Image
+// // // //              <IconButton onClick={handleCloseModal}>
+// // // //                <Close />
+// // // //              </IconButton>
+// // // //            </DialogTitle>
+// // // //            <DialogContent sx={{ display: "flex", alignItems: "center" }}>
+// // // //              <FullScreenImage src={fullScreenImageUrl} alt="Full Screen Property Photo" />
+// // // //            </DialogContent>
+// // // //          </FullScreenDialog>
+// // // //        </Container>
+// // // //      </LocalizationProvider>
+// // // //    );
+// // // //  };
+
+// // // //  export default PropertyRequestsPage;
 
 // // // import React, { useEffect, useState } from "react";
-// // //  import { useDispatch, useSelector } from "react-redux";
-// // //  import {
-// // //    fetchAllPropertyRequests,
-// // //    updatePropertyRequestByAdmin,
-// // //    deletePropertyRequest,
-// // //  } from "../../redux/property request/propertyRequestSlice";
-// // //  import {
-// // //    Container,
-// // //    Typography,
-// // //    CircularProgress,
-// // //    Box,
-// // //    Paper,
-// // //    Table,
-// // //    TableBody,
-// // //    TableCell,
-// // //    TableContainer,
-// // //    TableHead,
-// // //    TableRow,
-// // //    TablePagination,
-// // //    Button,
-// // //    IconButton,
-// // //    Tooltip,
-// // //    Modal,
-// // //    TextField,
-// // //    FormControl,
-// // //    InputLabel,
-// // //    Select,
-// // //    MenuItem,
-// // //    Grid,
-// // //    Dialog,
-// // //    DialogTitle,
-// // //    DialogContent,
-// // //    DialogActions,
-// // //    CardMedia,
-// // //  } from "@mui/material";
-// // //  import {
-// // //    CheckCircleOutline,
-// // //    HighlightOff,
-// // //    Visibility,
-// // //    DeleteOutline,
-// // //    ArrowBackIos,
-// // //    ArrowForwardIos,
-// // //    Close,
-// // //  } from "@mui/icons-material";
-// // //  import { styled, useTheme } from "@mui/material/styles";
-// // //  import { format } from "date-fns";
-// // //  import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-// // //  import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-// // //  import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+// // // import { useDispatch, useSelector } from "react-redux";
+// // // import {
+// // //   fetchAllPropertyRequests,
+// // //   updatePropertyRequestByAdmin,
+// // //   deletePropertyRequest,
+// // // } from "../../redux/property request/propertyRequestSlice";
+// // // import {
+// // //   Container,
+// // //   Typography,
+// // //   CircularProgress,
+// // //   Box,
+// // //   Paper,
+// // //   Table,
+// // //   TableBody,
+// // //   TableCell,
+// // //   TableContainer,
+// // //   TableHead,
+// // //   TableRow,
+// // //   TablePagination,
+// // //   Button,
+// // //   IconButton,
+// // //   Tooltip,
+// // //   Modal,
+// // //   TextField,
+// // //   FormControl,
+// // //   InputLabel,
+// // //   Select,
+// // //   MenuItem,
+// // //   Grid,
+// // //   Dialog,
+// // //   DialogTitle,
+// // //   DialogContent,
+// // //   DialogActions,
+// // //   CardMedia,
+// // // } from "@mui/material";
+// // // import {
+// // //   CheckCircleOutline,
+// // //   HighlightOff,
+// // //   Visibility,
+// // //   DeleteOutline,
+// // //   ArrowBackIos,
+// // //   ArrowForwardIos,
+// // //   Close,
+// // // } from "@mui/icons-material";
+// // // import { styled, useTheme } from "@mui/material/styles";
+// // // import { format } from "date-fns";
+// // // import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// // // import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+// // // import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
-// // //  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-// // //    "&:nth-of-type(odd)": {
-// // //      backgroundColor: theme.palette.action.hover,
-// // //    },
-// // //    "&:last-child td, &:last-child th": {
-// // //      border: 0,
-// // //    },
-// // //  }));
+// // // const StyledTableRow = styled(TableRow)(({ theme }) => ({
+// // //   "&:nth-of-type(odd)": {
+// // //     backgroundColor: theme.palette.action.hover,
+// // //   },
+// // //   "&:last-child td, &:last-child th": {
+// // //     border: 0,
+// // //   },
+// // // }));
 
-// // //  const StyledModalPaper = styled(Paper)(({ theme }) => ({
-// // //    position: "absolute",
-// // //    top: "50%",
-// // //    left: "50%",
-// // //    transform: "translate(-50%, -50%)",
-// // //    width: 500,
-// // //    padding: theme.spacing(4),
-// // //    outline: "none",
-// // //    textAlign: "center",
-// // //    backgroundColor: theme.palette.background.paper,
-// // //    boxShadow: theme.shadows["5"],
-// // //    borderRadius: theme.shape.borderRadius,
-// // //    "@media (max-width: 600px)": {
-// // //      width: "90%",
-// // //      padding: theme.spacing(2),
-// // //    },
-// // //  }));
+// // // const StyledModalPaper = styled(Paper)(({ theme }) => ({
+// // //   position: "absolute",
+// // //   top: "50%",
+// // //   left: "50%",
+// // //   transform: "translate(-50%, -50%)",
+// // //   width: 500,
+// // //   padding: theme.spacing(4),
+// // //   outline: "none",
+// // //   textAlign: "center",
+// // //   backgroundColor: theme.palette.background.paper,
+// // //   boxShadow: theme.shadows["5"],
+// // //   borderRadius: theme.shape.borderRadius,
+// // //   "@media (max-width: 600px)": {
+// // //     width: "90%",
+// // //     padding: theme.spacing(2),
+// // //   },
+// // // }));
 
-// // //  const CarouselContainer = styled(Box)(({ theme }) => ({
-// // //    position: "relative",
-// // //    width: "100%",
-// // //    maxWidth: 400,
-// // //    margin: "auto",
-// // //  }));
+// // // const CarouselContainer = styled(Box)(({ theme }) => ({
+// // //   position: "relative",
+// // //   width: "100%",
+// // //   maxWidth: 400,
+// // //   margin: "auto",
+// // // }));
 
-// // //  const CarouselImage = styled("img")({
-// // //    width: "100%",
-// // //    height: 250,
-// // //    objectFit: "cover",
-// // //    borderRadius: 8,
-// // //  });
+// // // const CarouselButton = styled(IconButton)(({ theme }) => ({
+// // //   position: "absolute",
+// // //   top: "50%",
+// // //   transform: "translateY(-50%)",
+// // //   backgroundColor: "rgba(0, 0, 0, 0.5)",
+// // //   color: "#fff",
+// // //   "&:hover": {
+// // //     backgroundColor: "rgba(0, 0, 0, 0.7)",
+// // //   },
+// // // }));
 
-// // //  const CarouselButton = styled(IconButton)(({ theme }) => ({
-// // //    position: "absolute",
-// // //    top: "50%",
-// // //    transform: "translateY(-50%)",
-// // //    backgroundColor: "rgba(0, 0, 0, 0.5)",
-// // //    color: "#fff",
-// // //    "&:hover": {
-// // //      backgroundColor: "rgba(0, 0, 0, 0.7)",
-// // //    },
-// // //  }));
+// // // const FullScreenDialog = styled(Dialog)(({ theme }) => ({
+// // //   "& .MuiDialog-paperFullScreen": {
+// // //     backgroundColor: theme.palette.background.default,
+// // //   },
+// // // }));
 
-// // //  const FullScreenDialog = styled(Dialog)(({ theme }) => ({
-// // //    "& .MuiDialog-paperFullScreen": {
-// // //      backgroundColor: theme.palette.background.default,
-// // //    },
-// // //  }));
+// // // const FullScreenImage = styled("img")({
+// // //   display: "block",
+// // //   maxWidth: "100%",
+// // //   maxHeight: "100vh",
+// // //   margin: "auto",
+// // // });
 
-// // //  const FullScreenImage = styled("img")({
-// // //    display: "block",
-// // //    maxWidth: "100%",
-// // //    maxHeight: "100vh",
-// // //    margin: "auto",
-// // //  });
+// // // const PropertyRequestsPage = () => {
+// // //   const dispatch = useDispatch();
+// // //   const theme = useTheme();
 
-// // //  const PropertyRequestsPage = () => {
-// // //    const dispatch = useDispatch();
-// // //    const theme = useTheme();
+// // //   const {
+// // //     propertyRequests,
+// // //     loading,
+// // //     error,
+// // //     deleteLoading,
+// // //     deletError,
+// // //     updateLoading,
+// // //   } = useSelector((state) => state.propertyRequest);
 
-// // //    const {
-// // //      propertyRequests,
-// // //      loading,
-// // //      error,
-// // //      deleteLoading,
-// // //      deletError,
-// // //      updateLoading,
-// // //    } = useSelector((state) => state.propertyRequest);
+// // //   const [page, setPage] = useState(0);
+// // //   const [rowsPerPage, setRowsPerPage] = useState(10);
+// // //   const [openAdminModal, setOpenAdminModal] = useState(false);
+// // //   const [openDetailsModal, setOpenDetailsModal] = useState(false);
+// // //   const [openFullScreen, setOpenFullScreen] = useState(false);
+// // //   const [fullScreenImageUrl, setFullScreenImageUrl] = useState("");
+// // //   const [selectedRequest, setSelectedRequest] = useState(null);
+// // //   const [action, setAction] = useState("");
+// // //   const [filterType, setFilterType] = useState("All");
+// // //   const [photoIndex, setPhotoIndex] = useState(0);
 
-// // //    const [page, setPage] = useState(0);
-// // //    const [rowsPerPage, setRowsPerPage] = useState(10);
-// // //    const [openAdminModal, setOpenAdminModal] = useState(false);
-// // //    const [openDetailsModal, setOpenDetailsModal] = useState(false);
-// // //    const [openFullScreen, setOpenFullScreen] = useState(false);
-// // //    const [fullScreenImageUrl, setFullScreenImageUrl] = useState("");
-// // //    const [selectedRequest, setSelectedRequest] = useState(null);
-// // //    const [action, setAction] = useState("");
-// // //    const [filterType, setFilterType] = useState("All");
-// // //    const [photoIndex, setPhotoIndex] = useState(0);
+// // //   const [adminFormData, setAdminFormData] = useState({
+// // //     propertyNumber: "",
+// // //     expireDate: null,
+// // //     status: "",
+// // //   });
 
-// // //    const [adminFormData, setAdminFormData] = useState({
-// // //      propertyNumber: "",
-// // //      expireDate: null,
-// // //      status: "",
-// // //    });
+// // //   useEffect(() => {
+// // //     dispatch(fetchAllPropertyRequests());
+// // //   }, [dispatch]);
 
-// // //    useEffect(() => {
-// // //      dispatch(fetchAllPropertyRequests());
-// // //    }, [dispatch]);
+// // //   const handleChangePage = (event, newPage) => {
+// // //     setPage(newPage);
+// // //   };
 
-// // //    const handleChangePage = (event, newPage) => {
-// // //      setPage(newPage);
-// // //    };
+// // //   const handleChangeRowsPerPage = (event) => {
+// // //     setRowsPerPage(parseInt(event.target.value, 10));
+// // //     setPage(0);
+// // //   };
 
-// // //    const handleChangeRowsPerPage = (event) => {
-// // //      setRowsPerPage(parseInt(event.target.value, 10));
-// // //      setPage(0);
-// // //    };
+// // //   const handleOpenAdminModal = (request, actionType) => {
+// // //     setSelectedRequest(request);
+// // //     setAction(actionType);
+// // //     if (actionType !== "delete") {
+// // //       setAdminFormData({
+// // //         propertyNumber: request.propertyNumber || "",
+// // //         expireDate: request.typeOperation === "Renting" ? null : null,
+// // //         status: actionType === "accept" ? "accepted" : "rejected",
+// // //       });
+// // //     }
+// // //     setOpenAdminModal(true);
+// // //   };
 
-// // //    const handleOpenAdminModal = (request, actionType) => {
-// // //      setSelectedRequest(request);
-// // //      setAction(actionType);
-// // //      if (actionType !== "delete") {
-// // //        setAdminFormData({
-// // //          propertyNumber: request.propertyNumber || "",
-// // //          expireDate: request.typeOperation === "Renting" ? null : null,
-// // //          status: actionType === "accept" ? "accepted" : "rejected",
-// // //        });
-// // //      }
-// // //      setOpenAdminModal(true);
-// // //    };
+// // //   const handleOpenDetailsModal = (request) => {
+// // //     setSelectedRequest(request);
+// // //     setPhotoIndex(0); // Reset carousel to the first image
+// // //     setOpenDetailsModal(true);
+// // //   };
 
-// // //    const handleOpenDetailsModal = (request) => {
-// // //      setSelectedRequest(request);
-// // //      setPhotoIndex(0); // Reset carousel to the first image
-// // //      setOpenDetailsModal(true);
-// // //    };
+// // //   const handleCloseAdminModal = () => {
+// // //     setOpenAdminModal(false);
+// // //     setSelectedRequest(null);
+// // //     setAction("");
+// // //   };
 
-// // //    const handleCloseModal = () => {
-// // //      setOpenAdminModal(false);
-// // //      setOpenDetailsModal(false);
-// // //      setOpenFullScreen(false);
-// // //      setSelectedRequest(null);
-// // //      setAction("");
-// // //      setFullScreenImageUrl("");
-// // //    };
+// // //   const handleCloseDetailsModal = () => {
+// // //     setOpenDetailsModal(false);
+// // //     setSelectedRequest(null);
+// // //   };
 
-// // //    const handleAdminFormChange = (e) => {
-// // //      const { name, value } = e.target;
-// // //      setAdminFormData({ ...adminFormData, [name]: value });
-// // //    };
+// // //   const handleCloseFullScreen = () => {
+// // //     setOpenFullScreen(false);
+// // //     setFullScreenImageUrl("");
+// // //   };
 
-// // //    const handleDateChange = (newDate) => {
-// // //      setAdminFormData({ ...adminFormData, expireDate: newDate });
-// // //    };
+// // //   const handleAdminFormChange = (e) => {
+// // //     const { name, value } = e.target;
+// // //     setAdminFormData({ ...adminFormData, [name]: value });
+// // //   };
 
-// // //    const handleAdminAction = () => {
-// // //      if (action === "delete") {
-// // //        dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
-// // //          dispatch(fetchAllPropertyRequests());
-// // //          handleCloseModal();
-// // //        });
-// // //      } else {
-// // //        // Logic for 'accept' and 'reject'
-// // //        const updateData = {
-// // //          id: selectedRequest.id,
-// // //          updateData: {
-// // //            status: adminFormData.status,
-// // //            propertyNumber: adminFormData.propertyNumber,
-// // //            expireDate:
-// // //              selectedRequest.typeOperation.toLowerCase() === "renting" &&
-// // //              adminFormData.status === "Accepted"
-// // //                ? adminFormData.expireDate
-// // //                : null,
-// // //          },
-// // //        };
+// // //   const handleDateChange = (newDate) => {
+// // //     setAdminFormData({ ...adminFormData, expireDate: newDate });
+// // //   };
 
-// // //        dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
-// // //          dispatch(fetchAllPropertyRequests());
-// // //          handleCloseModal();
-// // //        });
-// // //      }
-// // //    };
+// // //   const handleAdminAction = () => {
+// // //     if (action === "delete") {
+// // //       dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
+// // //         dispatch(fetchAllPropertyRequests());
+// // //         handleCloseAdminModal();
+// // //       });
+// // //     } else {
+// // //       // Logic for 'accept' and 'reject'
+// // //       const updateData = {
+// // //         id: selectedRequest.id,
+// // //         updateData: {
+// // //           status: adminFormData.status,
+// // //           propertyNumber: adminFormData.propertyNumber,
+// // //           expireDate:
+// // //             selectedRequest.typeOperation.toLowerCase() === "renting" &&
+// // //             adminFormData.status === "Accepted"
+// // //               ? adminFormData.expireDate
+// // //               : null,
+// // //         },
+// // //       };
 
-// // //    const handleNextPhoto = () => {
-// // //      if (selectedRequest?.photos) {
-// // //        setPhotoIndex((prevIndex) =>
-// // //          prevIndex === selectedRequest.photos.length - 1 ? 0 : prevIndex + 1
-// // //        );
-// // //      }
-// // //    };
+// // //       dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
+// // //         dispatch(fetchAllPropertyRequests());
+// // //         handleCloseAdminModal();
+// // //       });
+// // //     }
+// // //   };
 
-// // //    const handlePreviousPhoto = () => {
-// // //      if (selectedRequest?.photos) {
-// // //        setPhotoIndex((prevIndex) =>
-// // //          prevIndex === 0 ? selectedRequest.photos.length - 1 : prevIndex - 1
-// // //        );
-// // //      }
-// // //    };
+// // //   const handleNextPhoto = () => {
+// // //     if (selectedRequest?.photos) {
+// // //       setPhotoIndex((prevIndex) =>
+// // //         prevIndex === selectedRequest.photos.length - 1 ? 0 : prevIndex + 1
+// // //       );
+// // //     }
+// // //   };
 
-// // //    const handleOpenFullScreen = (imageUrl) => {
-// // //      setFullScreenImageUrl(imageUrl);
-// // //      setOpenFullScreen(true);
-// // //    };
+// // //   const handlePreviousPhoto = () => {
+// // //     if (selectedRequest?.photos) {
+// // //       setPhotoIndex((prevIndex) =>
+// // //         prevIndex === 0 ? selectedRequest.photos.length - 1 : prevIndex - 1
+// // //       );
+// // //     }
+// // //   };
 
-// // //    const filteredRequests = propertyRequests.filter((request) => {
-// // //      if (filterType === "All") return true;
-// // //      return request.typeOperation.toLowerCase() === filterType.toLowerCase();
-// // //    });
+// // //   const handleOpenFullScreen = (imageUrl) => {
+// // //     setFullScreenImageUrl(imageUrl);
+// // //     setOpenFullScreen(true);
+// // //   };
 
-// // //    const paginatedRequests = filteredRequests.slice(
-// // //      page * rowsPerPage,
-// // //      page * rowsPerPage + rowsPerPage
-// // //    );
+// // //   const filteredRequests = propertyRequests.filter((request) => {
+// // //     if (filterType === "All") return true;
+// // //     return request.typeOperation.toLowerCase() === filterType.toLowerCase();
+// // //   });
 
-// // //    if (loading) {
-// // //      return (
-// // //        <Box
-// // //          display="flex"
-// // //          justifyContent="center"
-// // //          alignItems="center"
-// // //          minHeight="100vh"
-// // //        >
-// // //          <CircularProgress />
-// // //        </Box>
-// // //      );
-// // //    }
+// // //   const paginatedRequests = filteredRequests.slice(
+// // //     page * rowsPerPage,
+// // //     page * rowsPerPage + rowsPerPage
+// // //   );
 
-// // //    if (error) {
-// // //      return (
-// // //        <Container>
-// // //          <Typography color="error" variant="h6" sx={{ mt: 4 }}>
-// // //            Error: {error}
-// // //          </Typography>
-// // //        </Container>
-// // //      );
-// // //    }
+// // //   if (loading) {
+// // //     return (
+// // //       <Box
+// // //         display="flex"
+// // //         justifyContent="center"
+// // //         alignItems="center"
+// // //         minHeight="100vh"
+// // //       >
+// // //         <CircularProgress />
+// // //       </Box>
+// // //     );
+// // //   }
 
-// // //    return (
-// // //      <LocalizationProvider dateAdapter={AdapterDateFns}>
-// // //        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-// // //          <Grid container spacing={2} alignItems="center" mb={4}>
-// // //            <Grid item xs={12} sm={6}>
-// // //              <Typography variant="h4" component="div">
-// // //                Property Requests Management
-// // //              </Typography>
-// // //            </Grid>
-// // //            <Grid item xs={12} sm={6} display="flex" justifyContent="flex-end">
-// // //              <FormControl sx={{ m: 1, minWidth: 150 }}>
-// // //                <InputLabel>Operation Type</InputLabel>
-// // //                <Select
-// // //                  value={filterType}
-// // //                  label="Operation Type"
-// // //                  onChange={(e) => setFilterType(e.target.value)}
-// // //                >
-// // //                  <MenuItem value="All">All</MenuItem>
-// // //                  <MenuItem value="Selling">Selling</MenuItem>
-// // //                  <MenuItem value="Renting">Renting</MenuItem>
-// // //                </Select>
-// // //              </FormControl>
-// // //            </Grid>
-// // //          </Grid>
+// // //   if (error) {
+// // //     return (
+// // //       <Container>
+// // //         <Typography color="error" variant="h6" sx={{ mt: 4 }}>
+// // //           Error: {error}
+// // //         </Typography>
+// // //       </Container>
+// // //     );
+// // //   }
 
-// // //          <Paper sx={{ width: "100%", overflow: "hidden" }}>
-// // //            <TableContainer sx={{ maxHeight: 600 }}>
-// // //              <Table stickyHeader aria-label="sticky table">
-// // //                <TableHead>
-// // //                  <TableRow>
-// // //                    <TableCell>ID</TableCell>
-// // //                    <TableCell>Property Number</TableCell>
-// // //                    <TableCell>Operation Type</TableCell>
-// // //                    <TableCell>Status</TableCell>
-// // //                    <TableCell>Created At</TableCell>
-// // //                    <TableCell align="center">Actions</TableCell>
-// // //                  </TableRow>
-// // //                </TableHead>
-// // //                <TableBody>
-// // //                  {paginatedRequests.map((request) => (
-// // //                    <StyledTableRow key={request.id}>
-// // //                      <TableCell>{request.id}</TableCell>
-// // //                      <TableCell>{request.propertyNumber}</TableCell>
-// // //                      <TableCell>{request.typeOperation}</TableCell>
-// // //                      <TableCell>{request.status}</TableCell>
-// // //                      <TableCell>
-// // //                        {request.createdAt
-// // //                          ? format(new Date(request.createdAt), "PP")
-// // //                          : "N/A"}{" "}
-// // //                      </TableCell>
-// // //                      <TableCell align="center">
-// // //                        <Tooltip title="View Details">
-// // //                          <IconButton
-// // //                            color="info"
-// // //                            onClick={() => handleOpenDetailsModal(request)}
-// // //                          >
-// // //                            <Visibility />
-// // //                          </IconButton>
-// // //                        </Tooltip>
-// // //                        <Tooltip title="Accept Request">
-// // //                          <IconButton
-// // //                            color="success"
-// // //                            onClick={() => handleOpenAdminModal(request, "accept")}
-// // //                          >
-// // //                            <CheckCircleOutline />
-// // //                          </IconButton>
-// // //                        </Tooltip>
-// // //                        <Tooltip title="Reject Request">
-// // //                          <IconButton
-// // //                            color="error"
-// // //                            onClick={() => handleOpenAdminModal(request, "reject")}
-// // //                          >
-// // //                            <HighlightOff />
-// // //                          </IconButton>
-// // //                        </Tooltip>
-// // //                        <Tooltip title="Delete Request">
-// // //                          <IconButton
-// // //                            color="secondary"
-// // //                            onClick={() => handleOpenAdminModal(request, "delete")}
-// // //                          >
-// // //                            <DeleteOutline />
-// // //                          </IconButton>
-// // //                        </Tooltip>
-// // //                      </TableCell>
-// // //                    </StyledTableRow>
-// // //                  ))}
+// // //   return (
+// // //     <LocalizationProvider dateAdapter={AdapterDateFns}>
+// // //       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+// // //         <Grid container spacing={2} alignItems="center" mb={4}>
+// // //           <Grid item xs={12} sm={6}>
+// // //             <Typography variant="h4" component="div">
+// // //               Property Requests Management
+// // //             </Typography>
+// // //           </Grid>
+// // //           <Grid item xs={12} sm={6} display="flex" justifyContent="flex-end">
+// // //             <FormControl sx={{ m: 1, minWidth: 150 }}>
+// // //               <InputLabel>Operation Type</InputLabel>
+// // //               <Select
+// // //                 value={filterType}
+// // //                 label="Operation Type"
+// // //                 onChange={(e) => setFilterType(e.target.value)}
+// // //               >
+// // //                 <MenuItem value="All">All</MenuItem>
+// // //                 <MenuItem value="Selling">Selling</MenuItem>
+// // //                 <MenuItem value="Renting">Renting</MenuItem>
+// // //               </Select>
+// // //             </FormControl>
+// // //           </Grid>
+// // //         </Grid>
 
-// // //                  {!paginatedRequests.length && (
-// // //                    <TableRow>
-// // //                      <TableCell colSpan={6} align="center">
-// // //                        No property requests found.
-// // //                      </TableCell>
-// // //                    </TableRow>
-// // //                  )}
-// // //                </TableBody>
-// // //              </Table>
-// // //            </TableContainer>
-// // //            <TablePagination
-// // //              rowsPerPageOptions={[10, 25, 100]}
-// // //              component="div"
-// // //              count={filteredRequests.length}
-// // //              rowsPerPage={rowsPerPage}
-// // //              page={page}
-// // //              onPageChange={handleChangePage}
-// // //              onRowsPerPageChange={handleChangeRowsPerPage}
-// // //            />
-// // //          </Paper>
+// // //         <Paper sx={{ width: "100%", overflow: "hidden" }}>
+// // //           <TableContainer sx={{ maxHeight: 600 }}>
+// // //             <Table stickyHeader aria-label="sticky table">
+// // //               <TableHead>
+// // //                 <TableRow>
+// // //                   <TableCell>ID</TableCell>
+// // //                   <TableCell>Property Number</TableCell>
+// // //                   <TableCell>Operation Type</TableCell>
+// // //                   <TableCell>Status</TableCell>
+// // //                   <TableCell>Created At</TableCell>
+// // //                   <TableCell align="center">Actions</TableCell>
+// // //                 </TableRow>
+// // //               </TableHead>
+// // //               <TableBody>
+// // //                 {paginatedRequests.map((request) => (
+// // //                   <StyledTableRow key={request.id}>
+// // //                     <TableCell>{request.id}</TableCell>
+// // //                     <TableCell>{request.propertyNumber}</TableCell>
+// // //                     <TableCell>{request.typeOperation}</TableCell>
+// // //                     <TableCell>{request.status}</TableCell>
+// // //                     <TableCell>
+// // //                       {request.createdAt
+// // //                         ? format(new Date(request.createdAt), "PP")
+// // //                         : "N/A"}{" "}
+// // //                     </TableCell>
+// // //                     <TableCell align="center">
+// // //                       <Tooltip title="View Details">
+// // //                         <IconButton
+// // //                           color="info"
+// // //                           onClick={() => handleOpenDetailsModal(request)}
+// // //                         >
+// // //                           <Visibility />
+// // //                         </IconButton>
+// // //                       </Tooltip>
+// // //                       <Tooltip title="Accept Request">
+// // //                         <IconButton
+// // //                           color="success"
+// // //                           onClick={() => handleOpenAdminModal(request, "accept")}
+// // //                         >
+// // //                           <CheckCircleOutline />
+// // //                         </IconButton>
+// // //                       </Tooltip>
+// // //                       <Tooltip title="Reject Request">
+// // //                         <IconButton
+// // //                           color="error"
+// // //                           onClick={() => handleOpenAdminModal(request, "reject")}
+// // //                         >
+// // //                           <HighlightOff />
+// // //                         </IconButton>
+// // //                       </Tooltip>
+// // //                       <Tooltip title="Delete Request">
+// // //                         <IconButton
+// // //                           color="secondary"
+// // //                           onClick={() => handleOpenAdminModal(request, "delete")}
+// // //                         >
+// // //                           <DeleteOutline />
+// // //                         </IconButton>
+// // //                       </Tooltip>
+// // //                     </TableCell>
+// // //                   </StyledTableRow>
+// // //                 ))}
 
-// // //          {/* Modal for Admin Actions (Accept, Reject, Delete) */}
-// // //          <Modal open={openAdminModal} onClose={handleCloseModal}>
-// // //            <StyledModalPaper>
-// // //              <Typography variant="h6" gutterBottom>
-// // //                {action === "accept"
-// // //                  ? "Accept Property Request"
-// // //                  : action === "reject"
-// // //                  ? "Reject Property Request"
-// // //                  : "Delete Property Request"}
-// // //              </Typography>
-// // //              <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-// // //                {`Are you sure you want to ${action} the request for property number ${selectedRequest?.propertyNumber}?`}
-// // //              </Typography>
+// // //                 {!paginatedRequests.length && (
+// // //                   <TableRow>
+// // //                     <TableCell colSpan={6} align="center">
+// // //                       No property requests found.
+// // //                     </TableCell>
+// // //                   </TableRow>
+// // //                 )}
+// // //               </TableBody>
+// // //             </Table>
+// // //           </TableContainer>
+// // //           <TablePagination
+// // //             rowsPerPageOptions={[10, 25, 100]}
+// // //             component="div"
+// // //             count={filteredRequests.length}
+// // //             rowsPerPage={rowsPerPage}
+// // //             page={page}
+// // //             onPageChange={handleChangePage}
+// // //             onRowsPerPageChange={handleChangeRowsPerPage}
+// // //           />
+// // //         </Paper>
 
-// // //              {action === "accept" &&
-// // //                selectedRequest?.typeOperation.toLowerCase() === "renting" && (
-// // //                  <Box component="form" noValidate sx={{ mt: 2 }}>
-// // //                    <DatePicker
-// // //                      label="Expiration Date"
-// // //                      value={adminFormData.expireDate}
-// // //                      onChange={handleDateChange}
-// // //                      slotProps={{
-// // //                        textField: { fullWidth: true, margin: "normal" },
-// // //                      }}
-// // //                    />
-// // //                  </Box>
-// // //                )}
-// // //              <Box
-// // //                sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
-// // //              >
-// // //                <Button
-// // //                  variant="contained"
-// // //                  color={
-// // //                    action === "accept"
-// // //                      ? "success"
-// // //                      : action === "reject"
-// // //                      ? "error"
-// // //                      : "secondary"
-// // //                  }
-// // //                  onClick={handleAdminAction}
-// // //                  disabled={updateLoading || deleteLoading}
-// // //                >
-// // //                  {action === "accept" ? (
-// // //                    updateLoading ? (
-// // //                      <CircularProgress size={20} color="inherit" />
-// // //                    ) : (
-// // //                      "Confirm Acceptance"
-// // //                    )
-// // //                  ) : action === "reject" ? (
-// // //                    updateLoading ? (
-// // //                      <CircularProgress size={20} color="inherit" />
-// // //                    ) : (
-// // //                      "Confirm Rejection"
-// // //                    )
-// // //                  ) : deleteLoading ? (
-// // //                    <CircularProgress size={20} color="inherit" />
-// // //                  ) : (
-// // //                    "Confirm Deletion"
-// // //                  )}
-// // //                </Button>
-// // //                <Button variant="outlined" onClick={handleCloseModal}>
-// // //                  Cancel
-// // //                </Button>
-// // //              </Box>
-// // //            </StyledModalPaper>
-// // //          </Modal>
+// // //         {/* Modal for Admin Actions (Accept, Reject, Delete) */}
+// // //         <Modal open={openAdminModal} onClose={handleCloseAdminModal}>
+// // //           <StyledModalPaper>
+// // //             <Typography variant="h6" gutterBottom>
+// // //               {action === "accept"
+// // //                 ? "Accept Property Request"
+// // //                 : action === "reject"
+// // //                 ? "Reject Property Request"
+// // //                 : "Delete Property Request"}
+// // //             </Typography>
+// // //             <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+// // //               {`Are you sure you want to ${action} the request for property number ${selectedRequest?.propertyNumber}?`}
+// // //             </Typography>
 
-// // //          {/* Modal for Viewing Details */}
-// // //          <Dialog
-// // //            open={openDetailsModal}
-// // //            onClose={handleCloseModal}
-// // //            maxWidth="sm"
-// // //            fullWidth
-// // //          >
-// // //            <DialogTitle>Property Request Details</DialogTitle>
-// // //            <DialogContent dividers>
-// // //              {selectedRequest && (
-// // //                <Box>
-// // //                  <Grid container spacing={2}>
-// // //                    <Grid item xs={12}>
-// // //                      <CarouselContainer>
-// // //                        {selectedRequest.photos && selectedRequest.photos.length > 0 ? (
-// // //                          <>
-// // //                            <CardMedia
-// // //                              component="img"
-// // //                              image={selectedRequest.photos?.[photoIndex]?.url}
-// // //                              alt="Property Photo"
-// // //                              onClick={() =>
-// // //                                handleOpenFullScreen(
-// // //                                  selectedRequest.photos?.[photoIndex]?.url
-// // //                                )
-// // //                              }
-// // //                              sx={{
-// // //                                width: "100%",
-// // //                                height: 300,
-// // //                                objectFit: "cover",
-// // //                                borderRadius: 1,
-// // //                                cursor: "pointer",
-// // //                              }}
-// // //                            />
-// // //                            {selectedRequest.photos.length > 1 && (
-// // //                              <>
-// // //                                <CarouselButton
-// // //                                  onClick={handlePreviousPhoto}
-// // //                                  sx={{ left: 8 }}
-// // //                                >
-// // //                                  <ArrowBackIos />
-// // //                                </CarouselButton>
-// // //                                <CarouselButton
-// // //                                  onClick={handleNextPhoto}
-// // //                                  sx={{ right: 8 }}
-// // //                                >
-// // //                                  <ArrowForwardIos />
-// // //                                </CarouselButton>
-// // //                              </>
-// // //                            )}
-// // //                          </>
-// // //                        ) : (
-// // //                          <Typography
-// // //                            variant="body2"
-// // //                            color="text.secondary"
-// // //                            align="center"
-// // //                          >
-// // //                            No photos available.
-// // //                          </Typography>
-// // //                        )}
-// // //                      </CarouselContainer>
-// // //                    </Grid>
-// // //                    <Grid item xs={12}>
-// // //                      <Typography variant="h6">Request Info</Typography>
-// // //                      <Typography variant="body1">
-// // //                        <strong>ID:</strong> {selectedRequest.id}
-// // //                      </Typography>
-// // //                      <Typography variant="body1">
-// // //                        <strong>Property Number:</strong>{" "}
-// // //                        {selectedRequest.propertyNumber}
-// // //                      </Typography>
-// // //                      <Typography variant="body1">
-// // //                        <strong>Operation Type:</strong>{" "}
-// // //                        {selectedRequest.typeOperation}
-// // //                      </Typography>
-// // //                      <Typography variant="body1">
-// // //                        <strong>Status:</strong> {selectedRequest.status}
-// // //                      </Typography>
-// // //                      <Typography variant="body1">
-// // //                        <strong>Created At:</strong>{" "}
-// // //                        {format(new Date(selectedRequest.createdAt), "PP")}
-// // //                      </Typography>
-// // //                    </Grid>
-// // //                  </Grid>
-// // //                </Box>
-// // //              )}
-// // //            </DialogContent>
-// // //            <DialogActions>
-// // //              <Button onClick={handleCloseModal}>Close</Button>
-// // //            </DialogActions>
-// // //          </Dialog>
+// // //             {action === "accept" &&
+// // //               selectedRequest?.typeOperation.toLowerCase() === "renting" && (
+// // //                 <Box component="form" noValidate sx={{ mt: 2 }}>
+// // //                   <DatePicker
+// // //                     label="Expiration Date"
+// // //                     value={adminFormData.expireDate}
+// // //                     onChange={handleDateChange}
+// // //                     slotProps={{
+// // //                       textField: { fullWidth: true, margin: "normal" },
+// // //                     }}
+// // //                   />
+// // //                 </Box>
+// // //               )}
+// // //             <Box
+// // //               sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
+// // //             >
+// // //               <Button
+// // //                 variant="contained"
+// // //                 color={
+// // //                   action === "accept"
+// // //                     ? "success"
+// // //                     : action === "reject"
+// // //                     ? "error"
+// // //                     : "secondary"
+// // //                 }
+// // //                 onClick={handleAdminAction}
+// // //                 disabled={updateLoading || deleteLoading}
+// // //               >
+// // //                 {action === "accept" ? (
+// // //                   updateLoading ? (
+// // //                     <CircularProgress size={20} color="inherit" />
+// // //                   ) : (
+// // //                     "Confirm Acceptance"
+// // //                   )
+// // //                 ) : action === "reject" ? (
+// // //                   updateLoading ? (
+// // //                     <CircularProgress size={20} color="inherit" />
+// // //                   ) : (
+// // //                     "Confirm Rejection"
+// // //                   )
+// // //                 ) : deleteLoading ? (
+// // //                   <CircularProgress size={20} color="inherit" />
+// // //                 ) : (
+// // //                   "Confirm Deletion"
+// // //                 )}
+// // //               </Button>
+// // //               <Button variant="outlined" onClick={handleCloseAdminModal}>
+// // //                 Cancel
+// // //               </Button>
+// // //             </Box>
+// // //           </StyledModalPaper>
+// // //         </Modal>
 
-// // //          {/* Full Screen Image Modal */}
-// // //          <FullScreenDialog
-// // //            fullScreen
-// // //            open={openFullScreen}
-// // //            onClose={handleCloseModal}
-// // //          >
-// // //            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-// // //              Full Screen Image
-// // //              <IconButton onClick={handleCloseModal}>
-// // //                <Close />
-// // //              </IconButton>
-// // //            </DialogTitle>
-// // //            <DialogContent sx={{ display: "flex", alignItems: "center" }}>
-// // //              <FullScreenImage src={fullScreenImageUrl} alt="Full Screen Property Photo" />
-// // //            </DialogContent>
-// // //          </FullScreenDialog>
-// // //        </Container>
-// // //      </LocalizationProvider>
-// // //    );
-// // //  };
+// // //         {/* Modal for Viewing Details */}
+// // //         <Dialog
+// // //           open={openDetailsModal}
+// // //           onClose={handleCloseDetailsModal}
+// // //           maxWidth="sm"
+// // //           fullWidth
+// // //         >
+// // //           <DialogTitle>Property Request Details</DialogTitle>
+// // //           <DialogContent dividers>
+// // //             {selectedRequest && (
+// // //               <Box>
+// // //                 <Grid container spacing={2}>
+// // //                   <Grid item xs={12}>
+// // //                     <CarouselContainer>
+// // //                       {selectedRequest.photos && selectedRequest.photos.length > 0 ? (
+// // //                         <>
+// // //                           <CardMedia
+// // //                             component="img"
+// // //                             image={selectedRequest.photos?.[photoIndex]?.url}
+// // //                             alt="Property Photo"
+// // //                             onClick={() =>
+// // //                               handleOpenFullScreen(
+// // //                                 selectedRequest.photos?.[photoIndex]?.url
+// // //                               )
+// // //                             }
+// // //                             sx={{
+// // //                               width: "100%",
+// // //                               height: 300,
+// // //                               objectFit: "cover",
+// // //                               borderRadius: 1,
+// // //                               cursor: "pointer",
+// // //                             }}
+// // //                           />
+// // //                           {selectedRequest.photos.length > 1 && (
+// // //                             <>
+// // //                               <CarouselButton
+// // //                                 onClick={handlePreviousPhoto}
+// // //                                 sx={{ left: 8 }}
+// // //                               >
+// // //                                 <ArrowBackIos />
+// // //                               </CarouselButton>
+// // //                               <CarouselButton
+// // //                                 onClick={handleNextPhoto}
+// // //                                 sx={{ right: 8 }}
+// // //                               >
+// // //                                 <ArrowForwardIos />
+// // //                               </CarouselButton>
+// // //                             </>
+// // //                           )}
+// // //                         </>
+// // //                       ) : (
+// // //                         <Typography
+// // //                           variant="body2"
+// // //                           color="text.secondary"
+// // //                           align="center"
+// // //                         >
+// // //                           No photos available.
+// // //                         </Typography>
+// // //                       )}
+// // //                     </CarouselContainer>
+// // //                   </Grid>
+// // //                   <Grid item xs={12}>
+// // //                     <Typography variant="h6">Request Info</Typography>
+// // //                     <Typography variant="body1">
+// // //                       <strong>ID:</strong> {selectedRequest.id}
+// // //                     </Typography>
+// // //                     <Typography variant="body1">
+// // //                       <strong>Property Number:</strong>{" "}
+// // //                       {selectedRequest.propertyNumber}
+// // //                     </Typography>
+// // //                     <Typography variant="body1">
+// // //                       <strong>Operation Type:</strong>{" "}
+// // //                       {selectedRequest.typeOperation}
+// // //                     </Typography>
+// // //                     <Typography variant="body1">
+// // //                       <strong>Status:</strong> {selectedRequest.status}
+// // //                     </Typography>
+// // //                     <Typography variant="body1">
+// // //                       <strong>Created At:</strong>{" "}
+// // //                       {format(new Date(selectedRequest.createdAt), "PP")}
+// // //                     </Typography>
+// // //                   </Grid>
+// // //                 </Grid>
+// // //               </Box>
+// // //             )}
+// // //           </DialogContent>
+// // //           <DialogActions>
+// // //             <Button onClick={handleCloseDetailsModal}>Close</Button>
+// // //           </DialogActions>
+// // //         </Dialog>
 
-// // //  export default PropertyRequestsPage;
+// // //         {/* Full Screen Image Modal */}
+// // //         <FullScreenDialog
+// // //           fullScreen
+// // //           open={openFullScreen}
+// // //           onClose={handleCloseFullScreen}
+// // //         >
+// // //           <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+// // //             Full Screen Image
+// // //             <IconButton onClick={handleCloseFullScreen}>
+// // //               <Close />
+// // //             </IconButton>
+// // //           </DialogTitle>
+// // //           <DialogContent sx={{ display: "flex", alignItems: "center" }}>
+// // //             <FullScreenImage src={fullScreenImageUrl} alt="Full Screen Property Photo" />
+// // //           </DialogContent>
+// // //         </FullScreenDialog>
+// // //       </Container>
+// // //     </LocalizationProvider>
+// // //   );
+// // // };
+
+// // // export default PropertyRequestsPage;
 
 // // import React, { useEffect, useState } from "react";
 // // import { useDispatch, useSelector } from "react-redux";
@@ -1527,6 +2094,13 @@
 // //   margin: "auto",
 // // }));
 
+// // const CarouselImage = styled("img")({
+// //   width: "100%",
+// //   height: 250,
+// //   objectFit: "cover",
+// //   borderRadius: 8,
+// // });
+
 // // const CarouselButton = styled(IconButton)(({ theme }) => ({
 // //   position: "absolute",
 // //   top: "50%",
@@ -1541,15 +2115,31 @@
 // // const FullScreenDialog = styled(Dialog)(({ theme }) => ({
 // //   "& .MuiDialog-paperFullScreen": {
 // //     backgroundColor: theme.palette.background.default,
+// //     display: "flex",
+// //     flexDirection: "column",
+// //     justifyContent: "center",
+// //     alignItems: "center",
 // //   },
 // // }));
 
 // // const FullScreenImage = styled("img")({
 // //   display: "block",
-// //   maxWidth: "100%",
-// //   maxHeight: "100vh",
-// //   margin: "auto",
+// //   maxWidth: "95%",
+// //   maxHeight: "95vh",
+// //   objectFit: "contain",
 // // });
+
+// // const FullScreenNavButton = styled(IconButton)(({ theme }) => ({
+// //     position: "absolute",
+// //     top: "50%",
+// //     transform: "translateY(-50%)",
+// //     backgroundColor: "rgba(0, 0, 0, 0.5)",
+// //     color: "#fff",
+// //     "&:hover": {
+// //       backgroundColor: "rgba(0, 0, 0, 0.7)",
+// //     },
+// //     zIndex: 100, // Ensure buttons are on top
+// // }));
 
 // // const PropertyRequestsPage = () => {
 // //   const dispatch = useDispatch();
@@ -1569,7 +2159,7 @@
 // //   const [openAdminModal, setOpenAdminModal] = useState(false);
 // //   const [openDetailsModal, setOpenDetailsModal] = useState(false);
 // //   const [openFullScreen, setOpenFullScreen] = useState(false);
-// //   const [fullScreenImageUrl, setFullScreenImageUrl] = useState("");
+// //   const [fullScreenIndex, setFullScreenIndex] = useState(0);
 // //   const [selectedRequest, setSelectedRequest] = useState(null);
 // //   const [action, setAction] = useState("");
 // //   const [filterType, setFilterType] = useState("All");
@@ -1601,7 +2191,7 @@
 // //       setAdminFormData({
 // //         propertyNumber: request.propertyNumber || "",
 // //         expireDate: request.typeOperation === "Renting" ? null : null,
-// //         status: actionType === "accept" ? "accepted" : "rejected",
+// //         status: actionType === "accept" ? "Accepted" : "Rejected",
 // //       });
 // //     }
 // //     setOpenAdminModal(true);
@@ -1626,7 +2216,7 @@
 
 // //   const handleCloseFullScreen = () => {
 // //     setOpenFullScreen(false);
-// //     setFullScreenImageUrl("");
+// //     setFullScreenIndex(0);
 // //   };
 
 // //   const handleAdminFormChange = (e) => {
@@ -1645,7 +2235,6 @@
 // //         handleCloseAdminModal();
 // //       });
 // //     } else {
-// //       // Logic for 'accept' and 'reject'
 // //       const updateData = {
 // //         id: selectedRequest.id,
 // //         updateData: {
@@ -1682,9 +2271,21 @@
 // //     }
 // //   };
 
-// //   const handleOpenFullScreen = (imageUrl) => {
-// //     setFullScreenImageUrl(imageUrl);
+// //   const handleOpenFullScreen = (index) => {
+// //     setFullScreenIndex(index);
 // //     setOpenFullScreen(true);
+// //   };
+
+// //   const handleFullScreenNext = () => {
+// //     setFullScreenIndex((prevIndex) =>
+// //       prevIndex === selectedRequest.photos.length - 1 ? 0 : prevIndex + 1
+// //     );
+// //   };
+
+// //   const handleFullScreenPrevious = () => {
+// //     setFullScreenIndex((prevIndex) =>
+// //       prevIndex === 0 ? selectedRequest.photos.length - 1 : prevIndex - 1
+// //     );
 // //   };
 
 // //   const filteredRequests = propertyRequests.filter((request) => {
@@ -1915,11 +2516,7 @@
 // //                             component="img"
 // //                             image={selectedRequest.photos?.[photoIndex]?.url}
 // //                             alt="Property Photo"
-// //                             onClick={() =>
-// //                               handleOpenFullScreen(
-// //                                 selectedRequest.photos?.[photoIndex]?.url
-// //                               )
-// //                             }
+// //                             onClick={() => handleOpenFullScreen(photoIndex)}
 // //                             sx={{
 // //                               width: "100%",
 // //                               height: 300,
@@ -1992,15 +2589,37 @@
 // //           open={openFullScreen}
 // //           onClose={handleCloseFullScreen}
 // //         >
-// //           <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-// //             Full Screen Image
-// //             <IconButton onClick={handleCloseFullScreen}>
-// //               <Close />
+// //             <IconButton
+// //                 onClick={handleCloseFullScreen}
+// //                 sx={{
+// //                     position: 'absolute',
+// //                     top: 8,
+// //                     right: 8,
+// //                     color: 'white',
+// //                     backgroundColor: 'rgba(0,0,0,0.5)',
+// //                     '&:hover': {
+// //                         backgroundColor: 'rgba(0,0,0,0.7)',
+// //                     },
+// //                     zIndex: 200,
+// //                 }}
+// //             >
+// //                 <Close />
 // //             </IconButton>
-// //           </DialogTitle>
-// //           <DialogContent sx={{ display: "flex", alignItems: "center" }}>
-// //             <FullScreenImage src={fullScreenImageUrl} alt="Full Screen Property Photo" />
-// //           </DialogContent>
+
+// //             {selectedRequest?.photos?.length > 1 && (
+// //                 <>
+// //                 <FullScreenNavButton onClick={handleFullScreenPrevious} sx={{ left: 16 }}>
+// //                     <ArrowBackIos />
+// //                 </FullScreenNavButton>
+// //                 <FullScreenNavButton onClick={handleFullScreenNext} sx={{ right: 16 }}>
+// //                     <ArrowForwardIos />
+// //                 </FullScreenNavButton>
+// //                 </>
+// //             )}
+
+// //             <DialogContent sx={{ display: "flex", alignItems: "center", justifyContent: "center", p: 0 }}>
+// //                 <FullScreenImage src={selectedRequest?.photos?.[fullScreenIndex]?.url} alt="Full Screen Property Photo" />
+// //             </DialogContent>
 // //         </FullScreenDialog>
 // //       </Container>
 // //     </LocalizationProvider>
@@ -2130,15 +2749,15 @@
 // });
 
 // const FullScreenNavButton = styled(IconButton)(({ theme }) => ({
-//     position: "absolute",
-//     top: "50%",
-//     transform: "translateY(-50%)",
-//     backgroundColor: "rgba(0, 0, 0, 0.5)",
-//     color: "#fff",
-//     "&:hover": {
-//       backgroundColor: "rgba(0, 0, 0, 0.7)",
-//     },
-//     zIndex: 100, // Ensure buttons are on top
+//   position: "absolute",
+//   top: "50%",
+//   transform: "translateY(-50%)",
+//   backgroundColor: "rgba(0, 0, 0, 0.5)",
+//   color: "#fff",
+//   "&:hover": {
+//     backgroundColor: "rgba(0, 0, 0, 0.7)",
+//   },
+//   zIndex: 100,
 // }));
 
 // const PropertyRequestsPage = () => {
@@ -2171,6 +2790,7 @@
 //     status: "",
 //   });
 
+
 //   useEffect(() => {
 //     dispatch(fetchAllPropertyRequests());
 //   }, [dispatch]);
@@ -2190,8 +2810,9 @@
 //     if (actionType !== "delete") {
 //       setAdminFormData({
 //         propertyNumber: request.propertyNumber || "",
-//         expireDate: request.typeOperation === "Renting" ? null : null,
-//         status: actionType === "accept" ? "Accepted" : "Rejected",
+//         expireDate:
+//           request.typeOperation.toLowerCase() === "renting" ? null : null,
+//         status: actionType === "accept" ? "accepted" : "rejected",
 //       });
 //     }
 //     setOpenAdminModal(true);
@@ -2199,7 +2820,7 @@
 
 //   const handleOpenDetailsModal = (request) => {
 //     setSelectedRequest(request);
-//     setPhotoIndex(0); // Reset carousel to the first image
+//     setPhotoIndex(0);
 //     setOpenDetailsModal(true);
 //   };
 
@@ -2207,6 +2828,11 @@
 //     setOpenAdminModal(false);
 //     setSelectedRequest(null);
 //     setAction("");
+//     setAdminFormData({
+//       propertyNumber: "",
+//       expireDate: null,
+//       status: "",
+//     });
 //   };
 
 //   const handleCloseDetailsModal = () => {
@@ -2242,12 +2868,13 @@
 //           propertyNumber: adminFormData.propertyNumber,
 //           expireDate:
 //             selectedRequest.typeOperation.toLowerCase() === "renting" &&
-//             adminFormData.status === "Accepted"
-//               ? adminFormData.expireDate
+//             adminFormData.status === "accepted"
+//               ? // ? Date(adminFormData.expireDate)
+//                 format(adminFormData.expireDate, "yyyy-MM-dd")
 //               : null,
 //         },
 //       };
-
+      
 //       dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
 //         dispatch(fetchAllPropertyRequests());
 //         handleCloseAdminModal();
@@ -2297,6 +2924,13 @@
 //     page * rowsPerPage,
 //     page * rowsPerPage + rowsPerPage
 //   );
+
+//   const isAcceptButtonDisabled =
+//     (action === "accept" &&
+//       selectedRequest?.typeOperation.toLowerCase() === "renting" &&
+//       adminFormData.expireDate === null) ||
+//     updateLoading ||
+//     deleteLoading;
 
 //   if (loading) {
 //     return (
@@ -2383,7 +3017,9 @@
 //                       <Tooltip title="Accept Request">
 //                         <IconButton
 //                           color="success"
-//                           onClick={() => handleOpenAdminModal(request, "accept")}
+//                           onClick={() =>
+//                             handleOpenAdminModal(request, "accept")
+//                           }
 //                         >
 //                           <CheckCircleOutline />
 //                         </IconButton>
@@ -2391,7 +3027,9 @@
 //                       <Tooltip title="Reject Request">
 //                         <IconButton
 //                           color="error"
-//                           onClick={() => handleOpenAdminModal(request, "reject")}
+//                           onClick={() =>
+//                             handleOpenAdminModal(request, "reject")
+//                           }
 //                         >
 //                           <HighlightOff />
 //                         </IconButton>
@@ -2399,7 +3037,9 @@
 //                       <Tooltip title="Delete Request">
 //                         <IconButton
 //                           color="secondary"
-//                           onClick={() => handleOpenAdminModal(request, "delete")}
+//                           onClick={() =>
+//                             handleOpenAdminModal(request, "delete")
+//                           }
 //                         >
 //                           <DeleteOutline />
 //                         </IconButton>
@@ -2469,7 +3109,7 @@
 //                     : "secondary"
 //                 }
 //                 onClick={handleAdminAction}
-//                 disabled={updateLoading || deleteLoading}
+//                 disabled={isAcceptButtonDisabled}
 //               >
 //                 {action === "accept" ? (
 //                   updateLoading ? (
@@ -2510,7 +3150,8 @@
 //                 <Grid container spacing={2}>
 //                   <Grid item xs={12}>
 //                     <CarouselContainer>
-//                       {selectedRequest.photos && selectedRequest.photos.length > 0 ? (
+//                       {selectedRequest.photos &&
+//                       selectedRequest.photos.length > 0 ? (
 //                         <>
 //                           <CardMedia
 //                             component="img"
@@ -2589,37 +3230,53 @@
 //           open={openFullScreen}
 //           onClose={handleCloseFullScreen}
 //         >
-//             <IconButton
-//                 onClick={handleCloseFullScreen}
-//                 sx={{
-//                     position: 'absolute',
-//                     top: 8,
-//                     right: 8,
-//                     color: 'white',
-//                     backgroundColor: 'rgba(0,0,0,0.5)',
-//                     '&:hover': {
-//                         backgroundColor: 'rgba(0,0,0,0.7)',
-//                     },
-//                     zIndex: 200,
-//                 }}
-//             >
-//                 <Close />
-//             </IconButton>
+//           <IconButton
+//             onClick={handleCloseFullScreen}
+//             sx={{
+//               position: "absolute",
+//               top: 8,
+//               right: 8,
+//               color: "white",
+//               backgroundColor: "rgba(0,0,0,0.5)",
+//               "&:hover": {
+//                 backgroundColor: "rgba(0,0,0,0.7)",
+//               },
+//               zIndex: 200,
+//             }}
+//           >
+//             <Close />
+//           </IconButton>
 
-//             {selectedRequest?.photos?.length > 1 && (
-//                 <>
-//                 <FullScreenNavButton onClick={handleFullScreenPrevious} sx={{ left: 16 }}>
-//                     <ArrowBackIos />
-//                 </FullScreenNavButton>
-//                 <FullScreenNavButton onClick={handleFullScreenNext} sx={{ right: 16 }}>
-//                     <ArrowForwardIos />
-//                 </FullScreenNavButton>
-//                 </>
-//             )}
+//           {selectedRequest?.photos?.length > 1 && (
+//             <>
+//               <FullScreenNavButton
+//                 onClick={handleFullScreenPrevious}
+//                 sx={{ left: 16 }}
+//               >
+//                 <ArrowBackIos />
+//               </FullScreenNavButton>
+//               <FullScreenNavButton
+//                 onClick={handleFullScreenNext}
+//                 sx={{ right: 16 }}
+//               >
+//                 <ArrowForwardIos />
+//               </FullScreenNavButton>
+//             </>
+//           )}
 
-//             <DialogContent sx={{ display: "flex", alignItems: "center", justifyContent: "center", p: 0 }}>
-//                 <FullScreenImage src={selectedRequest?.photos?.[fullScreenIndex]?.url} alt="Full Screen Property Photo" />
-//             </DialogContent>
+//           <DialogContent
+//             sx={{
+//               display: "flex",
+//               alignItems: "center",
+//               justifyContent: "center",
+//               p: 0,
+//             }}
+//           >
+//             <FullScreenImage
+//               src={selectedRequest?.photos?.[fullScreenIndex]?.url}
+//               alt="Full Screen Property Photo"
+//             />
+//           </DialogContent>
 //         </FullScreenDialog>
 //       </Container>
 //     </LocalizationProvider>
@@ -2627,6 +3284,11 @@
 // };
 
 // export default PropertyRequestsPage;
+
+
+
+
+
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -2783,13 +3445,7 @@ const PropertyRequestsPage = () => {
   const [action, setAction] = useState("");
   const [filterType, setFilterType] = useState("All");
   const [photoIndex, setPhotoIndex] = useState(0);
-
-  const [adminFormData, setAdminFormData] = useState({
-    propertyNumber: "",
-    expireDate: null,
-    status: "",
-  });
-
+  const [expireDate, setExpireDate] = useState(null);
 
   useEffect(() => {
     dispatch(fetchAllPropertyRequests());
@@ -2807,14 +3463,6 @@ const PropertyRequestsPage = () => {
   const handleOpenAdminModal = (request, actionType) => {
     setSelectedRequest(request);
     setAction(actionType);
-    if (actionType !== "delete") {
-      setAdminFormData({
-        propertyNumber: request.propertyNumber || "",
-        expireDate:
-          request.typeOperation.toLowerCase() === "renting" ? null : null,
-        status: actionType === "accept" ? "accepted" : "rejected",
-      });
-    }
     setOpenAdminModal(true);
   };
 
@@ -2828,11 +3476,7 @@ const PropertyRequestsPage = () => {
     setOpenAdminModal(false);
     setSelectedRequest(null);
     setAction("");
-    setAdminFormData({
-      propertyNumber: "",
-      expireDate: null,
-      status: "",
-    });
+    setExpireDate(null); // Reset date on close
   };
 
   const handleCloseDetailsModal = () => {
@@ -2845,41 +3489,42 @@ const PropertyRequestsPage = () => {
     setFullScreenIndex(0);
   };
 
-  const handleAdminFormChange = (e) => {
-    const { name, value } = e.target;
-    setAdminFormData({ ...adminFormData, [name]: value });
-  };
-
-  const handleDateChange = (newDate) => {
-    setAdminFormData({ ...adminFormData, expireDate: newDate });
-  };
-
   const handleAdminAction = () => {
-    if (action === "delete") {
-      dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
-        dispatch(fetchAllPropertyRequests());
-        handleCloseAdminModal();
-      });
-    } else {
-      const updateData = {
-        id: selectedRequest.id,
-        updateData: {
-          status: adminFormData.status,
-          propertyNumber: adminFormData.propertyNumber,
-          expireDate:
-            selectedRequest.typeOperation.toLowerCase() === "renting" &&
-            adminFormData.status === "accepted"
-              ? // ? Date(adminFormData.expireDate)
-                format(adminFormData.expireDate, "yyyy-MM-dd")
-              : null,
-        },
-      };
-      
-      dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
-        dispatch(fetchAllPropertyRequests());
-        handleCloseAdminModal();
-      });
+    let updateData = {};
+
+    switch (action) {
+      case "accept":
+          // Selling property, no date needed
+          updateData = {
+            id: selectedRequest.id,
+            updateData: {
+              status: "accepted",
+              propertyNumber: selectedRequest?.property.propertyNumber,
+            },
+        }
+        break;
+      case "reject":
+        updateData = {
+          id: selectedRequest.id,
+          updateData: {
+            status: "rejected",
+          },
+        };
+        break;
+      case "delete":
+        dispatch(deletePropertyRequest(selectedRequest.id)).then(() => {
+          dispatch(fetchAllPropertyRequests());
+          handleCloseAdminModal();
+        });
+        return; // Exit early for delete action
+      default:
+        return;
     }
+
+    dispatch(updatePropertyRequestByAdmin(updateData)).then(() => {
+      dispatch(fetchAllPropertyRequests());
+      handleCloseAdminModal();
+    });
   };
 
   const handleNextPhoto = () => {
@@ -2917,7 +3562,7 @@ const PropertyRequestsPage = () => {
 
   const filteredRequests = propertyRequests.filter((request) => {
     if (filterType === "All") return true;
-    return request.typeOperation.toLowerCase() === filterType.toLowerCase();
+    return request?.property.typeOperation.toLowerCase() === filterType.toLowerCase();
   });
 
   const paginatedRequests = filteredRequests.slice(
@@ -2927,8 +3572,8 @@ const PropertyRequestsPage = () => {
 
   const isAcceptButtonDisabled =
     (action === "accept" &&
-      selectedRequest?.typeOperation.toLowerCase() === "renting" &&
-      adminFormData.expireDate === null) ||
+      selectedRequest?.property?.typeOperation.toLowerCase() === "renting" &&
+      !expireDate) ||
     updateLoading ||
     deleteLoading;
 
@@ -2954,6 +3599,7 @@ const PropertyRequestsPage = () => {
       </Container>
     );
   }
+console.log("this is the paginatedRequests : ",paginatedRequests);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -2997,8 +3643,8 @@ const PropertyRequestsPage = () => {
                 {paginatedRequests.map((request) => (
                   <StyledTableRow key={request.id}>
                     <TableCell>{request.id}</TableCell>
-                    <TableCell>{request.propertyNumber}</TableCell>
-                    <TableCell>{request.typeOperation}</TableCell>
+                    <TableCell>{request?.property.propertyNumber}</TableCell>
+                    <TableCell>{request?.property.typeOperation}</TableCell>
                     <TableCell>{request.status}</TableCell>
                     <TableCell>
                       {request.createdAt
@@ -3017,9 +3663,7 @@ const PropertyRequestsPage = () => {
                       <Tooltip title="Accept Request">
                         <IconButton
                           color="success"
-                          onClick={() =>
-                            handleOpenAdminModal(request, "accept")
-                          }
+                          onClick={() => handleOpenAdminModal(request, "accept")}
                         >
                           <CheckCircleOutline />
                         </IconButton>
@@ -3080,22 +3724,22 @@ const PropertyRequestsPage = () => {
                 : "Delete Property Request"}
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-              {`Are you sure you want to ${action} the request for property number ${selectedRequest?.propertyNumber}?`}
+              {`Are you sure you want to ${action} the request for property number ${selectedRequest?.property.propertyNumber}?`}
             </Typography>
 
-            {action === "accept" &&
-              selectedRequest?.typeOperation.toLowerCase() === "renting" && (
+            {/* {action === "accept" &&
+              selectedRequest?.property.typeOperation.toLowerCase() === "renting" && (
                 <Box component="form" noValidate sx={{ mt: 2 }}>
                   <DatePicker
                     label="Expiration Date"
-                    value={adminFormData.expireDate}
-                    onChange={handleDateChange}
+                    value={expireDate}
+                    onChange={(date) => setExpireDate(date)}
                     slotProps={{
                       textField: { fullWidth: true, margin: "normal" },
                     }}
                   />
                 </Box>
-              )}
+              )} */}
             <Box
               sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
             >
@@ -3109,7 +3753,7 @@ const PropertyRequestsPage = () => {
                     : "secondary"
                 }
                 onClick={handleAdminAction}
-                disabled={isAcceptButtonDisabled}
+                // disabled={isAcceptButtonDisabled}
               >
                 {action === "accept" ? (
                   updateLoading ? (
@@ -3201,11 +3845,13 @@ const PropertyRequestsPage = () => {
                     </Typography>
                     <Typography variant="body1">
                       <strong>Property Number:</strong>{" "}
-                      {selectedRequest.propertyNumber}
+                      {console.log("this is the selectedRequest : ",selectedRequest)
+                      }
+                      {selectedRequest?.property.propertyNumber}
                     </Typography>
                     <Typography variant="body1">
                       <strong>Operation Type:</strong>{" "}
-                      {selectedRequest.typeOperation}
+                      {selectedRequest?.property.typeOperation}
                     </Typography>
                     <Typography variant="body1">
                       <strong>Status:</strong> {selectedRequest.status}

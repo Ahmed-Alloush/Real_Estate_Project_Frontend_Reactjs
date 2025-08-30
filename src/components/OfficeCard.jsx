@@ -152,7 +152,9 @@ import {
 import { Link } from "react-router-dom";
 import { FaPhone, FaStar } from "react-icons/fa";
 
-const OfficeCard = ({ id, name, office_phone, office_photo, averageRating }) => {
+const OfficeCard = ({ id, name
+  // , office_phone
+  , office_photo, averageRating }) => {
   return (
     <Link
       to={`/offices/${id}`}
@@ -192,12 +194,12 @@ const OfficeCard = ({ id, name, office_phone, office_photo, averageRating }) => 
             {name}
           </Typography>
 
-          <Stack direction="row" alignItems="center" spacing={1} mb={1}>
+          {/* <Stack direction="row" alignItems="center" spacing={1} mb={1}>
             <FaPhone size={16} color="#1976d2" />
             <Typography variant="body2" color="text.secondary">
               {office_phone}
             </Typography>
-          </Stack>
+          </Stack> */}
 
           <Stack direction="row" alignItems="center" spacing={0.5}>
             {[...Array(5)].map((_, index) => (

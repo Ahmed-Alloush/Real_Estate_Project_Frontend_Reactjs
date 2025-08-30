@@ -63,7 +63,7 @@ export const getUserById = createAsyncThunk(
     try {
       const token = localStorage.getItem("accessToken");
       const response = await api.get(
-        `/user/${id}`, // Assuming this is your API endpoint
+        `/user/one-user/${id}`, // Assuming this is your API endpoint
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -115,6 +115,7 @@ export const verifyCode = createAsyncThunk(
   async (code, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.accessToken;
+      console.log("this is the accessToken : ", token);
       const response = await api.post(
         "/user/verify-code",
         { verify_code: code },
@@ -148,6 +149,27 @@ export const completeRegister = createAsyncThunk(
   }
 );
 
+// Get user properties
+export const getUserProperties = createAsyncThunk(
+  "auth/getUserProperties",
+  async (_, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await api.get(
+        "/user/properties", // Assuming this is your API endpoint
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch user by ID."
+      );
+    }
+  }
+);
+
 // ======================================
 // ✅ Slice
 // ======================================
@@ -169,6 +191,9 @@ const authSlice = createSlice({
     success: false,
     error: null,
     verifySuccess: false,
+    userProperties: [],
+    userPropertiesLoading: false,
+    userPropertiesError: null,
   },
   reducers: {
     logout: (state) => {
@@ -227,6 +252,20 @@ const authSlice = createSlice({
       .addCase(getUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // Get user properties
+      .addCase(getUserProperties.pending, (state) => {
+        state.userPropertiesLoading = true;
+        state.userPropertiesError = null;
+      })
+      .addCase(getUserProperties.fulfilled, (state, action) => {
+        state.userPropertiesLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(getUserProperties.rejected, (state, action) => {
+        state.userPropertiesLoading = false;
+        state.userPropertiesError = action.payload;
       })
 
       // Get user by national number

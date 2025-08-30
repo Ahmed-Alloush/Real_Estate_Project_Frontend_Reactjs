@@ -15,6 +15,11 @@ import propertyRequestReducer from "../redux/property request/propertyRequestSli
 import propertyTypeReducer from "../redux/property type/propertyTypeSlice";
 import licenseTypeReducer from "../redux/license type/licenseTypeSlice";
 import officeCommentReducer from "../redux/office comment/officeCommentSlice";
+import attributeReducer from "../redux/attribute/attributeSlice";
+import statisticsReducer from "../redux/superAdmin/statisticsSlice";
+import officeComplaintReducer from "../redux/superAdmin/manageOfficeComplaintSlice";
+import propertyComplaintReducer from "../redux/superAdmin/managePropertyComplaintSlice";
+import themReducer from "../redux/them/themSlice";
 
 
 export const store = configureStore({
@@ -33,7 +38,12 @@ export const store = configureStore({
     notification:notificationReducer,
     propertyRequest: propertyRequestReducer,
     propertyType:propertyTypeReducer,
+    attribute:attributeReducer,
     licenseType:licenseTypeReducer,
     officeComment:officeCommentReducer,
+    statistics:statisticsReducer,
+    officeComplaint:officeComplaintReducer,
+    propertyComplaint:propertyComplaintReducer,
+    them:themReducer,
   },
 });

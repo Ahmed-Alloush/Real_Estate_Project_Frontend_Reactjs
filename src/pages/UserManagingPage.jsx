@@ -14,7 +14,6 @@ const UserManagingPage = () => {
 
   if (loading) return <CircularProgress />;
   if (error) return <Box color="error.main">Error: {error}</Box>;
-[].findIndex()
   return (
     <Grid container spacing={4}>
       <Box mx={"14%"} mt={"1%"}>

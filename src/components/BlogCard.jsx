@@ -5,10 +5,15 @@ import {
   Typography,
   IconButton,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const BlogCard = ({ blog, onEdit, onDelete }) => {
+  const { deletingId } = useSelector((state) => state.blog);
+  const isDeleting = deletingId === blog.id;
+
   return (
     <Card sx={{ position: "relative" }}>
       {blog.blog_media?.url && (
@@ -36,12 +41,22 @@ const BlogCard = ({ blog, onEdit, onDelete }) => {
           gap: 1,
         }}
       >
-        <IconButton color="primary" onClick={() => onEdit(blog)}>
-          <FaEdit size={16} />
-        </IconButton>
-        <IconButton color="error" onClick={() => onDelete(blog.id)}>
-          <FaTrash size={16} />
-        </IconButton>
+        {isDeleting ? (
+          <CircularProgress size={16} />
+        ) : (
+          <>
+            <IconButton color="primary" onClick={() => onEdit(blog)}>
+              <FaEdit size={16} />
+            </IconButton>
+            <IconButton
+              color="error"
+              onClick={() => onDelete(blog.id)}
+              disabled={isDeleting} // Disable the button while deleting
+            >
+              <FaTrash size={16} />
+            </IconButton>
+          </>
+        )}
       </Box>
     </Card>
   );

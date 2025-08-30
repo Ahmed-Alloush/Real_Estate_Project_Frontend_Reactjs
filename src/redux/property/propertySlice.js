@@ -14,6 +14,30 @@ export const fetchProperties = createAsyncThunk(
   }
 );
 
+// Filtered properties with pagination
+export const fetchPropertiesAndFilterThem = createAsyncThunk(
+  "property/fetchPropertiesAndFilterThem",
+  async (filterData, { rejectWithValue }) => {
+    try {
+      console.log("this is the filterData",filterData);
+      
+      const token = localStorage.getItem("accessToken");
+      const response = await api.post("/property/filter", filterData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          page: filterData.page || 1,
+          limit: filterData.limit || 1,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 // Fetch Favorite Properties
 export const fetchFavoriteProperties = createAsyncThunk(
   "property/fetchFavoriteProperties",
@@ -32,27 +56,6 @@ export const fetchFavoriteProperties = createAsyncThunk(
   }
 );
 
-// Filtered properties with pagination
-export const fetchPropertiesAndFilterThem = createAsyncThunk(
-  "property/fetchPropertiesAndFilterThem",
-  async (filterData, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      const response = await api.post("/property/filter", filterData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          page: filterData.page || 1,
-          limit: filterData.limit || 1,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
 
 // Fetch Reserved properties with pagination
 export const fetchReservedProperties = createAsyncThunk(
@@ -77,7 +80,7 @@ export const fetchReservedProperties = createAsyncThunk(
 // Fetch properties by office ID with pagination
 export const fetchPropertiesByOfficeId = createAsyncThunk(
   "property/fetchPropertiesByOfficeId",
-  async ({ officeId, page = 1, limit = 1 }, { rejectWithValue }) => {
+  async ({ officeId, page = 1, limit = 6 }, { rejectWithValue }) => {
     try {
       const response = await api.get(`/property/office/${officeId}`, {
         params: { page, limit },
@@ -122,7 +125,7 @@ export const createProperty = createAsyncThunk(
 
       const formattedAttributes = propertyData.attributes.map((attr) => ({
         name: attr.attributeName,
-        value: Number(attr.value),
+        value: `${attr.value}`,
       }));
       formData.append("attributes", JSON.stringify(formattedAttributes));
 
@@ -411,7 +414,9 @@ const propertySlice = createSlice({
       })
       .addCase(fetchProperties.fulfilled, (state, action) => {
         state.loading = false;
-        state.properties = action.payload;
+        state.properties = action.payload.data;
+        console.log("this is the state.properties ",action.payload.data);
+        
       })
       .addCase(fetchProperties.rejected, (state, action) => {
         state.loading = false;
